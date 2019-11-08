@@ -1,0 +1,58 @@
+---
+project: 'ric_plt_ric_dep'
+project_creation_date: '2019-11-08'
+project_category: ''
+lifecycle_state: 'Incubation'
+project_lead: &oran_ric_plt_ric_dep_ptl
+    name: 'Thoralf Czichy'
+    email: 'thoralf.czichy@nokia.com'
+    id: 'czichy'
+    company: 'Nokia'
+    timezone: 'America/New_York'
+primary_contact: *oran_ric_plt_ric_dep_ptl
+issue_tracking:
+    type: 'jira'
+    url: 'https://jira.o-ran-sc.org/projects/'
+    key: 'ric_plt_ric_dep'
+mailing_list:
+    type: 'groups.io'
+    url: 'technical-discuss@lists.o-ran-sc.org'
+    tag: '[]'
+realtime_discussion:
+    type: 'irc'
+    server: 'freenode.net'
+    channel: '#oran'
+meetings:
+    - type: 'gotomeeting+irc'
+      agenda: 'https://wiki.o-ran-sc.org/display/'
+      url: ''
+      server: 'freenode.net'
+      channel: '#oran'
+      repeats: ''
+      time: ''
+repositories:
+    - ric-plt/ric-dep
+committers:
+    - <<: *oran_ric_plt_ric_dep_ptl
+    - name: 'Lusheng Ji'
+      email: 'lji@research.att.com'
+      company: 'research.att'
+      id: 'wrider'
+      timezone: 'Unknown/Unknown'
+    - name: 'Prabhu K'
+      email: 'prabhu.k@nokia.com'
+      company: 'nokia'
+      id: 'prabhukaliswamy'
+      timezone: 'Unknown/Unknown'
+    - name: 'Ranjit Kumar'
+      email: 'ranjit.angajala@nokia.com'
+      company: 'nokia'
+      id: 'ranjitk'
+      timezone: 'Unknown/Unknown'
+tsc:
+    # yamllint disable rule:line-length
+    approval: 'missing'
+    changes:
+        - type: ''
+          name: ''
+          link: ''
