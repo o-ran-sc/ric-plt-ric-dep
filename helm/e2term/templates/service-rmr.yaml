@@ -14,28 +14,34 @@
 #   See the License for the specific language governing permissions and        #
 #   limitations under the License.                                             #
 ################################################################################
-
+{{- $topCtx :=  . }} 
+{{- range keys .Values.e2term }} 
+{{- $key := . }} 
+{{- with index $topCtx.Values.e2term . }}
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "common.servicename.e2term.rmr" . }}
-  namespace: {{ include "common.namespace.platform" . }}
+  name: {{ include "common.servicename.e2term.rmr" $topCtx }}-{{ $key }}
+  namespace: {{ include "common.namespace.platform" $topCtx }}
   labels:
-    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.e2term" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }} 
+    app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}
+    chart: {{ $topCtx.Chart.Name }}-{{ $topCtx.Chart.Version | replace "+" "_" }}
+    release: {{ $topCtx.Release.Name }}
+    heritage: {{ $topCtx.Release.Service }} 
 spec:
   type: ClusterIP
   ports:
-    - port: {{ include "common.serviceport.e2term.rmr.route" . }}
+    - port: {{ include "common.serviceport.e2term.rmr.route" $topCtx }}
       protocol: "TCP"
-      targetPort: "rmrroute"
-      name: "rmrroute"
-    - port: {{ include "common.serviceport.e2term.rmr.data" . }}
+      targetPort: "rmrroute-{{ $key }}"
+      name: "rmrroute-{{ $key }}"
+    - port: {{ include "common.serviceport.e2term.rmr.data" $topCtx }}
       protocol: "TCP"
-      targetPort: "rmrdata"
-      name: "rmrdata"
+      targetPort: "rmrdata-{{ $key }}"
+      name: "rmrdata-{{ $key }}"
   selector:
-      app: {{ include "common.namespace.platform" . }}-{{ include "common.name.e2term" . }}
-      release: {{ .Release.Name }}
+      app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}
+      release: {{ $topCtx.Release.Name }}
+{{- end }}
+{{- end }}

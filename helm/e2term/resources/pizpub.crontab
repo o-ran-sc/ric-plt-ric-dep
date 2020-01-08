@@ -15,4 +15,4 @@
 ################################################################################
 
 #
-0 * * * * find {{ .Values.dataRootDir }}/{{ .Values.processedDirectory }} -type f  -mtime +3 -delete
+0 * * * * find {{ .pizpub.dataRootDir }}/{{ .pizpub.processedDirectory }} -type f  -mtime +3 -delete
