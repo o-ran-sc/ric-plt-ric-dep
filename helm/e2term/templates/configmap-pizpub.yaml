@@ -13,12 +13,20 @@
 #   See the License for the specific language governing permissions and        #
 #   limitations under the License.                                             #
 ################################################################################
-{{ if .Values.e2term.pizpub.enabled  }}
+{{- $topCtx :=  . }}
+{{- range keys .Values.e2term }}
+{{- $key := . }}
+{{- with index $topCtx.Values.e2term . }}
+
+{{ if .pizpub.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "common.configmapname.e2term" . }}-pizpub
-  namespace: {{ include "common.namespace.platform" . }}
+  name: {{ include "common.configmapname.e2term" $topCtx }}-pizpub-{{ $key }}
+  namespace: {{ include "common.namespace.platform" $topCtx }}
 data:
-{{ tpl (.Files.Glob "resources/*").AsConfig . | indent 2 }}
+{{ tpl ($topCtx.Files.Glob "resources/*").AsConfig $topCtx | indent 2 }}
+
 {{ end }}
+{{- end }}
+{{- end }}

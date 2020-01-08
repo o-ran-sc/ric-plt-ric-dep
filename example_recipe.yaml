@@ -88,20 +88,28 @@ e2mgr:
     RIC_ID: "bbbccc-abcd0e/20"
 
 
-e2term:
-  image:
-    name: ric-plt-e2
-    tag: 3.0.1
 
-  privilegedmode: false
-  hostnetworkmode: false
-  env:
-    print: "1"
-    messagecollectorfile: "/data/outgoing/"
-  dataVolSize: 100Mi
-  storageClassName: local-storage
-  pizpub:
-    enabled: false
+e2term:
+  alpha:
+    imagePullPolicy: IfNotPresent
+    image:
+      name: ric-plt-e2
+      tag: 3.0.1
+      registry: "nexus3.o-ran-sc.org:10004"
+
+    privilegedmode: false
+    hostnetworkmode: false
+
+    replicaCount: 1
+    env:
+      print: "1"
+      messagecollectorfile: "/data/outgoing/"
+
+    dataVolSize: 100Mi
+    storageClassName: local-storage
+
+    pizpub:
+      enabled: false
 
 
 jaegeradapter:

@@ -20,27 +20,39 @@
 #################################################################
 
 e2term:
-  imagePullPolicy: IfNotPresent
-  image:
-    name: ric-plt-e2
-    tag: 3.0.1
-    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+  alpha:
+    imagePullPolicy: IfNotPresent
+    image:
+      name: ric-plt-e2
+      tag: 3.0.1
+      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+    
+    privilegedmode: false
+    hostnetworkmode: false
   
-  privilegedmode: false
-  hostnetworkmode: false
-
-  replicaCount: 1
-  env:
-    print: "1"
-    messagecollectorfile: "/data/outgoing/"
-  # Service ports are now defined in 
-  # ric-common/Common-Template/helm/ric-common/templates/_ports.tpl file.
-  # If need to change a service port, make the code change necessary, then
-  # update the _ports.tpl file with the new port number.
-
-  dataVolSize: 100Mi
-  storageClassName: local-storage
-  #storageClassName: ric-storage-class
-
-  pizpub:
-    enabled: false
+    replicaCount: 1
+    env:
+      print: "1"
+      messagecollectorfile: "/data/outgoing/"
+    # Service ports are now defined in 
+    # ric-common/Common-Template/helm/ric-common/templates/_ports.tpl file.
+    # If need to change a service port, make the code change necessary, then
+    # update the _ports.tpl file with the new port number.
+  
+    dataVolSize: 100Mi
+    storageClassName: local-storage
+    #storageClassName: ric-storage-class
+  
+    pizpub:
+      enabled: false
+    #  publishURL: ""
+    #  user: ""
+    #  password: ""
+    #  feedId: ""
+    #  dataRootDir: ""
+    #  scanDirectory: ""
+    #  processedDirectory: ""
+    #  image:
+    #    name: ""
+    #    tag: ""
+    #    registry: ""

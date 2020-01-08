@@ -12,17 +12,29 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   #
 #   See the License for the specific language governing permissions and        #
 #   limitations under the License.                                             #
-################################################################################
+################################################################################1
+{{- $topCtx :=  . }}
+{{- range keys .Values.e2term }}
+{{- $key := . }}
+{{- with index $topCtx.Values.e2term . }}
 
-kind: PersistentVolumeClaim
+{{if eq .storageClassName "local-storage" }}
+---
 apiVersion: v1
+kind: PersistentVolume
 metadata:
-  name: {{ include "common.pvcname.e2term" . }}
+  name: {{ include "common.pvname.e2term" $topCtx }}-{{ $key }}
+  labels:
+    type: local
 spec:
+  storageClassName: {{ .storageClassName }}
+  capacity:
+    storage: {{ .dataVolSize }}
   accessModes:
     - ReadWriteOnce
-  resources:
-    requests:
-      storage: {{ .Values.e2term.dataVolSize }}
-  storageClassName: {{ .Values.e2term.storageClassName }}
-  #volumeName: {{ include "common.pvname.e2term" . }}
+  hostPath:
+    path: /mnt/{{ include "common.pvname.e2term" $topCtx }}-{{ $key }}
+{{ end }}
+
+{{- end }}
+{{- end }}

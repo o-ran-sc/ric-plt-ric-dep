@@ -14,45 +14,51 @@
 #   See the License for the specific language governing permissions and        #
 #   limitations under the License.                                             #
 ################################################################################
-{{- $imagectx := dict "ctx" . "defaultregistry" .Values.e2term.image.registry }}
-{{- $pullpolicyctx := dict "ctx" . "defaultpullpolicy" .Values.e2term.imagePullPolicy }}
+{{- $topCtx :=  . }}
+{{- range keys .Values.e2term }}
+{{- $key := . }}
+{{- with index $topCtx.Values.e2term . }}
+
+{{- $imagectx := dict "ctx" $topCtx "defaultregistry" .image.registry }}
+{{- $pullpolicyctx := dict "ctx" $topCtx "defaultpullpolicy" .imagePullPolicy }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "common.deploymentname.e2term" . }}
-  namespace: {{ include "common.namespace.platform" . }}
+  name: {{ include "common.deploymentname.e2term" $topCtx }}-{{ $key }}
+  namespace: {{ include "common.namespace.platform" $topCtx }}
   labels:
-    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.e2term" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}
+    chart: {{ $topCtx.Chart.Name }}-{{ $topCtx.Chart.Version | replace "+" "_" }}
+    release: {{ $topCtx.Release.Name }}
+    heritage: {{ $topCtx.Release.Service }}
 spec:
-  replicas: {{ .Values.e2term.replicaCount }}
+  replicas: {{ .replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "common.namespace.platform" . }}-{{ include "common.name.e2term" . }}
-      release: {{ .Release.Name }}
+      app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}
+      release: {{ $topCtx.Release.Name }}
   template:
     metadata:
-      {{- if .Values.e2term.annotations }}
+      {{- if .annotations }}
       annotations:
-        {{- .Values.e2term.annotations | nindent 8 -}}
+        {{- .annotations | nindent 8 -}}
       {{ end }}
       labels:
-        app: {{ include "common.namespace.platform" . }}-{{ include "common.name.e2term" . }}
-        release: {{ .Release.Name }}
+        app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}
+        release: {{ $topCtx.Release.Name }}
     spec:
-      hostname: {{ include "common.name.e2term" . }}
-      hostNetwork: {{ .Values.e2term.hostnetworkmode }}
+      hostname: {{ include "common.name.e2term" $topCtx }}-{{ $key }}
+      hostNetwork: {{ .hostnetworkmode }}
       dnsPolicy: ClusterFirstWithHostNet
       imagePullSecrets:
         - name: {{ include "common.dockerregistry.credential" $imagectx }}
-      {{- with .Values.e2term.nodeselector }}
+      {{- with .nodeselector }}
       nodeSelector: {{ toYaml . | trim | nindent 8 -}}
       {{- end }}
       containers:
-        - name: {{ include "common.containername.e2term" . }}
-          image: {{ include "common.dockerregistry.url" $imagectx }}/{{ .Values.e2term.image.name }}:{{ .Values.e2term.image.tag }}
+        - name: {{ include "common.containername.e2term" $topCtx }}
+          image: {{ include "common.dockerregistry.url" $imagectx }}/{{ .image.name }}:{{ .image.tag }}
           imagePullPolicy: {{ include "common.dockerregistry.pullpolicy" $pullpolicyctx }}
           volumeMounts:
           - mountPath: /opt/e2/router.txt
@@ -61,38 +67,39 @@ spec:
           - mountPath: /tmp/rmr_verbose
             name: local-router-file
             subPath: rmr_verbose
-{{ if .Values.e2term.pizpub.enabled }}
-          - mountPath: "{{ .Values.e2term.env.messagecollectorfile }}"
+{{ if .pizpub.enabled }}
+          - mountPath: "{{ .env.messagecollectorfile }}"
             name: vol-shared
             readOnly: false
-            subPath: "{{ .Values.e2term.pizpub.scanDirectory }}"
+            subPath: "{{ .pizpub.scanDirectory }}"
 {{ else }}
-          - mountPath: "{{ .Values.e2term.env.messagecollectorfile }}"
+          - mountPath: "{{ .env.messagecollectorfile }}"
             name: vol-shared
             readOnly: false
 {{ end }}
           envFrom:
             - configMapRef:
-                name: {{ include "common.configmapname.e2term" . }}-env
+                name: {{ include "common.configmapname.e2term" $topCtx }}-env-{{ $key }}
           ports:
-            - name: "rmrroute"
-              containerPort: {{ include "common.serviceport.e2term.rmr.route" . }}
-            - name: "rmrdata"
-              containerPort: {{ include "common.serviceport.e2term.rmr.data" . }}
+            - name: "rmrroute-{{ $key }}"
+              containerPort: {{ include "common.serviceport.e2term.rmr.route" $topCtx }}
+            - name: "rmrdata-{{ $key }}"
+              containerPort: {{ include "common.serviceport.e2term.rmr.data" $topCtx }}
           stdin: true
           tty: true
           securityContext:
-            privileged: {{ .Values.e2term.privilegedmode }}
+            privileged: {{ .privilegedmode }}
 
-{{ if .Values.e2term.pizpub.enabled }}
-        - name: {{ include "common.containername.e2term" . }}-pizpub
-          image: {{ include "common.repository" . }}/{{ .Values.e2term.pizpub.imageName }}:{{ .Values.e2term.pizpub.imageVersion }}
-          imagePullPolicy: {{ include "common.pullPolicy" . }}
+{{ if .pizpub.enabled }}
+        - name: {{ include "common.containername.e2term" $topCtx }}-pizpub
+          {{- $pizpubimagectx := dict "ctx" $topCtx "defaultregistry" .pizpub.image.registry }}
+          image: {{ include "common.dockerregistry.url" $pizpubimagectx }}/{{ .pizpub.image.name }}:{{ .pizpub.image.tag }}
+          imagePullPolicy: {{ include "common.dockerregistry.pullpolicy" $pullpolicyctx }}
           volumeMounts:
           - mountPath: /etc/localtime
             name: localtime
             readOnly: true
-          - mountPath: "{{ .Values.e2term.pizpub.dataRootDir }}"
+          - mountPath: "{{ .pizpub.dataRootDir }}"
             name: vol-shared
             readOnly: false
           - name: pizpub-config
@@ -100,21 +107,23 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: ["/bin/sh", "/opt/app/config/conf/cleaner.sh", "{{ .Values.e2term.pizpub.dataRootDir }}/{{ .Values.e2term.pizpub.processedDirectory }}", "3"]
+                command: ["/bin/sh", "/opt/app/config/conf/cleaner.sh", "{{ .pizpub.dataRootDir }}/{{ .pizpub.processedDirectory }}", "3"]
 {{ end }}
       volumes:
         - name: local-router-file
           configMap:
-            name: {{ include "common.configmapname.e2term" . }}-router-configmap
-{{ if .Values.e2term.pizpub.enabled }}
+            name: {{ include "common.configmapname.e2term" $topCtx }}-router-configmap
+{{ if .pizpub.enabled }}
         - name: localtime
           hostPath:
             path: /etc/localtime
         - name: pizpub-config
           configMap:
-            name: {{ include "common.configmapname.e2term" . }}-pizpub
+            name: {{ include "common.configmapname.e2term" $topCtx }}-pizpub-{{ $key }}
 {{ end }}
         - name: vol-shared
           persistentVolumeClaim:
-            claimName: {{ include "common.pvcname.e2term" . }}
+            claimName: {{ include "common.pvcname.e2term" $topCtx }}-{{ $key }}
 
+{{- end }}
+{{- end }}
