@@ -13,7 +13,8 @@
 #   See the License for the specific language governing permissions and        #
 #   limitations under the License.                                             #
 ################################################################################
-{{- $imagectx := dict "ctx" . "defaultregistry" .Values.rsm.image.registry }}
+{{- $imagectx := dict "ctx" . "defaultregistry" .Values.rsm.image.main.registry }}
+{{- $initimagectx := dict "ctx" . "defaultregistry" .Values.rsm.image.init.registry }}
 {{- $pullpolicyctx := dict "ctx" . "defaultpullpolicy" .Values.rsm.imagePullPolicy }}
 apiVersion: apps/v1
 kind: Deployment
@@ -41,12 +42,17 @@ spec:
         app: {{ include "common.namespace.platform" . }}-{{ include "common.name.rsm" . }}
         release: {{ .Release.Name }}
     spec:
+      initContainers:
+      - name: redis-init
+        image: {{ include "common.dockerregistry.url" $initimagectx }}/{{ .Values.rsm.image.init.name }}:{{ .Values.rsm.image.init.tag }}
+        imagePullPolicy: {{ include "common.dockerregistry.pullpolicy" $pullpolicyctx }}
+        command: ['sh', '-c', 'redis-cli -h service-ricplt-dbaas-tcp -p 6379 set "{rsm},CFG:GENERAL:v1.0.0"  "{\"enableResourceStatus\":true,\"partialSuccessAllowed\":true,\"prbPeriodic\":true,\"tnlLoadIndPeriodic\":true,\"wwLoadIndPeriodic\":true,\"absStatusPeriodic\":true,\"rsrpMeasurementPeriodic\":true,\"csiPeriodic\":true,\"periodicityMs\":1,\"periodicityRsrpMeasurementMs\":3,\"periodicityCsiMs\":4}" nx']
       hostname: {{ include "common.name.rsm" . }} 
       imagePullSecrets:
         - name: {{ include "common.dockerregistry.credential" $imagectx }}
       containers:
         - name: {{ include "common.containername.rsm" . }}
-          image: {{ include "common.dockerregistry.url" $imagectx }}/{{ .Values.rsm.image.name }}:{{ .Values.rsm.image.tag }}
+          image: {{ include "common.dockerregistry.url" $imagectx }}/{{ .Values.rsm.image.main.name }}:{{ .Values.rsm.image.main.tag }}
           imagePullPolicy: {{ include "common.dockerregistry.pullpolicy" $pullpolicyctx }}
           volumeMounts:
           - mountPath: /opt/RSM/router.txt

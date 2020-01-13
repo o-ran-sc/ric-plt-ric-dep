@@ -25,7 +25,7 @@ a1mediator:
   imagePullPolicy: IfNotPresent
   image:
     name: ric-plt-a1
-    tag: 1.0.4
+    tag: 2.0.0
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
 
   # Service ports are now defined in
@@ -35,5 +35,6 @@ a1mediator:
 
 # these are ENV variables that A1 takes; see docs
   rmr_timeout_config:
-    rcv_retry_interval_ms: 500
-    rcv_retry_times: 20
+    a1_rcv_retry_times: 20
+    ins_del_no_resp_ttl: 5
+    ins_del_resp_ttl: 10
