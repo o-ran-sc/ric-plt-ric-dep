@@ -22,14 +22,18 @@
 rsm:
   imagePullPolicy: IfNotPresent
   image:
-    name: ric-plt-resource-status-manager
-    tag: 3.0.1
-    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+    init:
+      name: redis
+      tag: latest
+      registry: "docker.io"
+    main:
+      name: ric-plt-resource-status-manager
+      tag: 3.0.1
+      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
 
   privilegedmode: false
 
   replicaCount: 1
-  enableResourceStatus: true
 
 
   # Service ports are now defined in
