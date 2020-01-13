@@ -56,10 +56,11 @@ docker-credential:
 a1mediator:
   image:
     name: ric-plt-a1
-    tag: 1.0.4
+    tag: 2.0.0
   rmr_timeout_config:
-    rcv_retry_interval_ms: 500
-    rcv_retry_times: 20
+    a1_rcv_retry_times: 20
+    ins_del_no_resp_ttl: 5
+    ins_del_resp_ttl: 10
 
 appmgr:
   image:
@@ -119,11 +120,15 @@ jaegeradapter:
 
 rsm:
   image:
-    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
-    name: ric-plt-resource-status-manager
-    tag: 3.0.1
+    init:
+      name: redis
+      tag: latest
+      registry: "docker.io"
+    main:
+      name: ric-plt-resource-status-manager
+      tag: 3.0.1
+      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
   privilegedmode: false
-  enableResourceStatus: true
 
 rtmgr:
   image:
@@ -135,7 +140,6 @@ rtmgr:
   sbiurl: 0.0.0.0
   nbi: httpRESTful
   nbiurl: http://0.0.0.0:8888
-  loglevel: DEBUG
 
 submgr:
   image:
