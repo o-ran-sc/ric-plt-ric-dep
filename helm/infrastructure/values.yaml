@@ -55,8 +55,6 @@ extsvcplt:
   ricip: "10.0.0.1"
   auxip: "10.0.0.1"
 
-chartmuseum:
-  enabled: false
 
 docker-credential:
   enabled: true
