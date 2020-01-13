@@ -46,7 +46,7 @@ docker-credential:
   enabled: true
   credential:
     oran:
-      registry: "nexus3.o-ran-sc.org:10004"
+      registry: "nexus3.o-ran-sc.org:10002"
       credential:
         user: "docker"
         password: "docker"
@@ -56,93 +56,100 @@ docker-credential:
 a1mediator:
   image:
     name: ric-plt-a1
-    tag: 1.0.4
+    tag: 2.0.0
   rmr_timeout_config:
-    rcv_retry_interval_ms: 500
-    rcv_retry_times: 20
+    a1_rcv_retry_times: 20
+    ins_del_no_resp_ttl: 5
+    ins_del_resp_ttl: 10
 
 appmgr:
   image:
    init:
+     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
      name: it-dep-init
      tag: 0.0.1
    appmgr:
+     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
      name: ric-plt-appmgr
-     tag: 0.2.0
+     tag: 0.1.10
    chartmuseum:
+     registry: "docker.io"
      name: chartmuseum/chartmuseum
      tag: v0.8.2
 
 dbaas:
   backend:
     image:
+      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
       name: ric-plt-dbaas
-      tag: 0.1.0
+      tag: 0.2.2
 
 e2mgr:
   image:
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-e2mgr
-    tag: 3.0.1
+    tag: 2.0.10
   privilegedmode: false
   env:
     RIC_ID: "bbbccc-abcd0e/20"
 
 
-
 e2term:
-  alpha:
-    imagePullPolicy: IfNotPresent
-    image:
-      name: ric-plt-e2
-      tag: 3.0.1
-      registry: "nexus3.o-ran-sc.org:10004"
+  image:
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+    name: ric-plt-e2
+    tag: 3.0.1
 
-    privilegedmode: false
-    hostnetworkmode: false
-
-    replicaCount: 1
-    env:
-      print: "1"
-      messagecollectorfile: "/data/outgoing/"
-
-    dataVolSize: 100Mi
-    storageClassName: local-storage
-
-    pizpub:
-      enabled: false
+  privilegedmode: false
+  hostnetworkmode: false
+  env:
+    print: "1"
+    messagecollectorfile: "/data/outgoing/"
+  dataVolSize: 100Mi
+  storageClassName: local-storage
+  pizpub:
+    enabled: false
 
 
 jaegeradapter:
   image:
+    registry: "docker.io"
     name: jaegertracing/all-in-one
     tag: 1.12
 
 
 rsm:
   image:
-    name: ric-plt-resource-status-manager
-    tag: 3.0.1
+    init:
+      name: redis
+      tag: latest
+      registry: "docker.io"
+    main:
+      name: ric-plt-resource-status-manager
+      tag: 3.0.1
+      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
   privilegedmode: false
-  enableResourceStatus: true
 
 rtmgr:
   image:
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-rtmgr
-    tag: 0.3.8
+    tag: 0.3.9
   rpe: rmrpush
   sbi: nngpush
   sbiurl: 0.0.0.0
   nbi: httpRESTful
   nbiurl: http://0.0.0.0:8888
-  loglevel: DEBUG
 
 submgr:
   image:
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-submgr
     tag: 0.10.7
 
 vespamgr:
   image:
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-vespamgr
     tag: 0.0.8
   prometheusurl: "http://rec-prometheus-server.default"
