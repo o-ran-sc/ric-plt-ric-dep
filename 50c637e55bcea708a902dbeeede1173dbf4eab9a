@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "92ea2c39_13d97503",
+        "filename": "RECIPE_EXAMPLE/amber_example_recipe.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2020-01-22T20:01:32Z",
+      "side": 1,
+      "message": "Amber release containers are all on release registry, 10002.",
+      "revId": "50c637e55bcea708a902dbeeede1173dbf4eab9a",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "86214ef0_9872ae89",
+        "filename": "RECIPE_EXAMPLE/amber_example_recipe.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2020-01-22T20:01:32Z",
+      "side": 1,
+      "message": "Amber release containers are all on release registry, 10002.",
+      "revId": "50c637e55bcea708a902dbeeede1173dbf4eab9a",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    }
+  ]
+}
