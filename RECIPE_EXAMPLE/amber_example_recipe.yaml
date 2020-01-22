@@ -45,7 +45,13 @@ extsvcplt:
 docker-credential:
   enabled: true
   credential:
-    oran:
+    oran_staging:
+      registry: "nexus3.o-ran-sc.org:10004"
+      credential:
+        user: "docker"
+        password: "docker"
+        email: "@"
+    oran_release:
       registry: "nexus3.o-ran-sc.org:10002"
       credential:
         user: "docker"
@@ -127,15 +133,15 @@ rsm:
       registry: "docker.io"
     main:
       name: ric-plt-resource-status-manager
-      tag: 3.0.1
-      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+      tag: 3.0.3
+      registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
   privilegedmode: false
 
 rtmgr:
   image:
-    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
     name: ric-plt-rtmgr
-    tag: 0.3.9
+    tag: 0.4.9
   rpe: rmrpush
   sbi: nngpush
   sbiurl: 0.0.0.0
