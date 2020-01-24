@@ -1,0 +1,52 @@
+################################################################################
+#   Copyright (c) 2019 AT&T Intellectual Property.                             #
+#   Copyright (c) 2019 Nokia.                                                  #
+#                                                                              #
+#   Licensed under the Apache License, Version 2.0 (the "License");            #
+#   you may not use this file except in compliance with the License.           #
+#   You may obtain a copy of the License at                                    #
+#                                                                              #
+#       http://www.apache.org/licenses/LICENSE-2.0                             #
+#                                                                              #
+#   Unless required by applicable law or agreed to in writing, software        #
+#   distributed under the License is distributed on an "AS IS" BASIS,          #
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   #
+#   See the License for the specific language governing permissions and        #
+#   limitations under the License.                                             #
+################################################################################
+{{- $fullName := include "common.fullname.dbaasha" . }}
+{{- $podName := include "common.statefulsetname.dbaasha" . }}
+{{- $appName := include "common.name.dbaasha" . }}
+{{- $platformName := include "common.namespace.platform" . }}
+{{- $replicas := int .Values.dbaasha.replicas }}
+{{- $redisPort := include "common.serviceport.dbaasha.redis" .}}
+{{- $sentinelPort := include "common.serviceport.dbaasha.sentinel" .}}
+{{- $root := . }}
+{{- range $i := until $replicas }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullName }}-announce-{{ $i }}
+  labels:
+    app: {{ $platformName }}-{{ $appName }}
+    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
+    release: {{ $root.Release.Name }}
+    heritage: {{ $root.Release.Service }}
+spec:
+  publishNotReadyAddresses: true
+  type: ClusterIP
+  ports:
+  - name: server
+    port: {{ $redisPort }}
+    protocol: TCP
+    targetPort: redis
+  - name: sentinel
+    port: {{ $sentinelPort }}
+    protocol: TCP
+    targetPort: sentinel
+  selector:
+    release: {{ $root.Release.Name }}
+    app: {{ $platformName }}-{{ $appName }}
+    "statefulset.kubernetes.io/pod-name": {{ $podName }}-server-{{ $i }}
+{{- end }}
