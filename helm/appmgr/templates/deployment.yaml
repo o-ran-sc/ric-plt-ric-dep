@@ -91,6 +91,9 @@ spec:
           image: {{ include "common.dockerregistry.url" $newctx }}/{{ .Values.appmgr.image.chartmuseum.name }}:{{ .Values.appmgr.image.chartmuseum.tag }}
           {{- $newctx := dict "ctx" $topCtx "defaultpullpolicy" .Values.appmgr.imagePullPolicy }}
           imagePullPolicy: {{ include "common.dockerregistry.pullpolicy" $newctx }}
+          securityContext:
+            fsGroup: 0
+            runAsUser: 0
           envFrom:
             - configMapRef:
                 name: {{ include "common.configmapname.appmgr" . }}-chartmuseum-env
