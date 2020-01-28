@@ -16,7 +16,7 @@
 #   limitations under the License.                                             #
 ################################################################################
 
-COMPONENTS="appmgr rtmgr dbaas1 e2mgr e2term a1mediator submgr vespamgr rsm jaegeradapter infrastructure"
+COMPONENTS="appmgr rtmgr dbaas1 dbaasha e2mgr e2term a1mediator submgr vespamgr rsm jaegeradapter infrastructure"
 RECIPE_NAMESPACE=$(kubectl get cm --all-namespaces | grep ricplt-recipe | awk '{print $1}')
 kubectl get configmap  -n $RECIPE_NAMESPACE ricplt-recipe  -o jsonpath='{.data.recipe}' > /tmp/recipe.yaml
 
