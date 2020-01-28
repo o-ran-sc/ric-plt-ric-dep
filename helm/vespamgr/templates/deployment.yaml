@@ -62,7 +62,7 @@ spec:
                 name: vespa-secrets
           env:
             - name: VESMGR_APPMGRDOMAIN
-              value: appmgr-service
+              value: {{ include "common.servicename.appmgr.http" . }}
           livenessProbe:
             httpGet:
               path: /supervision
