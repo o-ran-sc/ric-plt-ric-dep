@@ -70,7 +70,7 @@ PLTNAMESPACE=$(echo "$NAMESPACE_BLOCK" | awk '/^ *platform:/{print $2}')
 INFRANAMESPACE=$(echo "$NAMESPACE_BLOCK" | awk '/^ *infra:/{print $2}')
 XAPPNAMESPACE=$(echo "$NAMESPACE_BLOCK" | awk '/^ *xapp:/{print $2}')
 RELEASE_PREFIX=$(echo "$COMMON_BLOCK" | awk '/^ *releasePrefix:/{print $2}')
-COMPONENTS=${LIST_OF_COMPONENTS:-"infrastructure appmgr rtmgr dbaas1 e2mgr e2term a1mediator submgr vespamgr rsm jaegeradapter"}
+COMPONENTS=${LIST_OF_COMPONENTS:-"infrastructure appmgr rtmgr dbaas1 dbaasha e2mgr e2term a1mediator submgr vespamgr rsm jaegeradapter"}
 echo "Deploying RIC infra components [$COMPONENTS]"
 
 
