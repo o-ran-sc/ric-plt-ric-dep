@@ -84,7 +84,16 @@ dbaas:
     image:
       registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
       name: ric-plt-dbaas
-      tag: 0.2.2
+      tag: 0.1.0
+
+dbaasha:
+  image:
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+    name: ric-plt-dbaas
+    tag: 0.2.2
+  # Remove the affinity line below when deploying in a k8s
+  # cluster of more than 3 nodes.
+  affinity: ""
 
 e2mgr:
   image:
