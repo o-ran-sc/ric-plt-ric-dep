@@ -165,3 +165,9 @@ vespamgr:
     name: ric-plt-vespamgr
     tag: 0.0.8
   prometheusurl: "http://rec-prometheus-server.default"
+
+o1mediator:
+  image:
+    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+    name: ric-plt-o1
+    tag: 0.3.2
