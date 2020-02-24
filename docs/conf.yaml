@@ -1,0 +1,6 @@
+---
+project_cfg: oran
+project: oran
+
+# Change this to ReleaseBranchName to modify the header
+default-version: latest
