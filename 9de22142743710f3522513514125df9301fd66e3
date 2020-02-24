@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eb58adb7_bd6e5ff4",
+        "filename": "docs/installation-guides.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2020-02-24T16:24:47Z",
+      "side": 1,
+      "message": "Is this identical to the it/dep docs? I think it will create duplicate pages in docs.o-ran-sc.org. This will make updating the installation guide very difficult since there are two separate places that need to be changed.\n\nHow about keeping the requirement list and put a link to refer the installation of k8s to it/dep guides?",
+      "revId": "9de22142743710f3522513514125df9301fd66e3",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a03bb546_862b7280",
+        "filename": "docs/installation-k8s1node.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2020-02-24T16:24:47Z",
+      "side": 1,
+      "message": "Suggest that we remove this page.",
+      "revId": "9de22142743710f3522513514125df9301fd66e3",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82c365f9_e8415324",
+        "filename": "docs/installation-ric.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2020-02-24T16:24:47Z",
+      "side": 1,
+      "message": "There is no submodule in ric-dep. We don\u0027t need this step.",
+      "range": {
+        "startLine": 32,
+        "startChar": 2,
+        "endLine": 33,
+        "endChar": 50
+      },
+      "revId": "9de22142743710f3522513514125df9301fd66e3",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "524b394e_0a5b5694",
+        "filename": "docs/installation-virtualbox.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2020-02-24T16:24:47Z",
+      "side": 1,
+      "message": "Suggest that we remove this page.",
+      "revId": "9de22142743710f3522513514125df9301fd66e3",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5b5705e0_fe9cdd62",
+        "filename": "docs/overview.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2020-02-24T16:24:47Z",
+      "side": 1,
+      "message": "If I am not mistaken, this is the script that we used to deploy k8s? That\u0027s in it/dep.",
+      "range": {
+        "startLine": 25,
+        "startChar": 1,
+        "endLine": 25,
+        "endChar": 62
+      },
+      "revId": "9de22142743710f3522513514125df9301fd66e3",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "05ac5d2a_85d7b162",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2020-02-24T16:24:47Z",
+      "side": 1,
+      "message": "Should this be bronze or Amber?",
+      "range": {
+        "startLine": 61,
+        "startChar": 42,
+        "endLine": 61,
+        "endChar": 46
+      },
+      "revId": "9de22142743710f3522513514125df9301fd66e3",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    }
+  ]
+}
