@@ -15,10 +15,41 @@
 #   limitations under the License.                                             #
 ################################################################################
 
-#################################################################
-# Application configuration defaults.
-#################################################################
-# application image
+# this is the config of the tiller that we want to talk to.  needed for the
+# service account of o1mediator to be configureed correctly.
+common:
+  k8sAPIHost: https://kubernetes.default.svc.cluster.local/
+  tillers:
+    ricxapp:
+      name: ricxapp
+      nameSpace: ricxapp
+      deployNameSpace: ricinfra
+      imagePullPolicy: IfNotPresent
+      image:
+        tillerTLSSecrets:
+          registry: nexus3.o-ran-sc.org:10002/o-ran-sc
+          name: it-dep-secret
+          tag:  0.0.2
+        tiller:
+          registry: gcr.io
+          name: kubernetes-helm/tiller
+          tag: v2.12.3
+      secret:
+        create: true
+        tillerSecretName: ricxapp-tiller-secret
+        helmSecretName: ricxapp-helm-secret
+      tls:
+       authenticate: true
+       verify: true
+      serviceAccount:
+        name: tiller
+        role:
+        - apiGroups: [""]
+          resources: ["pods", "configmaps", "services"]
+          verbs: ["get", "list", "create", "delete"]
+        - apiGroups: ["extensions", "apps"]
+          resources: ["deployments"]
+          verbs: ["get", "list", "create", "delete"]
 
 o1mediator:
   replicaCount: 1

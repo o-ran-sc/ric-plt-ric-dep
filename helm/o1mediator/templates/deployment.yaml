@@ -47,6 +47,7 @@ spec:
       hostname: {{ include "common.name.o1mediator" . }}
       imagePullSecrets:
         - name: {{ include "common.dockerregistry.credential" $imagectx }}
+      serviceAccountName: {{ include "common.serviceaccountname.o1mediator" . }}
       containers:
         - name: {{ include "common.containername.o1mediator" . }}
           image: {{ include "common.dockerregistry.url" $imagectx }}/{{ .Values.o1mediator.image.name }}:{{ .Values.o1mediator.image.tag }}
