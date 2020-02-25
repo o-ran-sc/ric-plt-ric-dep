@@ -130,17 +130,17 @@ jaegeradapter:
     tag: 1.12
 
 
-rsm:
-  image:
-    init:
-      name: redis
-      tag: latest
-      registry: "docker.io"
-    main:
-      name: ric-plt-resource-status-manager
-      tag: 3.0.3
-      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
-  privilegedmode: false
+#rsm:
+#  image:
+#    init:
+#      name: redis
+#      tag: latest
+#      registry: "docker.io"
+#    main:
+#      name: ric-plt-resource-status-manager
+#      tag: 3.0.1
+#      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+#  privilegedmode: false
 
 rtmgr:
   image:
