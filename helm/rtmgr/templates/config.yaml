@@ -52,6 +52,8 @@ data:
 
        "XMURL":
          "http://{{ include "common.servicename.appmgr.http" . }}:{{ include "common.serviceport.appmgr.http" . }}/ric/v1/xapps"
+       "E2MURL":
+         "http://{{ include "common.servicename.e2mgr.http" . }}:{{ include "common.serviceport.e2mgr.http" . }}/v1/e2t/list"
        "RTFILE":
          "/db/rt.json"
        "CFGFILE":
