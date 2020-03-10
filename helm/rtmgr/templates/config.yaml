@@ -78,6 +78,7 @@ data:
          "protPort": "tcp:4560"
          "maxSize": 2072
          "numWorkers": 1
+         "threadType": 1
        "PlatformRoutes": [
          { 'messagetype': 'RIC_SUB_REQ', 'senderendpoint': 'SUBMAN', 'subscriptionid': -1, 'endpoint': '', 'meid': '%meid'},
          { 'messagetype': 'RIC_SUB_DEL_REQ', 'senderendpoint': 'SUBMAN', 'subscriptionid': -1,'endpoint': '', 'meid': '%meid'},
