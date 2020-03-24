@@ -32,10 +32,6 @@ spec:
       protocol: "TCP"
       name: "http"
       targetPort: "http"
-    - port: {{ include "common.serviceport.appmgr.chartmuseum.http" . }}
-      targetPort: chartmuseum
-      protocol: TCP
-      name: chartmuseum
   selector:
     app: {{ include "common.namespace.platform" . }}-{{ include "common.name.appmgr" . }}
     release: {{ .Release.Name }}

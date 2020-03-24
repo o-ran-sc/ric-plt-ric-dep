@@ -86,21 +86,6 @@ spec:
               subPath: appmgr-tiller-secret-copier.sh
 {{- end }}      
       containers:
-        - name: {{ include "common.containername.appmgr.chartmuseum" . }}
-          {{- $newctx := dict "ctx" $topCtx "defaultregistry" .Values.appmgr.image.chartmuseum.registry }}
-          image: {{ include "common.dockerregistry.url" $newctx }}/{{ .Values.appmgr.image.chartmuseum.name }}:{{ .Values.appmgr.image.chartmuseum.tag }}
-          {{- $newctx := dict "ctx" $topCtx "defaultpullpolicy" .Values.appmgr.imagePullPolicy }}
-          imagePullPolicy: {{ include "common.dockerregistry.pullpolicy" $newctx }}
-          securityContext:
-            fsGroup: 0
-            runAsUser: 0
-          envFrom:
-            - configMapRef:
-                name: {{ include "common.configmapname.appmgr" . }}-chartmuseum-env
-          ports:
-            - name: chartmuseum
-              containerPort: {{ include "common.serviceport.appmgr.chartmuseum.http" . }}
-              protocol: TCP
         - name: {{ include "common.containername.appmgr" . }}
           {{- $newctx := dict "ctx" $topCtx "defaultregistry" .Values.appmgr.image.appmgr.registry }}
           image: {{ include "common.dockerregistry.url" $newctx }}/{{ .Values.appmgr.image.appmgr.name }}:{{ .Values.appmgr.image.appmgr.tag }}

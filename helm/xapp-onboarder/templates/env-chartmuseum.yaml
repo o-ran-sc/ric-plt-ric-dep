@@ -14,20 +14,12 @@
 #   See the License for the specific language governing permissions and        #
 #   limitations under the License.                                             #
 ################################################################################
-{{- $tillerKey := .Values.appmgr.tillerkey | default "ricxapp" }}
-{{- $topCtx :=  . }}
-{{- $ctx := dict "ctx" $topCtx "key" $tillerKey }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "common.configmapname.appmgr" . }}-appconfig
+  name: {{ include "common.configmapname.xapp-onboarder" . }}-chartmuseum-env
 data:
-    {{- $restport := (printf ":%s" (include "common.serviceport.appmgr.http" .) ) | quote -}}
-    {{- $defaulthelmrepo := (printf "http://%s:%s" (include "common.servicename.xapp-onboarder.server" .) (include "common.serviceport.xapp-onboarder.chartmuseum" .) ) | quote -}}
-    {{- $helmrepo := default $defaulthelmrepo .Values.appmgr.repoUrl | quote -}}
-    {{- $reponame := default "helm-repo" .Values.appmgr.reponame | quote -}}
-    {{- $tillerdeploynamespace := include "common.tillerDeployNameSpace" $ctx -}}
-    {{- $tillerservice := include "common.servicename.tiller" $ctx -}}
-    {{- $tillerport := include "common.tillerPort" $ctx | quote -}}
-    {{- $xappnamespace := include "common.namespace.xapp" . | quote -}}
-    {{- (.Files.Glob "resources/appmgr.yaml").AsConfig | replace "__XAPP_NAMESPACE__" $xappnamespace | replace "__HELM_REPO__" $helmrepo | replace "__REST_PORT__" $restport | replace "__REPO_NAME__" $reponame | replace "__TILLER_SERVICE__" $tillerservice | replace "__TILLER_NAMESPACE__" $tillerdeploynamespace | replace "__TILLER_PORT__" $tillerport | nindent 2 }}
+   DEBUG: "true"
+   STORAGE: "local"
+   STORAGE_LOCAL_ROOTDIR: "/charts"
+   PORT: {{ include "common.serviceport.xapp-onboarder.chartmuseum" . | quote }}
