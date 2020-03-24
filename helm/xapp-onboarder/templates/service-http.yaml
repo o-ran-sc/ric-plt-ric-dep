@@ -14,20 +14,30 @@
 #   See the License for the specific language governing permissions and        #
 #   limitations under the License.                                             #
 ################################################################################
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
+
+apiVersion: v1
+kind: Service
 metadata:
-  name: {{ include "common.ingressname.appmgr" . }}-chartmuseum
+  name: {{ include "common.servicename.xapp-onboarder.server" . }}
+  namespace: {{ include "common.namespace.platform" . }}
+  labels:
+    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.xapp-onboarder" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }} 
 spec:
-  tls:
-    - hosts:
-      - {{ include "common.ingresscontroller.url.platform" . }}
-      secretName: secret-plt-ingress-cert
-  rules:
-    - http:
-        paths:
-          - backend:
-              serviceName: {{ include "common.servicename.appmgr.http" . }}
-              servicePort: {{ include "common.serviceport.appmgr.chartmuseum.http" . }}
-            path: {{ include "common.kongpath.ric.helmrepo" . }}
+  type: ClusterIP
+  ports:
+    - port: {{ include "common.serviceport.xapp-onboarder.server" . }}
+      protocol: "TCP"
+      name: "server"
+      targetPort: "server"
+    - port: {{ include "common.serviceport.xapp-onboarder.chartmuseum" . }}
+      targetPort: "chartmuseum"
+      protocol: TCP
+      name: "chartmuseum"
+  selector:
+    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.xapp-onboarder" . }}
+    release: {{ .Release.Name }}
+
 

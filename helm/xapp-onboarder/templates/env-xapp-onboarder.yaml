@@ -14,20 +14,25 @@
 #   See the License for the specific language governing permissions and        #
 #   limitations under the License.                                             #
 ################################################################################
-{{- $tillerKey := .Values.appmgr.tillerkey | default "ricxapp" }}
-{{- $topCtx :=  . }}
-{{- $ctx := dict "ctx" $topCtx "key" $tillerKey }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "common.configmapname.appmgr" . }}-appconfig
+  name: {{ include "common.configmapname.xapp-onboarder" . }}-env
 data:
-    {{- $restport := (printf ":%s" (include "common.serviceport.appmgr.http" .) ) | quote -}}
-    {{- $defaulthelmrepo := (printf "http://%s:%s" (include "common.servicename.xapp-onboarder.server" .) (include "common.serviceport.xapp-onboarder.chartmuseum" .) ) | quote -}}
-    {{- $helmrepo := default $defaulthelmrepo .Values.appmgr.repoUrl | quote -}}
-    {{- $reponame := default "helm-repo" .Values.appmgr.reponame | quote -}}
-    {{- $tillerdeploynamespace := include "common.tillerDeployNameSpace" $ctx -}}
-    {{- $tillerservice := include "common.servicename.tiller" $ctx -}}
-    {{- $tillerport := include "common.tillerPort" $ctx | quote -}}
-    {{- $xappnamespace := include "common.namespace.xapp" . | quote -}}
-    {{- (.Files.Glob "resources/appmgr.yaml").AsConfig | replace "__XAPP_NAMESPACE__" $xappnamespace | replace "__HELM_REPO__" $helmrepo | replace "__REST_PORT__" $restport | replace "__REPO_NAME__" $reponame | replace "__TILLER_SERVICE__" $tillerservice | replace "__TILLER_NAMESPACE__" $tillerdeploynamespace | replace "__TILLER_PORT__" $tillerport | nindent 2 }}
+  FLASK_PORT: {{ include "common.serviceport.xapp-onboarder.server" . | quote }}  
+  FLASK_DEBUG: "False"
+  DBAAS_SERVICE_HOST: {{ include "common.servicename.dbaas.tcp" . | quote }}
+  DBAAS_SERVICE_PORT: {{ include "common.serviceport.dbaas.tcp" . | quote }}
+  DBAAS_PORT_6379_TCP_ADDR: {{ include "common.servicename.dbaas.tcp" . | quote }}
+  DBAAS_PORT_6379_TCP_PORT: {{ include "common.serviceport.dbaas.tcp" . | quote }}
+  DBAAS_MASTER_NAME: {{ include "common.servicename.dbaasha.tcp" . | quote }}
+  DBAAS_SERVICE_SENTINEL_PORT: {{ include "common.serviceport.dbaasha.sentinel" . | quote }}
+  CHART_WORKSPACE_PATH: {{.Values.xapponboarder.chart_workspace_path | quote}}
+  CHART_REPO_URL: "http://0.0.0.0:8080"
+  HELM_VERSION: {{.Values.xapponboarder.helm_version | quote }}
+  HTTP_RETRY: {{.Values.xapponboarder.http_retry | quote }}
+  ALLOW_REDEPLOY: {{.Values.xapponboarder.allow_redeploy | quote }}
+  CHART_WORKSPACE_SIZE: {{.Values.xapponboarder.chart_workspace_size | quote }}
+  MOCK_TEST_MODE: "False"
+  MOCK_TEST_HELM_REPO_TEMP_DIR: "/tmp/mock_helm_repo"
+
