@@ -31,8 +31,9 @@ e2mgr:
   
   replicaCount: 1
   
-  env:
-    RIC_ID: "bbbccc-abcd0e/20"
+  globalRicId:
+    plmnId: 131014
+    ricNearRtId: 556670
 
 
   # Service ports are now defined in 

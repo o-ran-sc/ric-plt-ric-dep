@@ -130,4 +130,16 @@ data:
     {{- else }}
     keepAliveDelayMs: 120000
     {{- end }}
+
+    globalRicId:
+      {{- if hasKey .Values.e2mgr "plmnId" }}
+      plmnId: {{ .Values.e2mgr.plmnId }}
+      {{- else }}
+      plmnId: 131014
+      {{- end }}
+      {{- if hasKey .Values.e2mgr "ricNearRtId" }}
+      ricNearRtId: {{ .Values.e2mgr.ricNearRtId }}
+      {{- else }}
+      ricNearRtId: 556670
+      {{- end }}
 ---

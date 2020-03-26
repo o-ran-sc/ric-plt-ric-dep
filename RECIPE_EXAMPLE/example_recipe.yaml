@@ -101,8 +101,9 @@ e2mgr:
     name: ric-plt-e2mgr
     tag: 2.0.10
   privilegedmode: false
-  env:
-    RIC_ID: "bbbccc-abcd0e/20"
+  globalRicId:
+    plmnId: 131014
+    ricNearRtId: 556670
 
 
 e2term:
