@@ -19,7 +19,7 @@
 #-------------------------------------------------------------------------
 
 common:
-  releasePrefix: r3
+  releasePrefix: r4
 
 # If a local docker registry is used, please specify it using the following option 
 #  localregistry: nexus3.o-ran-sc.org:10004
@@ -171,3 +171,15 @@ o1mediator:
     registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
     name: ric-plt-o1
     tag: 0.3.2
+
+xapponboarder:
+  image:
+   xapponboarder:
+     registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+     name: xapp-onboarder
+     tag: 1.0.0
+   chartmuseum:
+     registry: "docker.io"
+     name: chartmuseum/chartmuseum
+     tag: v0.8.2
+  allow_redeploy: "True"
