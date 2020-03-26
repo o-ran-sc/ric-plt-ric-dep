@@ -71,7 +71,7 @@ INFRANAMESPACE=$(echo "$NAMESPACE_BLOCK" | awk '/^ *infra:/{print $2}')
 XAPPNAMESPACE=$(echo "$NAMESPACE_BLOCK" | awk '/^ *xapp:/{print $2}')
 RELEASE_PREFIX=$(echo "$COMMON_BLOCK" | awk '/^ *releasePrefix:/{print $2}')
 # replace the dbaasha with dbaas1 if deploying non HA DBaaS
-COMPONENTS=${LIST_OF_COMPONENTS:-"infrastructure xapp-onboarder appmgr rtmgr dbaas1 e2mgr e2term a1mediator submgr vespamgr jaegeradapter o1mediator"}
+COMPONENTS=${LIST_OF_COMPONENTS:-"infrastructure xapp-onboarder appmgr rtmgr dbaas1 e2mgr e2term a1mediator submgr vespamgr jaegeradapter o1mediator alarm"}
 echo "Deploying RIC infra components [$COMPONENTS]"
 
 

@@ -184,3 +184,16 @@ xapponboarder:
      name: chartmuseum/chartmuseum
      tag: v0.8.2
   allow_redeploy: "True"
+
+
+alarm:
+  imagePullPolicy: IfNotPresent
+  image:
+    name: ric-plt-alarm-go
+    tag: 0.4.3
+    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+
+  replicaCount: 1 
+  promAlertManager:
+    address: "elfkp-prometheus-alertmanager:9093"
+    baseUrl: "/api/v2"
