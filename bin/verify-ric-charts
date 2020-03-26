@@ -19,11 +19,25 @@
 
 # Installs well-known RIC charts then verifies specified helm chart
 # Requires chart tgz archives in /tmp
-OVERRIDEYAML=$1
+HELMVER=$1
+OVERRIDEYAML=$2
 
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
+# Set up helm
+HELMVERSION=${HELMVER:=2.12.3}
+if [ ! -e helm-v${HELMVERSION}-linux-amd64.tar.gz ]; then
+  wget https://storage.googleapis.com/kubernetes-helm/helm-v${HELMVERSION}-linux-amd64.tar.gz
+fi
+
+tar -xvf ./helm-v${HELMVERSION}-linux-amd64.tar.gz
+mv linux-amd64/helm ./
+
+# set up ric common template
 ./setup-ric-common-template
+
+
+
 
 # Create array of helm charts
 CHART_ARRAY=()
@@ -38,12 +52,12 @@ for dir in "${CHART_ARRAY[@]}"
 do
   
     echo "Update chart depenedency"
-    helm dep up $dir 
+    ./helm dep up $dir 
     # Lint clearly marks errors; e.g., [ERROR]
     if [ -z $OVERRIDEYAML ]; then
-        helm lint $dir > /tmp/output 2>&1
+        ./helm lint $dir > /tmp/output 2>&1
     else
-        helm lint -f $OVERRIDEYAML $dir> /tmp/output 2>&1
+        ./helm lint -f $OVERRIDEYAML $dir> /tmp/output 2>&1
     fi
     echo "***************************************************************************************************************"
     cat /tmp/output 
@@ -52,9 +66,9 @@ do
     echo "***************************************************************************************************************"
 
     if [ -z $OVERRIDEYAML ]; then
-        helm template $dir > /tmp/output 2>&1
+        ./helm template $dir > /tmp/output 2>&1
     else
-	helm template -f $OVERRIDEYAML $dir > /tmp/output 2>&1
+	./helm template -f $OVERRIDEYAML $dir > /tmp/output 2>&1
     fi
     echo "***************************************************************************************************************"
     cat /tmp/output 
