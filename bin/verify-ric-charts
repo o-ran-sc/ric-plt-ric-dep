@@ -17,27 +17,32 @@
 #
 ##############################################################################
 
-# Installs well-known RIC charts then verifies specified helm chart
-# Requires chart tgz archives in /tmp
+# Verifies RIC helm charts
+# Requires Linux with wget and tar. 
+#This script should be executed inside the ric-plt/ric-dep bin directory only. 
+
 HELMVER=$1
 OVERRIDEYAML=$2
 
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
-# Set up helm
-HELMVERSION=${HELMVER:=2.12.3}
-if [ ! -e helm-v${HELMVERSION}-linux-amd64.tar.gz ]; then
-  wget https://storage.googleapis.com/kubernetes-helm/helm-v${HELMVERSION}-linux-amd64.tar.gz
-fi
+HELM_COMMAND=helm
 
-tar -xvf ./helm-v${HELMVERSION}-linux-amd64.tar.gz
-mv linux-amd64/helm ./
+$HELM_COMMAND > /dev/null 2>&1
+
+if [ $? -ne 0 ];then
+    # Set up helm
+    HELMVERSION=${HELMVER:=2.12.3}
+    if [ ! -e helm-v${HELMVERSION}-linux-amd64.tar.gz ]; then
+      wget https://storage.googleapis.com/kubernetes-helm/helm-v${HELMVERSION}-linux-amd64.tar.gz
+    fi
+    tar -xvf ./helm-v${HELMVERSION}-linux-amd64.tar.gz
+    mv linux-amd64/helm ./
+    HELM_COMMAND=./helm
+fi
 
 # set up ric common template
 ./setup-ric-common-template
-
-
-
 
 # Create array of helm charts
 CHART_ARRAY=()
@@ -47,39 +52,31 @@ done < <(find $ROOT_DIR/../ -maxdepth 4 -name Chart.yaml -printf '%h\0')
 
 echo "***************************************"
 
-
 for dir in "${CHART_ARRAY[@]}"
 do
   
     echo "Update chart depenedency"
-    ./helm dep up $dir 
+    $HELM_COMMAND dep up $dir 
     # Lint clearly marks errors; e.g., [ERROR]
     if [ -z $OVERRIDEYAML ]; then
-        ./helm lint $dir > /tmp/output 2>&1
+        $HELM_COMMAND lint $dir > /tmp/output 2>&1
     else
-        ./helm lint -f $OVERRIDEYAML $dir> /tmp/output 2>&1
+        $HELM_COMMAND lint -f $OVERRIDEYAML $dir> /tmp/output 2>&1
     fi
     echo "***************************************************************************************************************"
     cat /tmp/output 
-    
     egrep -q '^Error: [0-9]* chart\(s\) linted, [0-9]* chart\(s\) failed' /tmp/output && exit 1
     echo "***************************************************************************************************************"
 
     if [ -z $OVERRIDEYAML ]; then
-        ./helm template $dir > /tmp/output 2>&1
+        $HELM_COMMAND template $dir > /tmp/output 2>&1
     else
-	./helm template -f $OVERRIDEYAML $dir > /tmp/output 2>&1
+	$HELM_COMMAND template -f $OVERRIDEYAML $dir > /tmp/output 2>&1
     fi
     echo "***************************************************************************************************************"
     cat /tmp/output 
-   sleep 1 
     egrep -n '%!.\(.*=.*\)' /tmp/output && echo "Error: Type mismatch." && exit 1
     echo "***************************************************************************************************************"
-
 done
-#Error: 1 chart(s) linted, 1 chart(s) failed
-
-
-
 exit 0
 
