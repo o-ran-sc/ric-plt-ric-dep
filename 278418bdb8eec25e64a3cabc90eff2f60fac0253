@@ -1,0 +1,159 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5de3e3e1_7fc3fc12",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-26T21:44:28Z",
+      "side": 1,
+      "message": "Verifies",
+      "range": {
+        "startLine": 20,
+        "startChar": 2,
+        "endLine": 20,
+        "endChar": 10
+      },
+      "revId": "278418bdb8eec25e64a3cabc90eff2f60fac0253",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2bf1baf9_4b0fe6e8",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-26T21:44:28Z",
+      "side": 1,
+      "message": "charts?",
+      "range": {
+        "startLine": 20,
+        "startChar": 20,
+        "endLine": 20,
+        "endChar": 25
+      },
+      "revId": "278418bdb8eec25e64a3cabc90eff2f60fac0253",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "351161e2_e23e0926",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-26T21:44:28Z",
+      "side": 1,
+      "message": "I don\u0027t see any Debian/Ubuntu dependencies in this script.\n\nBut it assumes it\u0027s launched in a directory with charts, is that right?",
+      "range": {
+        "startLine": 21,
+        "startChar": 11,
+        "endLine": 21,
+        "endChar": 23
+      },
+      "revId": "278418bdb8eec25e64a3cabc90eff2f60fac0253",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a51970f_3d884ea5",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-26T21:44:28Z",
+      "side": 1,
+      "message": "Where is this script supposed to get \"setup-ric-common-template\" from?  That\u0027s a prereq not mentioned above.\n\nMaybe the assumption is that this script is launched in a fresh clone of the ric-plt/ric-dep repository area?",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 1
+      },
+      "revId": "278418bdb8eec25e64a3cabc90eff2f60fac0253",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b73d9bb7_a00db1c2",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-26T21:44:28Z",
+      "side": 1,
+      "message": "Not entirely certain what is being read here.  Is this the command-line argument?  Sorry I feel stupid.",
+      "range": {
+        "startLine": 49,
+        "startChar": 19,
+        "endLine": 49,
+        "endChar": 27
+      },
+      "revId": "278418bdb8eec25e64a3cabc90eff2f60fac0253",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d862454d_0229e2c2",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-26T21:44:28Z",
+      "side": 1,
+      "message": "where is this coming from? how is this supplied, purely as an environment variable?  Will this be needed when Jenkins runs it?",
+      "range": {
+        "startLine": 72,
+        "startChar": 13,
+        "endLine": 72,
+        "endChar": 25
+      },
+      "revId": "278418bdb8eec25e64a3cabc90eff2f60fac0253",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa46b957_9fdf7ce6",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-26T21:44:28Z",
+      "side": 1,
+      "message": "Please remove extra whitespace like this",
+      "revId": "278418bdb8eec25e64a3cabc90eff2f60fac0253",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    }
+  ]
+}
