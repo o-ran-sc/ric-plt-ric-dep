@@ -184,3 +184,9 @@ xapponboarder:
      name: chartmuseum/chartmuseum
      tag: v0.8.2
   allow_redeploy: "True"
+
+alarmadapter:
+  image:
+    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+    name: ric-plt-alarm-go
+    tag: 0.4.3
