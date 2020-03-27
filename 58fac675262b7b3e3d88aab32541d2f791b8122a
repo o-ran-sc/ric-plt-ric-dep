@@ -22,6 +22,29 @@
       "revId": "58fac675262b7b3e3d88aab32541d2f791b8122a",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ba3b366_6429bac9",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-27T18:34:15Z",
+      "side": 1,
+      "message": "I think the other script calls simply \"helm\" (not $HELM_COMMAND), this is what I get when I run it:\n\n14:31:47 Cloning into \u0027../dep\u0027...\n\n14:31:48 ./setup-ric-common-template: line 34: helm: command not found\n14:31:48 ./setup-ric-common-template: line 36: helm: command not found\n14:31:48 cp: cannot stat \u0027/tmp/ric-common-3.0.0.tgz\u0027: No such file or directory\n14:31:48 ./setup-ric-common-template: line 40: helm: command not found\n14:31:48 cp: cannot stat \u0027/tmp/aux-common-3.0.0.tgz\u0027: No such file or directory\n14:31:48 ./setup-ric-common-template: line 45: helm: command not found\n14:31:48 ./setup-ric-common-template: line 49: helm: command not found\n14:31:48 ./setup-ric-common-template: line 50: helm: command not found\n14:31:48 ***************************************",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 1
+      },
+      "revId": "58fac675262b7b3e3d88aab32541d2f791b8122a",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
     }
   ]
 }
