@@ -93,6 +93,30 @@
       "revId": "58fac675262b7b3e3d88aab32541d2f791b8122a",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "771bb623_638a0758",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2020-03-27T18:47:03Z",
+      "side": 1,
+      "message": "I know what\u0027s causing this. Give me 5 minutes to fix this.",
+      "parentUuid": "e7807509_0d63826f",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 1
+      },
+      "revId": "58fac675262b7b3e3d88aab32541d2f791b8122a",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
     }
   ]
 }
