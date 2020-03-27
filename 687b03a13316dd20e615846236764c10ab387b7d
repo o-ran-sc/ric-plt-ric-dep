@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ae222add_42609862",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-27T19:48:31Z",
+      "side": 1,
+      "message": "I recommend adding \"set -eu\" at the top.  -e means, stop on error.  -u means, stop if a variable is undefined.",
+      "revId": "687b03a13316dd20e615846236764c10ab387b7d",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    }
+  ]
+}
