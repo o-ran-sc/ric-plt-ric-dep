@@ -1,0 +1,199 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7025f867_fb423660",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 11
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-27T20:59:06Z",
+      "side": 1,
+      "message": "Please add this:\n\n    set -eu",
+      "revId": "471b262b561504f51dc642d8cddb6ec1268a5501",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "97f6bbf9_1618e5ad",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 11
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-27T20:59:06Z",
+      "side": 1,
+      "message": "First command should be:\n\n    echo \"--\u003e verify-ric-charts\"",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 1
+      },
+      "revId": "471b262b561504f51dc642d8cddb6ec1268a5501",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "316d68d1_adfdfc0f",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 11
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-27T20:59:06Z",
+      "side": 1,
+      "message": "Don\u0027t write this as a comment, echo it.  Be chatty.\n\n    echo \"Download and install Helm\"",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 2
+      },
+      "revId": "471b262b561504f51dc642d8cddb6ec1268a5501",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d46b43ac_46df5647",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 11
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-27T20:59:06Z",
+      "side": 1,
+      "message": "pls add\n\n    echo \"Stopping Helm server\"",
+      "range": {
+        "startLine": 52,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 1
+      },
+      "revId": "471b262b561504f51dc642d8cddb6ec1268a5501",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "49ef4ed0_7349c140",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 11
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-27T20:59:06Z",
+      "side": 1,
+      "message": "pls add\n\n    echo \"Starting Helm server\"",
+      "revId": "471b262b561504f51dc642d8cddb6ec1268a5501",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a84d33c2_da6b0bf7",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 11
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-27T20:59:06Z",
+      "side": 1,
+      "message": "pls add\n\n    echo \"Finding all Chart.yaml files\"",
+      "range": {
+        "startLine": 72,
+        "startChar": 0,
+        "endLine": 72,
+        "endChar": 1
+      },
+      "revId": "471b262b561504f51dc642d8cddb6ec1268a5501",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "70d39ab4_ba12fe8d",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 11
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-27T20:59:06Z",
+      "side": 1,
+      "message": "dependency",
+      "range": {
+        "startLine": 81,
+        "startChar": 23,
+        "endLine": 81,
+        "endChar": 34
+      },
+      "revId": "471b262b561504f51dc642d8cddb6ec1268a5501",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b035518b_0c167cda",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 11
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-27T20:59:06Z",
+      "side": 1,
+      "message": "pls add\n\n    echo \"Running helm on chart $dir\"",
+      "range": {
+        "startLine": 84,
+        "startChar": 0,
+        "endLine": 84,
+        "endChar": 1
+      },
+      "revId": "471b262b561504f51dc642d8cddb6ec1268a5501",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e3a567d_8131a301",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 11
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-27T20:59:06Z",
+      "side": 1,
+      "message": "Last command before exit should be:\n\n    echo \"--\u003e verify-ric-charts ends\"",
+      "range": {
+        "startLine": 104,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 1
+      },
+      "revId": "471b262b561504f51dc642d8cddb6ec1268a5501",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    }
+  ]
+}
