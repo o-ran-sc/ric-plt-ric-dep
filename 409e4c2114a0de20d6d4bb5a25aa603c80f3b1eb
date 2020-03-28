@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "26cd7802_3f8c6ecd",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 12
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2020-03-28T00:05:23Z",
+      "side": 1,
+      "message": "Right that solve the -e part. How about -u?\nDrop it?",
+      "parentUuid": "55c0184b_61e7ff3b",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 1
+      },
+      "revId": "409e4c2114a0de20d6d4bb5a25aa603c80f3b1eb",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d2febd27_ebb3573f",
         "filename": "bin/verify-ric-charts",
         "patchSetId": 12
