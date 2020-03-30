@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3920f68e_d0019028",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 14
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-30T21:39:42Z",
+      "side": 1,
+      "message": "Pls remove goofy trailing whitespace like this",
+      "range": {
+        "startLine": 21,
+        "startChar": 35,
+        "endLine": 21,
+        "endChar": 36
+      },
+      "revId": "66cc6770d50c349b3c67932ec3635c96264b3ae6",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d2609bb7_ef4bbdc9",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 14
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-30T21:39:42Z",
+      "side": 1,
+      "message": "please document argument 1, Helm version.",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 1
+      },
+      "revId": "66cc6770d50c349b3c67932ec3635c96264b3ae6",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d994cc4_588fc967",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 14
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-30T21:39:42Z",
+      "side": 1,
+      "message": "Please document argument 2, override file name",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 3
+      },
+      "revId": "66cc6770d50c349b3c67932ec3635c96264b3ae6",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "298d4d9e_e711e42d",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 14
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-03-30T21:39:42Z",
+      "side": 1,
+      "message": "here too",
+      "range": {
+        "startLine": 88,
+        "startChar": 29,
+        "endLine": 88,
+        "endChar": 30
+      },
+      "revId": "66cc6770d50c349b3c67932ec3635c96264b3ae6",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    }
+  ]
+}
