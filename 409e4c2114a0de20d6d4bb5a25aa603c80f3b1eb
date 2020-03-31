@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "82c8937d_981b5880",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 12
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2020-03-31T14:24:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "04d34a0b_49c11e03",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 1
+      },
+      "revId": "409e4c2114a0de20d6d4bb5a25aa603c80f3b1eb",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d2febd27_ebb3573f",
         "filename": "bin/verify-ric-charts",
         "patchSetId": 12
@@ -108,6 +132,30 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "d2febd27_ebb3573f",
+      "range": {
+        "startLine": 78,
+        "startChar": 0,
+        "endLine": 78,
+        "endChar": 1
+      },
+      "revId": "409e4c2114a0de20d6d4bb5a25aa603c80f3b1eb",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "546dc50d_1ddbe2e1",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 12
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2020-03-31T14:24:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c930595b_21a98734",
       "range": {
         "startLine": 78,
         "startChar": 0,
