@@ -23,10 +23,6 @@ metadata:
   name: {{ include "common.configmapname.appmgr" . }}-env
 data:
   NAME: "xappmgr"
-  DBAAS_SERVICE_HOST: {{ include "common.servicename.dbaas.tcp" . | quote }}
-  DBAAS_SERVICE_PORT: {{ include "common.serviceport.dbaas.tcp" . | quote }}
-  DBAAS_PORT_6379_TCP_ADDR: {{ include "common.servicename.dbaas.tcp" . | quote }}
-  DBAAS_PORT_6379_TCP_PORT: {{ include "common.serviceport.dbaas.tcp" . | quote }} 
   RMR_RTG_SVC: {{ include "common.serviceport.appmgr.rmr.route" . | quote }}
 {{- $certPath := .Values.appmgr.appcertpath | default "/opt/ric/certificates" }}
 {{- $secretPath := .Values.appmgr.appsecretpath | default "/opt/ric/secret" }}
