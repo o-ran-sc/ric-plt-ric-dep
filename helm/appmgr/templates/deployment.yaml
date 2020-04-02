@@ -117,6 +117,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "common.configmapname.appmgr" . }}-env
+            - configMapRef:
+                name: {{ include "common.configmapname.dbaas" . }}-appconfig
           livenessProbe:
             #exec:
             #  command:

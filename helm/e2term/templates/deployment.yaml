@@ -80,6 +80,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "common.configmapname.e2term" $topCtx }}-env-{{ $key }}
+            - configMapRef:
+                name: {{ include "common.configmapname.dbaas" $topCtx }}-appconfig-{{ $key }}
           ports:
             - name: "rmrroute-{{ $key }}"
               containerPort: {{ include "common.serviceport.e2term.rmr.route" $topCtx }}
