@@ -18,14 +18,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "common.configmapname.dbaasha" . }}-appconfig
-  labels:
-    heritage: {{ .Release.Service }}
-    release: {{ .Release.Name }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaasha" . }}
+  name: {{ include "common.configmapname.dbaas" . }}-appconfig
 data:
-  DBAAS_SERVICE_HOST: {{ include "common.servicename.dbaasha.tcp" . }}.{{ .Release.Namespace }}.svc.cluster.local
+  DBAAS_SERVICE_HOST: {{ include "common.servicename.dbaasha.tcp" . | quote }}
   DBAAS_SERVICE_PORT: {{ include "common.serviceport.dbaasha.redis" . | quote }}
   DBAAS_SERVICE_SENTINEL_PORT: {{ include "common.serviceport.dbaasha.sentinel" . | quote }}
   DBAAS_MASTER_NAME: {{ .Values.dbaasha.redis.masterGroupName }}
