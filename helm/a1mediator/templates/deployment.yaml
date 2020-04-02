@@ -56,6 +56,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "common.configmapname.a1mediator" . }}-env
+            - configMapRef:
+                name: {{ include "common.configmapname.dbaas" . }}-appconfig
           image: {{ include "common.dockerregistry.url" $imagectx }}/{{ .Values.a1mediator.image.name }}:{{ .Values.a1mediator.image.tag }}
           imagePullPolicy: {{ include "common.dockerregistry.pullpolicy" $pullpolicyctx }}
           ports:

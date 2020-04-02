@@ -55,6 +55,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "common.configmapname.rtmgr" . }}-env
+            - configMapRef:
+                name: {{ include "common.configmapname.dbaas" . }}-appconfig
           volumeMounts:
             - mountPath: /cfg
               name: rtmgrcfg
