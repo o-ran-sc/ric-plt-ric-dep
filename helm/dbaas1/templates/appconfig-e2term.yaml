@@ -14,12 +14,19 @@
 #   See the License for the specific language governing permissions and        #
 #   limitations under the License.                                             #
 ################################################################################
+{{- $topCtx :=  . }}
+{{- range keys .Values.e2term }}
+{{- $key := . }}
+{{- with index $topCtx.Values.e2term . }}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "common.configmapname.e2mgr" . }}-env
+  name: {{ include "common.configmapname.dbaas" $topCtx }}-appconfig-{{ $key }}
 data:
-   RMR_RTG_SVC: {{ include "common.serviceport.e2mgr.rmr.route" . | quote }}
-   RMR_SRC_ID: {{ include "common.servicename.e2mgr.rmr" . }}.{{ include "common.namespace.platform" . }}
-   #nano: {{ include "common.serviceport.e2mgr.rmr.data" . | quote }}
-
+  DBAAS_SERVICE_HOST: {{ include "common.servicename.dbaas.tcp" $topCtx | quote }}
+  DBAAS_SERVICE_PORT: {{ include "common.serviceport.dbaas.tcp" $topCtx | quote }}
+  DBAAS_PORT_6379_TCP_ADDR: {{ include "common.servicename.dbaas.tcp" $topCtx | quote }}
+  DBAAS_PORT_6379_TCP_PORT: {{ include "common.serviceport.dbaas.tcp" $topCtx | quote }}
+{{- end }}
+{{- end }}

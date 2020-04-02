@@ -59,6 +59,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "common.configmapname.e2mgr" . }}-env
+            - configMapRef:
+                name: {{ include "common.configmapname.dbaas" . }}-appconfig
           ports:
             - name: "http"
               containerPort: {{ include "common.serviceport.e2mgr.http" . }}
