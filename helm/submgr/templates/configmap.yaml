@@ -27,9 +27,12 @@ data:
       "level": 3
     "rmr":
       "protPort" : "tcp:4560"
-      "maxSize": 2072
+      "maxSize": 8192
       "numWorkers": 1
     "rtmgr":
       "hostAddr": {{ include "common.servicename.rtmgr.http" . | quote }}
       "port"    : {{ include "common.serviceport.rtmgr.http" . }}
       "baseUrl" : "/ric/v1"
+  submgrutartg: |
+      newrt|start
+      newrt|end
