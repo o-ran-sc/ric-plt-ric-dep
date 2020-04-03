@@ -1,5 +1,6 @@
 ################################################################################
-#   Copyright (c) 2019 AT&T Intellectual Property.                             #
+#   Copyright (c) 2020 AT&T Intellectual Property.                             #
+#   Copyright (c) 2020 Nokia.                                                  #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -15,16 +16,24 @@
 ################################################################################
 
 dbaas:
-  backend:
-    terminationGracePeriodSeconds: 0
-    replicas: 1
-    imagePullPolicy: IfNotPresent
-    image:
-      name: ric-plt-dbaas
-      tag: 0.1.0
-      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
-
-    # Service ports are now defined in
-    # ric-common/Common-Template/helm/ric-common/templates/_ports.tpl file.
-    # If need to change a service port, make the code change necessary, then
-    # update the _ports.tpl file with the new port number.
+  image:
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+    name: ric-plt-dbaas
+    tag: 0.2.2
+  imagePullPolicy: IfNotPresent
+  enabled: true
+  terminationGracePeriodSeconds: 0
+  replicas: 1
+  config:
+    protected-mode: "no"
+    loadmodule: "/usr/local/libexec/redismodule/libredismodule.so"
+    bind: 0.0.0.0
+  sysctlImage:
+    enabled: true
+    command:
+      - /bin/sh
+      - -c
+      - |-
+        sysctl -w net.core.somaxconn=511
+        echo never > /host-sys/kernel/mm/transparent_hugepage/enabled
+    mountHostSys: true

@@ -138,10 +138,10 @@ spec:
       volumes:
       - name: config
         configMap:
-          name: {{ template "common.configmapname.dbaasha" . }}-config
+          name: {{ template "common.configmapname.dbaas" . }}-config
       - name: probes
         configMap:
-          name: {{ template "common.configmapname.dbaasha" . }}-probes
+          name: {{ template "common.configmapname.dbaas" . }}-probes
       {{- if .Values.dbaasha.sysctlImage.mountHostSys }}
       - name: host-sys
         hostPath:

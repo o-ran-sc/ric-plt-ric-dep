@@ -1,6 +1,6 @@
 ################################################################################
-#   Copyright (c) 2019 AT&T Intellectual Property.                             #
-#   Copyright (c) 2019 Nokia.                                                  #
+#   Copyright (c) 2020 AT&T Intellectual Property.                             #
+#   Copyright (c) 2020 Nokia.                                                  #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -25,7 +25,5 @@ metadata:
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaasha" . }}
 data:
-  DBAAS_SERVICE_HOST: {{ include "common.servicename.dbaasha.tcp" . }}.{{ .Release.Namespace }}.svc.cluster.local
-  DBAAS_SERVICE_PORT: {{ include "common.serviceport.dbaasha.redis" . | quote }}
-  DBAAS_SERVICE_SENTINEL_PORT: {{ include "common.serviceport.dbaasha.sentinel" . | quote }}
-  DBAAS_MASTER_NAME: {{ .Values.dbaasha.redis.masterGroupName }}
+  DBAAS_SERVICE_HOST: {{ include "common.servicename.dbaas.tcp" . }}.{{ .Release.Namespace }}.svc.cluster.local
+  DBAAS_SERVICE_PORT: {{ include "common.serviceport.dbaas.tcp" . | quote }}

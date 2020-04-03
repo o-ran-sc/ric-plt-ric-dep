@@ -18,7 +18,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "common.configmapname.dbaasha" . }}-config
+  name: {{ template "common.configmapname.dbaas" . }}-config
   labels:
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
