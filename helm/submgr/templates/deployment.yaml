@@ -50,7 +50,8 @@ spec:
         - name: {{ include "common.containername.submgr" . }}
           image: {{ include "common.dockerregistry.url" $imagectx }}/{{ .Values.submgr.image.name }}:{{ .Values.submgr.image.tag }}
           imagePullPolicy: {{ include "common.dockerregistry.pullpolicy" $pullpolicyctx }}
-          command: ["/run_submgr.sh"]
+          command: ["/submgr"]
+          args: ["-f", "/cfg/submgr-config.yaml"]
           envFrom:
             - configMapRef:
                 name: {{ include "common.configmapname.submgr" . }}-env
@@ -75,4 +76,6 @@ spec:
               - key: submgrcfg
                 path: submgr-config.yaml
                 mode: 0644
-
+              - key: submgrutartg
+                path: submgr-uta-rtg.cfg
+                mode: 0644
