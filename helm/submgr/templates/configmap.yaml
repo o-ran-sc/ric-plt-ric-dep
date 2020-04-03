@@ -33,3 +33,6 @@ data:
       "hostAddr": {{ include "common.servicename.rtmgr.http" . | quote }}
       "port"    : {{ include "common.serviceport.rtmgr.http" . }}
       "baseUrl" : "/ric/v1"
+  submgrutartg: |
+      newrt|start
+      newrt|end
