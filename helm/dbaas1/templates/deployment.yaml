@@ -1,5 +1,6 @@
 ################################################################################
-#   Copyright (c) 2019 AT&T Intellectual Property.                             #
+#   Copyright (c) 2020 AT&T Intellectual Property.                             #
+#   Copyright (c) 2020 Nokia.                                                  #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -13,12 +14,12 @@
 #   See the License for the specific language governing permissions and        #
 #   limitations under the License.                                             #
 ################################################################################
-
-
+{{- $ctx := dict "ctx" . "defaultregistry" .Values.dbaas.image.registry }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "common.deploymentname.dbaas" . }}
+  name: {{ include "common.deploymentname.dbaas" . }}-server
   namespace: {{ include "common.namespace.platform" . }}
   labels:
     app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaas" . }}
@@ -26,7 +27,7 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  replicas: {{ .Values.dbaas.backend.replicas }}
+  replicas: {{ .Values.dbaas.replicas }}
   selector:
     matchLabels:
       app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaas" . }}
@@ -42,16 +43,46 @@ spec:
         release: {{ .Release.Name }}
     spec:
       imagePullSecrets:
-       {{- $ctx := dict "ctx" . "defaultregistry" .Values.dbaas.backend.image.registry }}
-       - name: {{ include "common.dockerregistry.credential" $ctx }}
-      terminationGracePeriodSeconds: {{ .Values.dbaas.backend.terminationGracePeriodSeconds }}
+        - name: {{ include "common.dockerregistry.credential" $ctx }}
+      terminationGracePeriodSeconds: {{ .Values.dbaas.terminationGracePeriodSeconds }}
+      {{- if .Values.dbaas.sysctlImage.enabled }}
+      initContainers:
+      - name: init-sysctl
+        image: {{ include "common.dockerregistry.url" $ctx }}/{{ .Values.dbaas.image.name }}:{{ .Values.dbaas.image.tag }}
+        {{- if .Values.dbaas.sysctlImage.mountHostSys }}
+        volumeMounts:
+        - name: host-sys
+          mountPath: /host-sys
+        {{- end }}
+        command:
+{{ toYaml .Values.dbaas.sysctlImage.command | indent 10 }}
+        securityContext:
+          runAsNonRoot: false
+          privileged: true
+          runAsUser: 0
+      {{- end }}
       containers:
-      - image: {{ include "common.dockerregistry.url" $ctx }}/{{ .Values.dbaas.backend.image.name }}:{{ .Values.dbaas.backend.image.tag }}
-        {{- $ctx := dict "ctx" . "defaultpullpolicy" .Values.dbaas.backend.imagePullPolicy }}
+      - name: {{ include "common.containername.dbaas" . }}
+        image: {{ include "common.dockerregistry.url" $ctx }}/{{ .Values.dbaas.image.name }}:{{ .Values.dbaas.image.tag }}
         imagePullPolicy: {{ include "common.dockerregistry.pullpolicy" $ctx  }}
+        command:
+        - redis-server
+        args:
+        - /data/redis.conf
         ports:
         - containerPort: {{ include "common.serviceport.dbaas.tcp" . }}
-          name: sql
+          name: redis
           protocol: TCP
-        name: {{ include "common.containername.dbaas" . }}
+        volumeMounts:
+        - mountPath: /data
+          name: config
       restartPolicy: Always
+      volumes:
+      - name: config
+        configMap:
+          name: {{ template "common.configmapname.dbaas" . }}-config
+      {{- if .Values.dbaas.sysctlImage.mountHostSys }}
+      - name: host-sys
+        hostPath:
+          path: /sys
+      {{- end }}

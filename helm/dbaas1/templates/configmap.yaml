@@ -15,25 +15,18 @@
 #   limitations under the License.                                             #
 ################################################################################
 
-dbaas:
-  image:
-    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
-    name: ric-plt-dbaas
-    tag: 0.2.2
-  imagePullPolicy: IfNotPresent
-  enabled: true
-  terminationGracePeriodSeconds: 0
-  replicas: 1
-  config:
-    protected-mode: "no"
-    loadmodule: "/usr/local/libexec/redismodule/libredismodule.so"
-    bind: 0.0.0.0
-  sysctlImage:
-    enabled: false
-    command:
-      - /bin/sh
-      - -c
-      - |-
-        sysctl -w net.core.somaxconn=511
-        echo never > /host-sys/kernel/mm/transparent_hugepage/enabled
-    mountHostSys: false
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "common.configmapname.dbaas" . }}-config
+  labels:
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaas" . }}
+data:
+  redis.conf: |
+    dir "/data"
+    {{- range $key, $value := .Values.dbaas.config }}
+    {{ $key }} {{ $value }}
+    {{- end }}

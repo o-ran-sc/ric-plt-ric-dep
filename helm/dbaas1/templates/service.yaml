@@ -1,5 +1,6 @@
 ################################################################################
-#   Copyright (c) 2019 AT&T Intellectual Property.                             #
+#   Copyright (c) 2020 AT&T Intellectual Property.                             #
+#   Copyright (c) 2020 Nokia.                                                  #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -23,13 +24,13 @@ metadata:
     app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaas" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }} 
+    heritage: {{ .Release.Service }}
 spec:
   selector:
     app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaas" . }}
     release: {{ .Release.Name }}
   ports:
   - port: {{ include "common.serviceport.dbaas.tcp" . }}
-    targetPort: "sql"
+    targetPort: "redis"
     protocol: "TCP"
-    name: "sql"
+    name: "redis"

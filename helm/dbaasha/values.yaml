@@ -24,14 +24,14 @@ dbaasha:
   replicas: 3
   enabled: true
   sysctlImage:
-    enabled: true
+    enabled: false
     command:
       - /bin/sh
       - -c
       - |-
         sysctl -w net.core.somaxconn=511
         echo never > /host-sys/kernel/mm/transparent_hugepage/enabled
-    mountHostSys: true
+    mountHostSys: false
   probeTimeout: 10
   redis:
     masterGroupName: dbaasmaster

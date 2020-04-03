@@ -15,25 +15,35 @@
 #   limitations under the License.                                             #
 ################################################################################
 
-dbaas:
-  image:
-    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
-    name: ric-plt-dbaas
-    tag: 0.2.2
-  imagePullPolicy: IfNotPresent
-  enabled: true
-  terminationGracePeriodSeconds: 0
-  replicas: 1
-  config:
-    protected-mode: "no"
-    loadmodule: "/usr/local/libexec/redismodule/libredismodule.so"
-    bind: 0.0.0.0
-  sysctlImage:
-    enabled: false
-    command:
-      - /bin/sh
-      - -c
-      - |-
-        sysctl -w net.core.somaxconn=511
-        echo never > /host-sys/kernel/mm/transparent_hugepage/enabled
-    mountHostSys: false
+{{/* vim: set filetype=mustache: */}}
+{{/*
+Expand the name of the chart.
+*/}}
+{{- define "dbaas.name" -}}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Create a default fully qualified app name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+If release name contains chart name it will be used as a full name.
+*/}}
+{{- define "dbaas.fullname" -}}
+{{- if .Values.fullnameOverride -}}
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- $name := default .Chart.Name .Values.nameOverride -}}
+{{- if contains $name .Release.Name -}}
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Create chart name and version as used by the chart label.
+*/}}
+{{- define "dbaas.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
