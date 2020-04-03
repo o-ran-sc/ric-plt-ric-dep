@@ -1,5 +1,6 @@
 ################################################################################
-#   Copyright (c) 2019 AT&T Intellectual Property.                             #
+#   Copyright (c) 2020 AT&T Intellectual Property.                             #
+#   Copyright (c) 2020 Nokia.                                                  #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -14,22 +15,37 @@
 #   limitations under the License.                                             #
 ################################################################################
 
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "common.servicename.dbaas.tcp" . }}
-  namespace: {{ include "common.namespace.platform" . }}
-  labels:
-    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaas" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }} 
-spec:
-  selector:
-    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaas" . }}
-    release: {{ .Release.Name }}
-  ports:
-  - port: {{ include "common.serviceport.dbaas.tcp" . }}
-    targetPort: "sql"
-    protocol: "TCP"
-    name: "sql"
+dbaas:
+  image:
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+    name: ric-plt-dbaas
+    tag: 0.2.2
+  imagePullPolicy: IfNotPresent
+  enableHighAvailability: false
+  enablePodAntiAffinity: false
+  terminationGracePeriodSeconds: 5
+
+  redis:
+    masterGroupName: dbaasmaster
+    config:
+      ## For /data/conf/redis.conf
+      min-slaves-to-write: 1
+      min-slaves-max-lag: 5
+      maxmemory: "0"
+      maxmemory-policy: "volatile-lru"
+      protected-mode: "no"
+      loadmodule: "/usr/local/libexec/redismodule/libredismodule.so"
+      bind: 0.0.0.0
+
+  sentinel:
+    quorum: 2
+    protected-mode: "no"
+    config:
+      ## For /data/conf/sentinel.conf
+      down-after-milliseconds: 5000
+      failover-timeout: 60000
+      parallel-syncs: 1
+
+  saReplicas: 1
+  haReplicas: 3
+  probeTimeout: 10
