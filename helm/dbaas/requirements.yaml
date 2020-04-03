@@ -1,6 +1,6 @@
 ################################################################################
-#   Copyright (c) 2019 AT&T Intellectual Property.                             #
-#   Copyright (c) 2019 Nokia.                                                  #
+#   Copyright (c) 2020 AT&T Intellectual Property.                             #
+#   Copyright (c) 2020 Nokia.                                                  #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -15,27 +15,7 @@
 #   limitations under the License.                                             #
 ################################################################################
 
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "common.servicename.dbaasha.tcp" . }}
-  labels:
-    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaasha" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-spec:
-  type: ClusterIP
-  clusterIP: None
-  ports:
-  - name: server
-    port: {{ include "common.serviceport.dbaasha.redis" . }}
-    protocol: TCP
-    targetPort: redis
-  - name: sentinel
-    port: {{ include "common.serviceport.dbaasha.sentinel" . }}
-    protocol: TCP
-    targetPort: sentinel
-  selector:
-    release: {{ .Release.Name }}
-    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaasha" . }}
+dependencies:
+  - name: ric-common
+    version: ^3.2.0
+    repository: "@local"
