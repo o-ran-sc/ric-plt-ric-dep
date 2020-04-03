@@ -1,6 +1,6 @@
 ################################################################################
-#   Copyright (c) 2019 AT&T Intellectual Property.                             #
-#   Copyright (c) 2019 Nokia.                                                  #
+#   Copyright (c) 2020 AT&T Intellectual Property.                             #
+#   Copyright (c) 2020 Nokia.                                                  #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -15,9 +15,8 @@
 #   limitations under the License.                                             #
 ################################################################################
 
-dependencies:
-  - name: ric-common
-    version: ^3.1.0
-    repository: "@local"
-  #- name: dbaasha
-  #  condition: dbaasha.enabled
+apiVersion: v1
+appVersion: "1.0"
+description: DBaaS service backend helm charts
+name: dbaas
+version: 2.0.0

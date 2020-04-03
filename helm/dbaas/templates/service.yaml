@@ -14,39 +14,30 @@
 #   See the License for the specific language governing permissions and        #
 #   limitations under the License.                                             #
 ################################################################################
-{{- $fullName := include "common.fullname.dbaasha" . }}
-{{- $podName := include "common.statefulsetname.dbaasha" . }}
-{{- $appName := include "common.name.dbaasha" . }}
-{{- $platformName := include "common.namespace.platform" . }}
-{{- $replicas := int .Values.dbaasha.replicas }}
-{{- $redisPort := include "common.serviceport.dbaasha.redis" .}}
-{{- $sentinelPort := include "common.serviceport.dbaasha.sentinel" .}}
-{{- $root := . }}
-{{- range $i := until $replicas }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ $fullName }}-announce-{{ $i }}
+  name: {{ include "common.servicename.dbaas.tcp" . }}
   labels:
-    app: {{ $platformName }}-{{ $appName }}
-    chart: {{ $root.Chart.Name }}-{{ $root.Chart.Version | replace "+" "_" }}
-    release: {{ $root.Release.Name }}
-    heritage: {{ $root.Release.Service }}
+    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaas" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 spec:
-  publishNotReadyAddresses: true
   type: ClusterIP
+  clusterIP: None
   ports:
   - name: server
-    port: {{ $redisPort }}
+    port: {{ include "common.serviceport.dbaas.redis" . }}
     protocol: TCP
     targetPort: redis
+{{- if $.Values.dbaas.enableHighAvailability }}
   - name: sentinel
-    port: {{ $sentinelPort }}
+    port: {{ include "common.serviceport.dbaas.sentinel" . }}
     protocol: TCP
     targetPort: sentinel
-  selector:
-    release: {{ $root.Release.Name }}
-    app: {{ $platformName }}-{{ $appName }}
-    "statefulset.kubernetes.io/pod-name": {{ $podName }}-server-{{ $i }}
 {{- end }}
+  selector:
+    release: {{ .Release.Name }}
+    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaas" . }}

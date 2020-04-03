@@ -20,7 +20,6 @@
 
 common:
   releasePrefix: r4
-
 # If a local docker registry is used, please specify it using the following option 
 #  localregistry: nexus3.o-ran-sc.org:10004
 
@@ -79,21 +78,16 @@ appmgr:
      name: chartmuseum/chartmuseum
      tag: v0.8.2
 
-dbaas:
-  backend:
-    image:
-      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
-      name: ric-plt-dbaas
-      tag: 0.1.0
 
-dbaasha:
+dbaas:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-dbaas
     tag: 0.2.2
-  # Remove the affinity line below when deploying in a k8s
-  # cluster of more than 3 nodes.
-  affinity: ""
+  enableHighAvailability: true
+  # Enable pod anti affinity only if you have more than 3 k8s nodes
+  enablePodAntiAffinity: false
+
 
 e2mgr:
   image:
