@@ -58,7 +58,7 @@ extsvcplt:
 a1mediator:
   image:
     name: ric-plt-a1
-    tag: 2.0.0
+    tag: 2.1.1
   rmr_timeout_config:
     a1_rcv_retry_times: 20
     ins_del_no_resp_ttl: 5
@@ -99,7 +99,7 @@ e2mgr:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-e2mgr
-    tag: 2.0.10
+    tag: 3.0.5
   privilegedmode: false
   globalRicId:
     plmnId: 131014
@@ -111,7 +111,7 @@ e2term:
     image:
       registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
       name: ric-plt-e2
-      tag: 3.0.1
+      tag: 3.0.4
   
     privilegedmode: false
     hostnetworkmode: false
@@ -147,7 +147,7 @@ rtmgr:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-rtmgr
-    tag: 0.4.9
+    tag: 0.4.15
   rpe: rmrpush
   sbi: nngpush
   sbiurl: 0.0.0.0
