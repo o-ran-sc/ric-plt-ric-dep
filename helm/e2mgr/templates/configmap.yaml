@@ -79,7 +79,7 @@ data:
       {{- if hasKey .Values.e2mgr "maxMsgSize" }}
       maxMsgSize: {{ .Values.e2mgr.maxMsgSize }}
       {{- else }}
-      maxMsgSize: 4096
+      maxMsgSize: 65536 
       {{- end }}
 
     routingManager:
