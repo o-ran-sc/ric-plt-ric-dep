@@ -34,7 +34,7 @@ if [[ "${2:-nope}" != "nope" ]]; then
     OVERRIDEYAML=$2
 fi
 
-ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+ROOT_DIR="$(pwd)"
 HELM_COMMAND=helm
 
 if ! $($HELM_COMMAND > /dev/null);then
@@ -52,10 +52,9 @@ fi
 git clone --single-branch --branch master "https://gerrit.o-ran-sc.org/r/it/dep" ./dep
 
 # Start Helm local repo if there isn't one
-HELM_PID=$(pgrep  "$HELM_COMMAND")
-if [ ! -z "$HELM_PID" ]; then
+if [ ! -z $(pgrep "$HELM_COMMAND") ]; then
     echo "Stopping existing local Helm server."
-    kill -9 "$HELM_PID"
+    kill -9 "$(pgrep "$HELM_COMMAND")"
 fi
 if [ ! -d ./charts ]; then
     mkdir ./charts
