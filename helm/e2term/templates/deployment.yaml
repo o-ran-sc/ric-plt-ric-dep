@@ -85,6 +85,9 @@ spec:
               containerPort: {{ include "common.serviceport.e2term.rmr.route" $topCtx }}
             - name: "rmrdata-{{ $key }}"
               containerPort: {{ include "common.serviceport.e2term.rmr.data" $topCtx }}
+            - name: "rmrsctp-{{ $key }}" 
+              containerPort: 36422
+              protocol: SCTP 
           stdin: true
           tty: true
           securityContext:
