@@ -87,23 +87,17 @@ do
     # Lint clearly marks errors; e.g., [ERROR]
     echo "Performing Helm lint"
     if [[ "${OVERRIDEYAML:-nope}" != "nope" ]]; then
-        $HELM_COMMAND lint -f "$OVERRIDEYAML" "$dir"> /tmp/output 2>&1
+        $HELM_COMMAND lint -f "$OVERRIDEYAML" "$dir"
     else
-        $HELM_COMMAND lint "$dir" > /tmp/output 2>&1
+        $HELM_COMMAND lint "$dir" 
     fi
-    echo "***************************************************************************************************************"
-    cat /tmp/output 
-    egrep -q '^Error: [0-9]* chart\(s\) linted, [0-9]* chart\(s\) failed' /tmp/output && exit 1
     echo "***************************************************************************************************************"
     echo "Rendering Helm charts locally"
     if [[ "${OVERRIDEYAML:-nope}" != "nope" ]]; then
-	$HELM_COMMAND template -f "$OVERRIDEYAML" "$dir" > /tmp/output 2>&1
+	$HELM_COMMAND template -f "$OVERRIDEYAML" "$dir"
     else
-        $HELM_COMMAND template "$dir" > /tmp/output 2>&1
+        $HELM_COMMAND template "$dir"
     fi
-    echo "***************************************************************************************************************"
-    cat /tmp/output 
-    grep -E -n '%!.\(.*=.*\)' /tmp/output && echo "Error: Type mismatch." && exit 1
     echo "***************************************************************************************************************"
 done
 echo "--> verify-ric-charts ends"
