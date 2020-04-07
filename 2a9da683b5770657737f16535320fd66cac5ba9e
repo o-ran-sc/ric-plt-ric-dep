@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "331a42f1_a43b7f5a",
+        "filename": "bin/verify-ric-charts",
+        "patchSetId": 2
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-04-07T23:10:00Z",
+      "side": 1,
+      "message": "\"make the script *more* verbose\" is the commit message, but here I see a change that removes the \"cat /tmp/output\" command, which seems to make it less verbose.  What is really going on here?",
+      "range": {
+        "startLine": 94,
+        "startChar": 100,
+        "endLine": 94,
+        "endChar": 122
+      },
+      "revId": "2a9da683b5770657737f16535320fd66cac5ba9e",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    }
+  ]
+}
