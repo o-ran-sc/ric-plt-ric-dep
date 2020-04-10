@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f615425c_333bcf5a",
+        "filename": "helm/dbaas1/templates/appconfig.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2020-04-10T01:04:31Z",
+      "side": 1,
+      "message": "We no longer need this file since it has been included in the new version of dbaas charts. Please refer to 3145",
+      "revId": "a1611e547d93fc6abefa9c65320425af2032349e",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    }
+  ]
+}

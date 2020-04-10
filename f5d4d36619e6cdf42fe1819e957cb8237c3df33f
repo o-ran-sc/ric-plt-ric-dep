@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "09acdc54_11a37717",
+        "filename": "helm/dbaasha/templates/appconfig.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2020-04-10T01:04:31Z",
+      "side": 0,
+      "message": "We no longer need this file since it has been included in the new version of dbaas charts. Please refer to 3145",
+      "revId": "f5d4d36619e6cdf42fe1819e957cb8237c3df33f",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d708952f_6c808fa5",
+        "filename": "helm/o1mediator/templates/deployment.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2020-04-10T01:04:31Z",
+      "side": 0,
+      "message": "Can we also delete the env.yaml file?",
+      "revId": "f5d4d36619e6cdf42fe1819e957cb8237c3df33f",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    }
+  ]
+}
