@@ -21,12 +21,6 @@ metadata:
 data:
   FLASK_PORT: {{ include "common.serviceport.xapp-onboarder.server" . | quote }}  
   FLASK_DEBUG: "False"
-  DBAAS_SERVICE_HOST: {{ include "common.servicename.dbaas.tcp" . | quote }}
-  DBAAS_SERVICE_PORT: {{ include "common.serviceport.dbaas.tcp" . | quote }}
-  DBAAS_PORT_6379_TCP_ADDR: {{ include "common.servicename.dbaas.tcp" . | quote }}
-  DBAAS_PORT_6379_TCP_PORT: {{ include "common.serviceport.dbaas.tcp" . | quote }}
-  DBAAS_MASTER_NAME: {{ include "common.servicename.dbaasha.tcp" . | quote }}
-  DBAAS_SERVICE_SENTINEL_PORT: {{ include "common.serviceport.dbaasha.sentinel" . | quote }}
   CHART_WORKSPACE_PATH: {{.Values.xapponboarder.chart_workspace_path | quote}}
   CHART_REPO_URL: "http://0.0.0.0:8080"
   HELM_VERSION: {{.Values.xapponboarder.helm_version | quote }}

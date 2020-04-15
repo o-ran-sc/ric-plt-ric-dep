@@ -54,7 +54,7 @@ spec:
           imagePullPolicy: {{ include "common.dockerregistry.pullpolicy" $pullpolicyctx }}
           envFrom:
             - configMapRef:
-                name: {{ include "common.configmapname.o1mediator" . }}-env
+                name: {{ include "common.configmapname.dbaas" . }}-appconfig
           ports:
             - name: http-supervise
               containerPort: {{ include "common.serviceport.o1mediator.http.supervise" . }}

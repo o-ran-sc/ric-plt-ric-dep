@@ -72,6 +72,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "common.configmapname.xapp-onboarder" . }}-env
+            - configMapRef:
+                name: {{ include "common.configmapname.dbaas" . }}-appconfig
           livenessProbe:
             #exec:
             #  command:
