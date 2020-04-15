@@ -30,10 +30,6 @@ data:
   rtmgrcfg: |
        "PlatformComponents":
          -
-           "name": "E2TERM"
-           "fqdn": "{{ printf "%s.%s" (include "common.servicename.e2term.rmr" .) (include "common.namespace.platform" .) }}"
-           "port": {{ include "common.serviceport.e2term.rmr.data" . }}
-         -
            "name": "SUBMAN"
            "fqdn": "{{ printf "%s.%s" (include "common.servicename.submgr.rmr" .) (include "common.namespace.platform" .) }}"
            "port": {{ include "common.serviceport.submgr.rmr.data" . }}
@@ -76,9 +72,10 @@ data:
          "level": 4
        "rmr":
          "protPort": "tcp:4560"
-         "maxSize": 2072
+         "maxSize": 4096
          "numWorkers": 1
          "threadType": 1
+	   "maxrecord": 50
        "PlatformRoutes": [
          { 'messagetype': 'RIC_SUB_REQ', 'senderendpoint': 'SUBMAN', 'subscriptionid': -1, 'endpoint': '', 'meid': '%meid'},
          { 'messagetype': 'RIC_SUB_DEL_REQ', 'senderendpoint': 'SUBMAN', 'subscriptionid': -1,'endpoint': '', 'meid': '%meid'},
