@@ -35,6 +35,8 @@ e2mgr:
     plmnId: 131014
     ricNearRtId: 556670
 
+  kubernetes:
+    configPath: ./kube_config.yml
 
   # Service ports are now defined in 
   # ric-common/Common-Template/helm/ric-common/templates/_ports.tpl file.

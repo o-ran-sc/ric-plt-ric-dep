@@ -27,7 +27,12 @@ dbaas:
 
   redis:
     masterGroupName: dbaasmaster
-    config:
+    sa_config:
+      ## For /data/conf/redis.conf
+      protected-mode: "no"
+      loadmodule: "/usr/local/libexec/redismodule/libredismodule.so"
+      bind: 0.0.0.0
+    ha_config:
       ## For /data/conf/redis.conf
       min-slaves-to-write: 1
       min-slaves-max-lag: 5
@@ -35,7 +40,6 @@ dbaas:
       maxmemory-policy: "volatile-lru"
       protected-mode: "no"
       loadmodule: "/usr/local/libexec/redismodule/libredismodule.so"
-      bind: 0.0.0.0
 
   sentinel:
     quorum: 2
