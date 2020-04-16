@@ -27,9 +27,15 @@ metadata:
 data:
   redis.conf: |
     dir "/data"
-    {{- range $key, $value := .Values.dbaas.redis.config }}
+{{- if $.Values.dbaas.enableHighAvailability }}
+    {{- range $key, $value := .Values.dbaas.redis.ha_config }}
     {{ $key }} {{ $value }}
     {{- end }}
+{{- else }}
+    {{- range $key, $value := .Values.dbaas.redis.sa_config }}
+    {{ $key }} {{ $value }}
+    {{- end }}
+{{- end }}
 
 {{- if $.Values.dbaas.enableHighAvailability }}
   sentinel.conf: |
