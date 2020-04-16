@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "83308d08_eadbd41f",
+        "filename": "helm/rtmgr/templates/config.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2020-04-16T18:56:23Z",
+      "side": 0,
+      "message": "So how does rtmgr know about the E2TERM FQDN? Will the E2TERM gets in touch with rtmgr?",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 11
+      },
+      "revId": "f882a9b97ac9dec5dfc2468f3150911e296132dc",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    }
+  ]
+}
