@@ -74,7 +74,11 @@ docker-credential:
 
 certificate-manager:
   enabled: true
-      
+
+
+danm-network:
+  enabled: true
+
 
 kong:
   enabled: true
