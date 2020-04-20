@@ -40,10 +40,55 @@ spec:
       release: {{ $topCtx.Release.Name }}
   template:
     metadata:
-      {{- if .annotations }}
+        {{- if $.Values.global }}
+          {{- if $.Values.global.danm_networks }}
+            {{- $networklist := list }}
+            {{- range $network := $.Values.global.danm_networks }}
+              {{- if $network.tenants }}
+                {{- if $network.tenants.e2term }}
+                  {{- if (hasKey $network.tenants.e2term $key) }}
+                    {{- $networklist = append $networklist $network }}
+                  {{- end }}
+                {{- end }}
+              {{- end }}
+            {{- end }}
+            {{- if $networklist }}
       annotations:
-        {{- .annotations | nindent 8 -}}
-      {{ end }}
+        danm.k8s.io/interfaces: |
+          [
+            {{- range $network := $networklist }}
+              {{- printf "\n            {\"clusterNetwork\": \"%s\"" $network.name }}
+              {{- with index $network.tenants.e2term $key }}
+              {{- if .ip }}
+                {{- printf ", \"ip\": \"%s\"" .ip }}
+              {{- else }}
+                {{- printf ", \"ip\": \"dynamic\"" }}
+              {{- end }}
+              {{- if .ip6 }}
+                {{- printf ", \"ip6\": \"%s\"" .ip6 }}
+              {{- end }}
+              {{- if .proutes }}
+                {{- printf ", \"proutes\": {" }}
+                {{- range $subnet, $gw := .proutes }}
+                  {{- if eq $subnet ( first ( keys .proutes ))}}
+                    {{- printf "\"%s\": \"%s\"" $subnet $gw }}
+                  {{- else }}
+                    {{- printf ", \"%s\": \"%s\"" $subnet $gw }}
+                  {{- end }}
+                {{- end }}
+                {{- printf "}" }}
+              {{- end }}
+              {{- end }}
+              {{- if ne $network.name (last $networklist).name }}
+              {{- printf "}," }}
+              {{- else }}
+              {{- printf "}" }}
+              {{- end }}
+            {{- end }}
+          ]
+            {{- end }}
+          {{- end }}
+        {{- end }}
       labels:
         app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}
         release: {{ $topCtx.Release.Name }}
