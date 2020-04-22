@@ -61,6 +61,7 @@ function wait_for_cats() {
   echo
 }
 
+KERNEL_OPTIMIZATION=false
 
 while [ -n "$1" ]; do # while loop starts
 
@@ -71,6 +72,8 @@ while [ -n "$1" ]; do # while loop starts
         ;;
     -c) LIST_OF_COMPONENTS=$2
         shift
+        ;;
+    -o) KERNEL_OPTIMIZATION=true
         ;;
     *) echo "Option $1 not recognized" ;; # In case you typed a different option other than a,b,c
 
@@ -134,7 +137,77 @@ if [ ! -z "$LOCAL_REPOSITORY" ]; then
 fi
 
 
+echo Add cluster roles
+    cat >ricplt-role.yaml <<EOF
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ricplt-system-tiller
+rules:
+  - apiGroups: [""]
+    resources: ["deployments"]
+    verbs: ["get", "list", "create", "delete"]
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "list", "create", "delete"]
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["clusterroles", "clusterrolebindings"]
+    verbs: ["get", "list", "create", "delete"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "patch"]
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["list", "watch", "get"]
+  - apiGroups: ["configuration.konghq.com"]
+    resources: ["kongconsumers"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["configuration.konghq.com"]
+    resources: ["kongcredentials"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["configuration.konghq.com"]
+    resources: ["kongingresses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["configuration.konghq.com"]
+    resources: ["kongplugins"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["watch", "list", "get", "create", "delete", "update"]
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["watch", "list", "get", "create", "delete"]
+  - apiGroups: ["danm.k8s.io"]
+    resources: ["clusternetworks"]
+    verbs: ["watch", "list", "get", "create", "delete"]
+  - apiGroups: ["extensions"]
+    resources: ["ingresses/status"]
+    verbs: ["update"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses/status"]
+    verbs: ["update"]
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ricplt-system-tiller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ricplt-system-tiller
+subjects:
+  - kind: ServiceAccount
+    name: tiller
+    namespace: kube-system
+EOF
+kubectl apply -f ricplt-role.yaml
+rm ricplt-role.yaml
+
+
 # Add kernel optimization for radis services
+if $KERNEL_OPTIMIZATION; then
     cat >kernel_optimizer.yaml <<EOF
 apiVersion: apps/v1
 kind: DaemonSet
@@ -184,6 +257,7 @@ wait_for_pods redis-kernel-optimizer ${INFRANAMESPACE:-ricinfra}
 wait_for_cats redis-kernel-optimizer ${INFRANAMESPACE:-ricinfra}
 kubectl delete -f kernel_optimizer.yaml
 rm kernel_optimizer.yaml
+fi
 
 
 for component in $COMPONENTS; do
