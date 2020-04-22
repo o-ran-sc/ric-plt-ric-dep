@@ -142,4 +142,11 @@ data:
       {{- else }}
       ricNearRtId: 556670
       {{- end }}
+    kubernetes:
+      {{- if hasKey .Values.e2mgr "configPath" }}
+      configPath: {{ .Values.e2mgr.configPath }}
+      {{- else }}
+      configPath: ./kube_config.yml
+      {{- end }}
+      kubeNamespace: {{ include "common.namespace.platform" . }}
 ---

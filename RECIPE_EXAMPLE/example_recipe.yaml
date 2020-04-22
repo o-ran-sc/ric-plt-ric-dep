@@ -98,6 +98,9 @@ e2mgr:
   globalRicId:
     plmnId: 131014
     ricNearRtId: 556670
+  kubernetes:
+    configPath: ./kube_config.yml
+    kubeNamespace: ricplt
 
 
 e2term:

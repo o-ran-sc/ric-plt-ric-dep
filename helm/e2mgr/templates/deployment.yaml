@@ -53,6 +53,9 @@ spec:
           - mountPath: /opt/E2Manager/router.txt
             name: local-router-file
             subPath: router.txt
+          - mountPath: /opt/E2Manager/kube_config.yml
+              name: local-kube-config
+              subPath: kube_config.yml
           - mountPath: /opt/E2Manager/resources/configuration.yaml
             name: local-configuration-file
             subPath: configuration.yaml
