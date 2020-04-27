@@ -91,9 +91,9 @@ dbaas:
 
 e2mgr:
   image:
-    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
     name: ric-plt-e2mgr
-    tag: 2.0.10
+    tag: 4.4.2
   privilegedmode: false
   globalRicId:
     plmnId: 131014
@@ -103,9 +103,9 @@ e2mgr:
 e2term:
   alpha:
     image:
-      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+      registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
       name: ric-plt-e2
-      tag: 3.0.1
+      tag: 4.0.8
   
     privilegedmode: false
     hostnetworkmode: false
@@ -139,20 +139,15 @@ jaegeradapter:
 
 rtmgr:
   image:
-    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
     name: ric-plt-rtmgr
-    tag: 0.4.9
-  rpe: rmrpush
-  sbi: nngpush
-  sbiurl: 0.0.0.0
-  nbi: httpRESTful
-  nbiurl: http://0.0.0.0:8888
+    tag: 0.5.7
 
 submgr:
   image:
-    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
     name: ric-plt-submgr
-    tag: 0.10.7
+    tag: 0.4.2
 
 vespamgr:
   image:
