@@ -39,7 +39,7 @@ spec:
 {{- if .net6 }}
     net6: {{ .net6 }}
 {{- end }}
-{{- if .routes }}
+{{- if .routes6 }}
     routes6:
 {{- range $subnet, $route := .routes6 }}
       {{ $subnet | quote }}: {{ $route | quote }}
