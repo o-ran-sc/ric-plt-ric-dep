@@ -57,7 +57,7 @@ extsvcplt:
 a1mediator:
   image:
     name: ric-plt-a1
-    tag: 2.0.0
+    tag: 2.1.8
   rmr_timeout_config:
     a1_rcv_retry_times: 20
     ins_del_no_resp_ttl: 5
