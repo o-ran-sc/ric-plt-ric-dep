@@ -76,6 +76,10 @@ certificate-manager:
   enabled: true
 
 
+prometheus:
+  enabled: false
+
+
 danm-network:
   enabled: true
 
