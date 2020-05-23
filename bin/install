@@ -160,6 +160,12 @@ rules:
   - apiGroups: [""]
     resources: ["nodes"]
     verbs: ["list", "watch", "get"]
+  - apiGroups: [""]
+    resources: ["nodes/metrics"]
+    verbs: ["list", "watch", "get"]
+  - apiGroups: [""]
+    resources: ["nodes/proxy"]
+    verbs: ["list", "watch", "get"]
   - apiGroups: ["configuration.konghq.com"]
     resources: ["kongconsumers"]
     verbs: ["get", "list", "watch"]
@@ -176,6 +182,9 @@ rules:
     resources: ["ingresses"]
     verbs: ["watch", "list", "get", "create", "delete", "update"]
   - apiGroups: [""]
+    resources: ["ingresses"]
+    verbs: ["watch", "list", "get", "create", "delete", "update"]
+  - apiGroups: [""]
     resources: ["persistentvolumes"]
     verbs: ["watch", "list", "get", "create", "delete"]
   - apiGroups: ["danm.k8s.io"]
@@ -183,12 +192,19 @@ rules:
     verbs: ["watch", "list", "get", "create", "delete"]
   - apiGroups: ["extensions"]
     resources: ["ingresses/status"]
-    verbs: ["update"]
+    verbs: ["update", "get", "list", "watch"]
   - apiGroups: ["networking.k8s.io"]
     resources: ["ingresses/status"]
-    verbs: ["update"]
+    verbs: ["update", "get", "list", "watch"]
+  - apiGroups: ["certificates.k8s.io"]
+    resources: ["certificatesigningrequests"]
+    verbs: ["list", "watch"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["list", "watch"]
+  - nonResourceURLs: ["/metrics"]
+    verbs: ["get"]
 ---
-
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -263,7 +279,7 @@ fi
 for component in $COMPONENTS; do
     helm dep up $DIR/../helm/$component
     helm install -f $OVERRIDEYAML --namespace "${PLTNAMESPACE:-ricplt}" --name "${RELEASE_PREFIX}-$component" $DIR/../helm/$component
-    sleep 3
+    sleep 8
 done
 
 
