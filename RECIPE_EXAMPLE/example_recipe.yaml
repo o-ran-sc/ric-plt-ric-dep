@@ -57,7 +57,7 @@ extsvcplt:
 a1mediator:
   image:
     name: ric-plt-a1
-    tag: 2.1.8
+    tag: 2.1.9
   rmr_timeout_config:
     a1_rcv_retry_times: 20
     ins_del_no_resp_ttl: 5
@@ -72,7 +72,7 @@ appmgr:
    appmgr:
      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
      name: ric-plt-appmgr
-     tag: 0.1.10
+     tag: 0.4.3
    chartmuseum:
      registry: "docker.io"
      name: chartmuseum/chartmuseum
@@ -93,10 +93,10 @@ e2mgr:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-e2mgr
-    tag: 2.0.10
+    tag: 4.4.5
   privilegedmode: false
   globalRicId:
-    plmnId: 131014
+    plmnId: "13F184"
     ricNearRtId: 556670
 
 
@@ -105,7 +105,7 @@ e2term:
     image:
       registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
       name: ric-plt-e2
-      tag: 3.0.1
+      tag: 4.4.1
   
     privilegedmode: false
     hostnetworkmode: false
@@ -139,9 +139,9 @@ jaegeradapter:
 
 rtmgr:
   image:
-    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
     name: ric-plt-rtmgr
-    tag: 0.4.9
+    tag: 0.6.0
   rpe: rmrpush
   sbi: nngpush
   sbiurl: 0.0.0.0
@@ -150,29 +150,29 @@ rtmgr:
 
 submgr:
   image:
-    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
     name: ric-plt-submgr
-    tag: 0.10.7
+    tag: 0.4.2-1
 
 vespamgr:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-vespamgr
-    tag: 0.0.8
+    tag: 0.4.0
   prometheusurl: "http://rec-prometheus-server.default"
 
 o1mediator:
   image:
     registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
     name: ric-plt-o1
-    tag: 0.3.2
+    tag: 0.4.4
 
 xapponboarder:
   image:
    xapponboarder:
      registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
      name: xapp-onboarder
-     tag: 1.0.0
+     tag: 1.0.5
    chartmuseum:
      registry: "docker.io"
      name: chartmuseum/chartmuseum
@@ -183,4 +183,4 @@ alarmadapter:
   image:
     registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
     name: ric-plt-alarm-go
-    tag: 0.4.3
+    tag: 0.4.4

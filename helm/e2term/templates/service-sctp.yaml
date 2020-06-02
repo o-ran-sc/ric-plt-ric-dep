@@ -33,7 +33,7 @@ spec:
   type: NodePort
   ports:
     - port: {{ include "common.serviceport.e2term.sctp" $topCtx }}
-      #nodePort: 32222
+      nodePort: 31888
       protocol: "SCTP"
       targetPort: {{ include "common.serviceport.e2term.sctp" $topCtx }}
       name: "rmrsctp-{{ $key }}"      
