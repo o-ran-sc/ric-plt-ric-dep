@@ -15,4 +15,6 @@
 ################################################################################
 
 #
+{{- with index .Values.e2term .key }}
 0 * * * * find {{ .pizpub.dataRootDir }}/{{ .pizpub.processedDirectory }} -type f  -mtime +3 -delete
+{{- end }}

@@ -15,8 +15,8 @@
 #   limitations under the License.                                             #
 ################################################################################
 {{- $topCtx :=  . }} 
-{{- range keys .Values.e2term }} 
-{{- $key := . }} 
+{{- range $index, $element := keys .Values.e2term }} 
+{{- $key := . }}
 {{- with index $topCtx.Values.e2term . }}
 ---
 apiVersion: v1
@@ -33,7 +33,7 @@ spec:
   type: NodePort
   ports:
     - port: {{ include "common.serviceport.e2term.sctp" $topCtx }}
-      nodePort: 31888
+      nodePort: {{ add 32222 $index }}
       protocol: "SCTP"
       targetPort: {{ include "common.serviceport.e2term.sctp" $topCtx }}
       name: "rmrsctp-{{ $key }}"      

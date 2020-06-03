@@ -16,9 +16,11 @@
 {{- $topCtx :=  . }}
 {{- range keys .Values.e2term }}
 {{- $key := . }}
+{{- $_ := set $topCtx "key" $key }}
 {{- with index $topCtx.Values.e2term . }}
 
 {{ if .pizpub.enabled }}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
