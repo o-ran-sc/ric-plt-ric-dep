@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3ecddf81_bcc85f3b",
+        "filename": "helm/e2term/templates/service-sctp.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2020-06-04T18:33:23Z",
+      "side": 1,
+      "message": "I need this to make RIC work with O-DU. It is okay not to use 31888 but I do need something deterministic, not a random port picked by Kube at deployment time.",
+      "revId": "e844aa6d56c9ded60406c50b37f34b8c554c2b0f",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    }
+  ]
+}
