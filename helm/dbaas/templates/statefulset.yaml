@@ -89,6 +89,7 @@ spec:
         - name: data
           mountPath: /data
 {{- end }}
+      shareProcessNamespace: true
       containers:
       - name: {{ include "common.containername.dbaas" . }}-redis
         image: {{ include "common.dockerregistry.url" $ctx }}/{{ .Values.dbaas.image.name }}:{{ .Values.dbaas.image.tag }}
