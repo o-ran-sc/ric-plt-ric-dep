@@ -54,6 +54,10 @@ extsvcplt:
 #        email: ""
 
 
+# infrastructure optional components
+prometheus:
+  enabled: true
+
 a1mediator:
   image:
     name: ric-plt-a1
@@ -141,7 +145,7 @@ rtmgr:
   image:
     registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
     name: ric-plt-rtmgr
-    tag: 0.6.0
+    tag: 0.6.1
   rpe: rmrpush
   sbi: nngpush
   sbiurl: 0.0.0.0
