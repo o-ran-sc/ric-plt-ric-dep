@@ -1,5 +1,5 @@
 ################################################################################
-#   Copyright (c) 2019 AT&T Intellectual Property.                             #
+#   Copyright (c) 2019,2020 AT&T Intellectual Property.                        #
 #   Copyright (c) 2019 Nokia.                                                  #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
@@ -55,6 +55,11 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "common.configmapname.dbaas" . }}-appconfig
+            - configMapRef:
+                name: {{ include "common.configmapname.o1mediator" . }}-env
+          volumeMounts:
+            - mountPath: /etc/o1agent
+              name: appconfig-file
           ports:
             - name: http-supervise
               containerPort: {{ include "common.serviceport.o1mediator.http.supervise" . }}
@@ -65,3 +70,7 @@ spec:
             - name: http-event
               containerPort: {{ include "common.serviceport.o1mediator.http.event" . }}
               protocol: TCP
+      volumes:
+        - name: appconfig-file
+          configMap:
+            name: {{ include "common.configmapname.o1mediator" . }}-appconfig-configmap

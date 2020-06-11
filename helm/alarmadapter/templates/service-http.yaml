@@ -32,7 +32,7 @@ spec:
   selector:
     app: {{ include "common.namespace.platform" . }}-{{ include "common.name.alarmadapter" . }}
     release: {{ .Release.Name }}
-  clusterIP: None
+  type: ClusterIP
   ports:
   - name: http
     port: {{ include "common.serviceport.alarmadapter.http" . }}

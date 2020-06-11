@@ -8,6 +8,9 @@ data:
   VESMGR_MEAS_INTERVAL: "30s"
   VESMGR_PRICOLLECTOR_ADDR: {{ include "common.ingresscontroller.url.aux" . | quote }}
   VESMGR_PRICOLLECTOR_SERVERROOT: {{ include "common.kongpath.aux.vescollector" . | quote }}
-  VESMGR_PRICOLLECTOR_PORT: "80"
+  VESMGR_PRICOLLECTOR_PORT: "8443"
   VESMGR_PRICOLLECTOR_SECURE: "false"
   VESMGR_PROMETHEUS_ADDR: {{ .Values.vespamgr.prometheusurl }}
+  VESMGR_PRICOLLECTOR_USER: "sample1"
+  VESMGR_PRICOLLECTOR_PASSWORD: "sample1"
+  VESMGR_ALERTMANAGER_BIND_ADDR: ":9095"

@@ -30,7 +30,7 @@ serviceAccounts:
 alertmanager:
   ## If false, alertmanager will not be installed
   ##
-  enabled: false
+  enabled: true
 
   ## alertmanager container name
   ##
@@ -169,7 +169,7 @@ alertmanager:
     ## If true, alertmanager will create/use a Persistent Volume Claim
     ## If false, use emptyDir
     ##
-    enabled: true
+    enabled: false
 
     ## alertmanager data Persistent Volume access modes
     ## Must match those of existing PV or dynamic provisioner
@@ -1117,20 +1117,27 @@ pushgateway:
 ##
 alertmanagerFiles:
   alertmanager.yml:
-    global: {}
-      # slack_api_url: ''
-
-    receivers:
-      - name: default-receiver
-        # slack_configs:
-        #  - channel: '@you'
-        #    send_resolved: true
-
+    global:
+      resolve_timeout: 5m
     route:
-      group_wait: 10s
-      group_interval: 5m
-      receiver: default-receiver
-      repeat_interval: 3h
+      group_wait: 5s
+      group_interval: 3m
+      repeat_interval: 1h
+      group_by: ['alertname', 'severity', 'instance', 'job']
+      receiver: vespa
+      routes:
+      #  - receiver: echo
+      #    continue: true
+        - receiver: vespa
+          continue: true
+    receivers:
+    #  - name: echo
+    #    webhook_configs:
+    #      - url: 'http://10.244.0.1:5001'
+      - name: vespa
+        webhook_configs:
+          - url: 'http://service-ricplt-vespamgr-http:9095/alerts'
+
 
 ## Prometheus server ConfigMap entries
 ##
