@@ -53,6 +53,8 @@ extsvcplt:
 #        password: ""
 #        email: ""
 
+prometheus:
+  enabled: true
 
 a1mediator:
   image:
@@ -84,7 +86,7 @@ dbaas:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-dbaas
     tag: 0.2.2
-  enableHighAvailability: true
+  enableHighAvailability: false
   # Enable pod anti affinity only if you have more than 3 k8s nodes
   enablePodAntiAffinity: false
 
@@ -141,7 +143,7 @@ rtmgr:
   image:
     registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
     name: ric-plt-rtmgr
-    tag: 0.6.0
+    tag: 0.6.1
   rpe: rmrpush
   sbi: nngpush
   sbiurl: 0.0.0.0
@@ -159,7 +161,7 @@ vespamgr:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-vespamgr
     tag: 0.4.0
-  prometheusurl: "http://rec-prometheus-server.default"
+  prometheusurl: "http://r4-infrastructure-prometheus-server.ricplt"
 
 o1mediator:
   image:
@@ -172,7 +174,7 @@ xapponboarder:
    xapponboarder:
      registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
      name: xapp-onboarder
-     tag: 1.0.5
+     tag: 1.0.7
    chartmuseum:
      registry: "docker.io"
      name: chartmuseum/chartmuseum
@@ -183,4 +185,4 @@ alarmadapter:
   image:
     registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
     name: ric-plt-alarmadapter
-    tag: 0.4.4
+    tag: 0.4.5
