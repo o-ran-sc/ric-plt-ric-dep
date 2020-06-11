@@ -22,6 +22,8 @@ o1mediator:
     tag: 0.3.1
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
 
+  prometheusAMUrl: "r4-infrastructure-prometheus-alertmanager:80"
+
   # Service ports are now defined in
   # ric-common/Common-Template/helm/ric-common/templates/_ports.tpl file.
   # If need to change a service port, make the code change necessary, then
