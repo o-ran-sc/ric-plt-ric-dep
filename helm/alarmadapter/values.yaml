@@ -20,3 +20,5 @@ alarmadapter:
     name: ric-plt-alarm-go
     tag: 0.4.3
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+
+  alertManagerAddress: "r4-infrastructure-prometheus-alertmanager:80"

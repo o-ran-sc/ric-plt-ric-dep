@@ -24,7 +24,7 @@ vespamgr:
   replicaCount: 1
   image:
     name: ric-plt-vespamgr
-    tag: 0.0.8
+    tag: 0.4.0
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
 
   # Service ports are now defined in
@@ -32,4 +32,4 @@ vespamgr:
   # If need to change a service port, make the code change necessary, then
   # update the _ports.tpl file with the new port number.
   
-  prometheusurl: "http://rec-prometheus-server.default"
+  prometheusurl: "http://r4-infrastructure-prometheus-server.ricplt"
