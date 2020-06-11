@@ -49,18 +49,19 @@ spec:
         - name: {{ include "common.containername.alarmadapter" . }}
           image: {{ include "common.dockerregistry.url" $imagectx }}/{{ .Values.alarmadapter.image.name }}:{{ .Values.alarmadapter.image.tag }}
           imagePullPolicy: {{ include "common.dockerregistry.pullpolicy" $pullpolicyctx }}
-          command: ["/run_adapter.sh"]
           #command: ["/bin/sh"]
           #args: ["-c", "while true; do echo hello; sleep 10;done"]
+          command: ["/bin/sh"]
+          args: ["-c", "/alarm-adapter -f /alarmadaptercfg/config-file.json"]
           envFrom:
             - configMapRef:
                 name: {{ include "common.configmapname.alarmadapter" . }}-env
             - configMapRef:
                 name: {{ include "common.configmapname.dbaas" . }}-appconfig
           volumeMounts:
-            - mountPath: /cfg
-              name: config-volume
-              readOnly: true
+            - mountPath: /alarmadaptercfg
+              name: appconfig-file
+              subpath: config-file.json
           ports:
             - name: "http"
               containerPort: {{ include "common.serviceport.alarmadapter.http" . }}
@@ -69,10 +70,6 @@ spec:
             - name: "rmrdata"
               containerPort: {{ include "common.serviceport.alarmadapter.rmr.data" . }}
       volumes:
-        - name: config-volume
+        - name: appconfig-file
           configMap:
-            name: alarmadaptercfg
-            items:
-              - key: alarmadaptercfg
-                path: alarmadapter-config.yaml
-                mode: 0644
+            name: {{ include "common.configmapname.alarmadapter" . }}-appconfig
