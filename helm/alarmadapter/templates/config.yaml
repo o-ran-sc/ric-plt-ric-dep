@@ -1,5 +1,5 @@
 #==================================================================================
-#   Copyright (c) 2019 AT&T Intellectual Property.
+#   Copyright (c) 2019,2020 AT&T Intellectual Property.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -16,37 +16,43 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: alarmadaptercfg
-  namespace: ricplt
+  name: {{ include "common.configmapname.alarmadapter" . }}-appconfig-configmap
+  namespace: {{ include "common.namespace.platform" . }}
 data:
-  # FQDN and port info of rtmgr
-  alarmadaptercfg: |
-    "local": 
-      "host": ":8080"
-    "logger": 
-      "level": 4
-    "db" : 
-      "namespaces": 
-        - 
-          "sdl"
-        - 
-          "rnib"
-    "rmr": 
-      "protPort": "tcp:4560"
-      "maxSize": 1024
-      "numWorkers": 1
-      "promAlertManager": 
-    "address": "elfkp-prometheus-alertmanager:9093"
-    "baseUrl": "/api/v2"
-    "schemes": http
-    "alertInterval": 30000
-    "alarmDefinitions: 
-      - 
-        "specificProblem": 1234
-        "Text": "Connection to DBAAS server lost"
-      -  
-        "specificProblem": 1235
-        "Text": "Distribution of internal routing table failed due to timeout"
-      - 
-        "specificProblem": 1236
-        "Text": "E2 connection to gNB lost"
+  config-file.json: |-
+    {
+      "local": {
+        "host": ":8080"
+      },
+      "logger": {
+        "level": 4
+      },
+      "db": {
+        "namespaces": ["sdl", "rnib"]
+      },
+      "rmr": {
+        "protPort": "tcp:4560",
+        "maxSize": 1024,
+        "numWorkers": 1
+      },
+      "promAlertManager": {
+        "address": {{ .Values.alarmadapter.alertManagerAddress | quote }},
+        "baseUrl": "/api/v2",
+        "schemes": "http",
+        "alertInterval": 30000
+      },
+      "alarmDefinitions": [
+        {
+          "specificProblem": 1234,
+          "Text": "Connection to DBAAS server lost"
+        },
+        {
+          "specificProblem": 1235,
+          "Text": "Distribution of internal routing table failed due to timeout"
+        },
+        {
+          "specificProblem": 1236,
+          "Text": "E2 connection to gNB lost"
+        }
+      ]
+    }

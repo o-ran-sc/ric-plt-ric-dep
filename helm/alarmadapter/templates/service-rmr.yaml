@@ -29,7 +29,7 @@ spec:
   selector:
     app: {{ include "common.namespace.platform" . }}-{{ include "common.name.alarmadapter" . }}
     release: {{ .Release.Name }}	
-  clusterIP: None
+  type: ClusterIP
   ports:
   - name: rmrdata
     port: {{ include "common.serviceport.alarmadapter.rmr.data" . }}

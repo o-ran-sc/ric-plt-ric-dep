@@ -1,6 +1,5 @@
 ################################################################################
-#   Copyright (c) 2019 AT&T Intellectual Property.                             #
-#   Copyright (c) 2019 Nokia.                                                  #
+#   Copyright (c) 2020 AT&T Intellectual Property.                             #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -15,21 +14,10 @@
 #   limitations under the License.                                             #
 ################################################################################
 
-#################################################################
-# Application configuration defaults.
-#################################################################
-
-vespamgr:
-  imagePullPolicy: IfNotPresent
-  replicaCount: 1
-  image:
-    name: ric-plt-vespamgr
-    tag: 0.4.0
-    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
-
-  # Service ports are now defined in
-  # ric-common/Common-Template/helm/ric-common/templates/_ports.tpl file.
-  # If need to change a service port, make the code change necessary, then
-  # update the _ports.tpl file with the new port number.
-  
-  prometheusurl: "http://r4-infrastructure-prometheus-server.ricplt"
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "common.configmapname.o1mediator" . }}-appconfig-configmap
+  namespace: {{ include "common.namespace.platform" . }}
+data:
+{{ tpl (.Files.Glob "resources/*").AsConfig . | indent 2 }}
