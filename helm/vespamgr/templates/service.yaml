@@ -30,6 +30,10 @@ spec:
       protocol: "TCP"
       name: "http"
       targetPort: "http"
+    - port: {{ include "common.serviceport.vespamgr.alert" . }}
+       protocol: "TCP"
+       name: "alert"
+       targetPort: "alert"
   selector:
     app: {{ include "common.namespace.platform" . }}-{{ include "common.name.vespamgr" . }}
     release: {{ .Release.Name }}
