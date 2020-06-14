@@ -142,4 +142,10 @@ data:
       {{- else }}
       ricNearRtId: 556670
       {{- end }}
+
+    {{- if hasKey .Values.e2mgr "stateChangeMessageChannel" }}
+    stateChangeMessageChannel: {{ .Values.e2mgr.stateChangeMessageChannel }}
+    {{- else }}
+    stateChangeMessageChannel: "RAN_CONNECTION_STATUS_CHANGE"
+    {{- end }}
 ---
