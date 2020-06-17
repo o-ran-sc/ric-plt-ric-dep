@@ -95,12 +95,13 @@ e2mgr:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-e2mgr
-    tag: 4.4.5
+    tag: 5.2.4
   privilegedmode: false
   globalRicId:
-    plmnId: "13F184"
-    ricNearRtId: 556670
-
+    ricId: "AACCE"
+    mcc: "310"
+    mnc: "411"
+  stateChangeMessageChannel: RAN_CONNECTION_STATUS_CHANGE
 
 e2term:
   alpha:
