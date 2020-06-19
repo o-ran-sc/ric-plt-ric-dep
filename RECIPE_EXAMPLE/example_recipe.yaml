@@ -36,8 +36,8 @@ common:
 # ricip should be the ingress controller listening IP for the platform cluster
 # auxip should be the ingress controller listening IP for the AUX cluster
 extsvcplt:
-  ricip: "10.0.0.1"
-  auxip: "10.0.0.1"
+  ricip: "$__K8S_HOST_RIC__"
+  auxip: "$__K8S_HOST_SMO__"
 
 
 # Specify the docker registry credential using the following
@@ -58,6 +58,7 @@ prometheus:
 
 a1mediator:
   image:
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-a1
     tag: 2.1.9
   rmr_timeout_config:
@@ -95,7 +96,7 @@ e2mgr:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-e2mgr
-    tag: 4.4.5
+    tag: 4.4.12
   privilegedmode: false
   globalRicId:
     plmnId: "13F184"
@@ -141,7 +142,7 @@ jaegeradapter:
 
 rtmgr:
   image:
-    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-rtmgr
     tag: 0.6.1
   rpe: rmrpush
@@ -152,9 +153,9 @@ rtmgr:
 
 submgr:
   image:
-    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-submgr
-    tag: 0.4.2-1
+    tag: 0.4.3
 
 vespamgr:
   image:
@@ -165,14 +166,14 @@ vespamgr:
 
 o1mediator:
   image:
-    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-o1
     tag: 0.4.4
 
 xapponboarder:
   image:
    xapponboarder:
-     registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
      name: xapp-onboarder
      tag: 1.0.7
    chartmuseum:
@@ -183,6 +184,6 @@ xapponboarder:
 
 alarmadapter:
   image:
-    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-alarmadapter
     tag: 0.4.5
