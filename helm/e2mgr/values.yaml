@@ -35,6 +35,17 @@ e2mgr:
     plmnId: 131014
     ricNearRtId: 556670
 
+  liveness:
+    api: v1/health
+    initialDelaySeconds: 3
+    periodSeconds: 10
+    enabled: true
+
+  readiness:
+    api: v1/health
+    initialDelaySeconds: 3
+    periodSeconds: 10
+    enabled: true
 
   # Service ports are now defined in 
   # ric-common/Common-Template/helm/ric-common/templates/_ports.tpl file.

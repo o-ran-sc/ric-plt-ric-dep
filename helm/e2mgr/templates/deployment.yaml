@@ -80,6 +80,24 @@ spec:
           tty: true
           securityContext:
             privileged: {{ .Values.e2mgr.privilegedmode}}
+
+          {{- if eq .Values.e2mgr.liveness.enabled true }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.e2mgr.liveness.api }}
+              port: {{ include "common.serviceport.e2mgr.http" . }}
+            initialDelaySeconds: {{ .Values.e2mgr.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.e2mgr.liveness.periodSeconds }}
+          {{- end }}
+          {{- if eq .Values.e2mgr.readiness.enabled true }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.e2mgr.readiness.api }}
+              port: {{ include "common.serviceport.e2mgr.http" . }}
+            initialDelaySeconds: {{ .Values.e2mgr.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.e2mgr.liveness.periodSeconds }}
+          {{- end }}
+
       volumes:
         - name: local-router-file
           configMap:
