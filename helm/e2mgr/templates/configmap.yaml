@@ -132,14 +132,27 @@ data:
     {{- end }}
 
     globalRicId:
-      {{- if hasKey .Values.e2mgr "plmnId" }}
-      plmnId: {{ .Values.e2mgr.plmnId }}
+      {{- if hasKey .Values.e2mgr "ricId" }}
+      ricId: {{ .Values.e2mgr.ricId }}
       {{- else }}
-      plmnId: 131014
+      ricId: "AACCE"
       {{- end }}
-      {{- if hasKey .Values.e2mgr "ricNearRtId" }}
-      ricNearRtId: {{ .Values.e2mgr.ricNearRtId }}
+      {{- if hasKey .Values.e2mgr "mcc" }}
+      mcc: {{ .Values.e2mgr.mcc }}
       {{- else }}
-      ricNearRtId: 556670
+      mcc: "310"
       {{- end }}
+      {{- if hasKey .Values.e2mgr "mnc" }}
+      mnc: {{ .Values.e2mgr.mnc }}
+      {{- else }}
+      mnc: "411"
+      {{- end }}
+      
+    {{- if hasKey .Values.e2mgr "stateChangeMessageChannel" }}
+    stateChangeMessageChannel: {{ .Values.e2mgr.stateChangeMessageChannel }}
+    {{- else }}
+    stateChangeMessageChannel: "RAN_CONNECTION_STATUS_CHANGE"
+    {{- end }}
+      
+      
 ---
