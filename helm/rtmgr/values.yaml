@@ -22,7 +22,7 @@ rtmgr:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
   
   rpe: rmrpush
-  sbi: nngpush
+  sbi: rmrpush
   sbiurl: 0.0.0.0
   nbi: httpRESTful
   nbiurl: http://0.0.0.0:8888
