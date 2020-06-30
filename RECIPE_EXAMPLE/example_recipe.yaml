@@ -94,9 +94,9 @@ dbaas:
 
 e2mgr:
   image:
-    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
     name: ric-plt-e2mgr
-    tag: 5.2.4
+    tag: 5.2.5
   privilegedmode: false
   globalRicId:
     ricId: "AACCE"
@@ -107,9 +107,9 @@ e2mgr:
 e2term:
   alpha:
     image:
-      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+      registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
       name: ric-plt-e2
-      tag: 4.4.1
+      tag: 5.0.7
   
     privilegedmode: false
     hostnetworkmode: false
