@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cc5252cd_a09a7d8b",
+        "filename": "helm/e2term/templates/deployment.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-06-30T16:24:41Z",
+      "side": 1,
+      "message": "should this be \".readiness\" since it sets up the readiness probe?",
+      "range": {
+        "startLine": 140,
+        "startChar": 21,
+        "endLine": 140,
+        "endChar": 29
+      },
+      "revId": "3702438c283e802c5aa3928b010f6b872cc1a345",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    }
+  ]
+}
