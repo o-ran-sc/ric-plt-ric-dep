@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "70b62c7f_fc2a1890",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-06-30T15:58:09Z",
+      "side": 1,
+      "message": "Please write your commit message to conform with LF and ORAN conventions.  Line 1 short, line 2 blank, line 3..n details, line n+1 blank, then the footer lines all together.  The issue ID does not appear in the subject. For example:\n\n\n    DevOps: E2T to implement K8S healthcheck\n\n    Requires e2term staging 5.0.7\n\n    Issue-ID: RIC-356\n    Signed-off-by: Fuss, Areli (af732p) \u003careli.fuss@intl.att.com\u003e\n    Change-Id: I55cdc0f0dee6dfe53f0fddb60b6633ea948e09c1\n\n\nI\u0027m not sure about \"DevOps:\" is helpful as a prefix in the subject, but I left it alone.",
+      "revId": "6338265c7c61fcb556accfdd01786ba8e4794347",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    }
+  ]
+}
