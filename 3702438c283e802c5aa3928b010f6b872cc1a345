@@ -22,6 +22,30 @@
       "revId": "3702438c283e802c5aa3928b010f6b872cc1a345",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "034c0624_709d5acf",
+        "filename": "helm/e2term/templates/deployment.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1000447
+      },
+      "writtenOn": "2020-06-30T16:44:27Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "cc5252cd_a09a7d8b",
+      "range": {
+        "startLine": 140,
+        "startChar": 21,
+        "endLine": 140,
+        "endChar": 29
+      },
+      "revId": "3702438c283e802c5aa3928b010f6b872cc1a345",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": false
     }
   ]
 }
