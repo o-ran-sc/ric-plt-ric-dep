@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6569c352_9b63e3e6",
+        "filename": "RECIPE_EXAMPLE/example_recipe.yaml",
+        "patchSetId": 5
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-06-30T16:37:24Z",
+      "side": 1,
+      "message": "why did you change from the release registry to the STAGING registry?  Especially in the example recipe for open-source, ideally only released images are used.",
+      "range": {
+        "startLine": 97,
+        "startChar": 39,
+        "endLine": 97,
+        "endChar": 41
+      },
+      "revId": "9c24b3e3d42a94fd6f5cebab116c2a41d92c3ea5",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "21c4355b_270d4bdb",
+        "filename": "RECIPE_EXAMPLE/example_recipe.yaml",
+        "patchSetId": 5
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-06-30T16:37:24Z",
+      "side": 1,
+      "message": "same question here, using the staging registry looks wrong",
+      "range": {
+        "startLine": 110,
+        "startChar": 40,
+        "endLine": 110,
+        "endChar": 43
+      },
+      "revId": "9c24b3e3d42a94fd6f5cebab116c2a41d92c3ea5",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    }
+  ]
+}
