@@ -137,7 +137,20 @@ spec:
           tty: true
           securityContext:
             privileged: {{ .privilegedmode }}
-
+          {{- if eq .readiness.enabled true }}
+          readinessProbe:
+            exec:
+              command: [ "/bin/sh", "-c", "{{ .readiness.command }}:{{ include "common.serviceport.e2term.rmr.data" . }}" ]
+            initialDelaySeconds: {{ .readiness.initialDelaySeconds }}
+            periodSeconds: {{ .readiness.periodSeconds }}
+          {{- end }}
+          {{- if eq .liveness.enabled true }}
+          livenessProbe:
+            exec:
+              command: [ "/bin/sh", "-c", "{{ .liveness.command }}:{{ include "common.serviceport.e2term.rmr.data" . }}" ]
+            initialDelaySeconds: {{ .liveness.initialDelaySeconds }}
+            periodSeconds: {{ .liveness.periodSeconds }}
+          {{- end }}
 {{ if .pizpub.enabled }}
         - name: {{ include "common.containername.e2term" $topCtx }}-pizpub
           {{- $pizpubimagectx := dict "ctx" $topCtx "defaultregistry" .pizpub.image.registry }}
