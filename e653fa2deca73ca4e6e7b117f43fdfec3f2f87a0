@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6a6ae061_2f8a519b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2020-06-30T14:48:25Z",
+      "side": 1,
+      "message": "Please fix the commit message.  The RIC project does not put an issue ID as the first part of the subject (the first line), instead the issue ID must appear in the footer in this format:\n\nIssue-ID: RIC-356\n\nAlso the first line should be max 50 chars, followed by a blank line.",
+      "revId": "e653fa2deca73ca4e6e7b117f43fdfec3f2f87a0",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    }
+  ]
+}
