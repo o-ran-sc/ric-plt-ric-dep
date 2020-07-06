@@ -148,11 +148,16 @@ data:
       mnc: "411"
       {{- end }}
       
-    {{- if hasKey .Values.e2mgr "stateChangeMessageChannel" }}
-    stateChangeMessageChannel: {{ .Values.e2mgr.stateChangeMessageChannel }}
-    {{- else }}
-    stateChangeMessageChannel: "RAN_CONNECTION_STATUS_CHANGE"
-    {{- end }}
-      
+    rnibWriter:
+      {{- if hasKey .Values.e2mgr "stateChangeMessageChannel" }}
+      stateChangeMessageChannel: {{ .Values.e2mgr.stateChangeMessageChannel }}
+      {{- else }}
+      stateChangeMessageChannel: "RAN_CONNECTION_STATUS_CHANGE"
+      {{- end }}
+      {{- if hasKey .Values.e2mgr "ranManipulationMessageChannel" }}
+      ranManipulationMessageChannel: {{ .Values.e2mgr.ranManipulationMessageChannel }}
+      {{- else }}
+      ranManipulationMessageChannel: "RAN_MANIPULATION"
+      {{- end }}
       
 ---

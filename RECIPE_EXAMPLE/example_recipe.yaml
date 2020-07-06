@@ -96,21 +96,22 @@ e2mgr:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-e2mgr
-    tag: 5.2.5
+    tag: 5.2.15
   privilegedmode: false
   globalRicId:
     ricId: "AACCE"
     mcc: "310"
     mnc: "411"
-  stateChangeMessageChannel: RAN_CONNECTION_STATUS_CHANGE
+  rnibWriter:
+    stateChangeMessageChannel: RAN_CONNECTION_STATUS_CHANGE
+    ranManipulationMessageChannel: RAN_MANIPULATION
 
 e2term:
   alpha:
     image:
       registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
       name: ric-plt-e2
-      tag: 5.0.7
-  
+      tag: 5.0.8
     privilegedmode: false
     hostnetworkmode: false
     env:
