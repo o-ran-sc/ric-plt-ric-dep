@@ -72,10 +72,61 @@ data:
          "level": 4
        "rmr":
          "protPort": "tcp:4560"
-         "maxSize": 4096
+         "maxSize": 1024
          "numWorkers": 1
          "threadType": 1
-       "maxrecord": 50
+       "messagetypes": [
+          "RIC_HEALTH_CHECK_REQ=100",
+          "RIC_HEALTH_CHECK_RESP=101",
+          "RIC_ALARM=110",
+          "RIC_ALARM_QUERY=111",
+          "RIC_SCTP_CONNECTION_FAILURE=1080",
+          "E2_TERM_INIT=1100",
+          "E2_TERM_KEEP_ALIVE_REQ=1101",
+          "E2_TERM_KEEP_ALIVE_RESP=1102",
+          "RIC_SCTP_CLEAR_ALL=1090",
+          "RAN_CONNECTED=1200",
+          "RAN_RESTARTED=1210",
+          "RAN_RECONFIGURED=1220",
+          "RIC_ENB_LOAD_INFORMATION=10020",
+          "RIC_X2_SETUP_REQ=10060",
+          "RIC_X2_SETUP_RESP=10061",
+          "RIC_X2_SETUP_FAILURE=10062",
+          "RIC_X2_RESET=10070",
+          "RIC_X2_RESET_RESP=10071",
+          "RIC_ENB_CONF_UPDATE=10080",
+          "RIC_ENB_CONF_UPDATE_ACK=10081",
+          "RIC_ENB_CONF_UPDATE_FAILURE=10082",
+          "RIC_RES_STATUS_REQ=10090",
+          "RIC_RES_STATUS_RESP=10091",
+          "RIC_RES_STATUS_FAILURE=10092",
+          "RIC_ENDC_X2_SETUP_REQ=10360",
+          "RIC_ENDC_X2_SETUP_RESP=10361",
+          "RIC_ENDC_X2_SETUP_FAILURE=10362",
+          "RIC_ENDC_CONF_UPDATE=10370",
+          "RIC_ENDC_CONF_UPDATE_ACK=10371",
+          "RIC_ENDC_CONF_UPDATE_FAILURE=10372",
+          "RIC_E2_SETUP_REQ=12001",
+          "RIC_E2_SETUP_RESP=12002",
+          "RIC_E2_SETUP_FAILURE=12003",
+          "RIC_ERROR_INDICATION=12007",
+          "RIC_SUB_REQ=12010",
+          "RIC_SUB_RESP=12011",
+          "RIC_SUB_FAILURE=12012",
+          "RIC_SUB_DEL_REQ=12020",
+          "RIC_SUB_DEL_RESP=12021",
+          "RIC_SUB_DEL_FAILURE=12022",
+          "A1_POLICY_REQ=20010",
+          "A1_POLICY_RESP=20011",
+          "A1_POLICY_QUERY=20012",
+          "TS_UE_LIST=30000",
+          "TS_QOE_PRED_REQ=30001",
+          "TS_QOE_PREDICTION=30002",
+          "MC_REPORT=30010",
+          "DCAPTERM_RTPM_RMR_MSGTYPE=33001",
+          "DCAPTERM_GEO_RMR_MSGTYPE=33002",
+          ]
+
        "PlatformRoutes": [
          { 'messagetype': 'RIC_SUB_REQ', 'senderendpoint': 'SUBMAN', 'subscriptionid': -1, 'endpoint': '', 'meid': '%meid'},
          { 'messagetype': 'RIC_SUB_DEL_REQ', 'senderendpoint': 'SUBMAN', 'subscriptionid': -1,'endpoint': '', 'meid': '%meid'},
