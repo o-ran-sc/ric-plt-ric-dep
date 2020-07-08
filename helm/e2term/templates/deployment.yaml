@@ -133,6 +133,8 @@ spec:
             - name: "rmrsctp-{{ $key }}" 
               containerPort: 36422
               protocol: SCTP 
+            - name: "prmts-{{ $key }}"
+              containerPort: {{ include "common.serviceport.e2term.prometheus" $topCtx }}
           stdin: true
           tty: true
           securityContext:
