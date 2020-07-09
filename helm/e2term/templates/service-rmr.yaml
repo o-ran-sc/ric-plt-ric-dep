@@ -25,7 +25,7 @@ metadata:
   name: {{ include "common.servicename.e2term.rmr" $topCtx }}-{{ $key }}
   namespace: {{ include "common.namespace.platform" $topCtx }}
   labels:
-    app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}
+    app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}-{{ $key }}
     chart: {{ $topCtx.Chart.Name }}-{{ $topCtx.Chart.Version | replace "+" "_" }}
     release: {{ $topCtx.Release.Name }}
     heritage: {{ $topCtx.Release.Service }} 
@@ -41,7 +41,7 @@ spec:
       targetPort: "rmrdata-{{ $key }}"
       name: "rmrdata-{{ $key }}"
   selector:
-      app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}
+      app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}-{{ $key }}
       release: {{ $topCtx.Release.Name }}
 {{- end }}
 {{- end }}
