@@ -15,6 +15,7 @@
 #   limitations under the License.                                             #
 ################################################################################
 {{- $topCtx :=  . }}
+{{- $health := .Values.health }}
 {{- range keys .Values.e2term }}
 {{- $key := . }}
 {{- with index $topCtx.Values.e2term . }}
@@ -137,7 +138,20 @@ spec:
           tty: true
           securityContext:
             privileged: {{ .privilegedmode }}
-
+          {{- if eq $health.liveness.enabled true }}
+          readinessProbe:
+            exec:
+              command: [ "/bin/sh", "-c", "{{ $health.readiness.command }}:{{ include "common.serviceport.e2term.rmr.data" . }}" ]
+            initialDelaySeconds: {{ $health.readiness.initialDelaySeconds }}
+            periodSeconds: {{ $health.readiness.periodSeconds }}
+          {{- end }}
+          {{- if eq $health.liveness.enabled true }}
+          livenessProbe:
+            exec:
+              command: [ "/bin/sh", "-c", "{{ $health.liveness.command }}:{{ include "common.serviceport.e2term.rmr.data" . }}" ]
+            initialDelaySeconds: {{ $health.liveness.initialDelaySeconds }}
+            periodSeconds: {{ $health.liveness.periodSeconds }}
+          {{- end }}
 {{ if .pizpub.enabled }}
         - name: {{ include "common.containername.e2term" $topCtx }}-pizpub
           {{- $pizpubimagectx := dict "ctx" $topCtx "defaultregistry" .pizpub.image.registry }}
