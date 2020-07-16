@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "28075f45_2ec3db92",
+        "filename": "helm/infrastructure/subcharts/prometheus/values.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 1185,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2020-07-16T13:21:17Z",
+      "side": 1,
+      "message": "This may be tricky. since we may have different name of the e2term  (the \"alpha\" part). Also what happen if we have multiple e2t instances?\n\nNormally we will be using k8s annotation in e2t charts to define the scraping endpoints and jobs. Can we try something like that?",
+      "revId": "4a866d3b1add464ed70fff9f75bfcd4180be67ca",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    }
+  ]
+}
