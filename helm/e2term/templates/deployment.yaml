@@ -29,7 +29,7 @@ metadata:
   name: {{ include "common.deploymentname.e2term" $topCtx }}-{{ $key }}
   namespace: {{ include "common.namespace.platform" $topCtx }}
   labels:
-    app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}
+    app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}-{{ $key }}
     chart: {{ $topCtx.Chart.Name }}-{{ $topCtx.Chart.Version | replace "+" "_" }}
     release: {{ $topCtx.Release.Name }}
     heritage: {{ $topCtx.Release.Service }}
@@ -37,7 +37,7 @@ spec:
   replicas: {{ .replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}
+      app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}-{{ $key }}
       release: {{ $topCtx.Release.Name }}
   template:
     metadata:
@@ -91,7 +91,7 @@ spec:
           {{- end }}
         {{- end }}
       labels:
-        app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}
+        app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}-{{ $key }}
         release: {{ $topCtx.Release.Name }}
     spec:
       hostname: {{ include "common.name.e2term" $topCtx }}-{{ $key }}
@@ -131,7 +131,7 @@ spec:
               containerPort: {{ include "common.serviceport.e2term.rmr.route" $topCtx }}
             - name: "rmrdata-{{ $key }}"
               containerPort: {{ include "common.serviceport.e2term.rmr.data" $topCtx }}
-            - name: "rmrsctp-{{ $key }}" 
+            - name: "sctp-{{ $key }}"
               containerPort: 36422
               protocol: SCTP 
           stdin: true
