@@ -133,7 +133,9 @@ spec:
               containerPort: {{ include "common.serviceport.e2term.rmr.data" $topCtx }}
             - name: "sctp-{{ $key }}"
               containerPort: 36422
-              protocol: SCTP 
+              protocol: SCTP
+            - name: "prmts-{{ $key }}"
+              containerPort: {{ include "common.serviceport.e2term.prometheus" $topCtx }}
           stdin: true
           tty: true
           securityContext:
