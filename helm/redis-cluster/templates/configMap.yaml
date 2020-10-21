@@ -1,0 +1,387 @@
+###################################################################################
+#  ============LICENSE_START=======================================================
+#
+#  ================================================================================
+#  Copyright (C) 2020 Hcl Technologies Limited.
+#  ================================================================================
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+# ============LICENSE_END=========================================================
+###################################################################################
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.rediscluster.name }}-cm
+data:
+  update-node.sh: |
+    #!/bin/sh
+    REDIS_NODES="/data/nodes.conf"
+    sed -i -e "/myself/ s/[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}/${POD_IP}/" ${REDIS_NODES}
+    exec "$@"
+
+  redis.conf: |+
+    cluster-enabled yes
+    cluster-require-full-coverage no
+    cluster-node-timeout {{ .Values.rediscluster.nodetimeout }}
+    cluster-config-file /data/nodes.conf
+    cluster-migration-barrier 1
+    appendonly yes
+    protected-mode no
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.assigner.name }}-cm
+data:
+  placenode.pl: |
+    #!/usr/bin/env perl
+    =head
+    ============LICENSE_START=======================================================
+    
+    ================================================================================
+    Copyright (C) 2020 Hcl Technologies Limited.
+    ================================================================================
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+   
+         http://www.apache.org/licenses/LICENSE-2.0
+   
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    ============LICENSE_END=========================================================
+  
+    
+    About:
+  
+    This script has been developed as part of https://jira.o-ran-sc.org/browse/RIC-360
+    This script identifies the missing anti-affinity(as per above ticket) of redis instances 
+    required in a redis-cluster. If there is an  undesired  anti-affinity this script can  be 
+    executed to communicate to redis nodes  to switch roles (e.g. master/slave) such that the 
+    end-state meets the desired anti-affinity.
+           
+  
+    Pre-requisites: 
+  
+      1) A redis cluster with 3 masters (2 replicas each) deployed on kubernetes 1.18 (or later) 
+      2) Three available worker nodes for serving redis workloads
+      3) kubectl (with access to the k8 cluster)
+   
+    =cut
+  
+  
+    my $podRow = { 
+    "podIP"      => "",
+    "podName"    => "",
+    "k8Node"     => "",
+    
+    "rdNodeRole" => "",
+    "rdNodeID"   => "",
+    
+    "rdMasterNodeID"   => "",
+    "slaveIPs"    => [] 
+    };
+    
+    # Pod label for redis nodes
+    my $podLabel = $ENV{'POD_LABEL'};
+    
+    my $podTable =   [];
+    my $k8NodeInfo = [];
+    
+    setk8NodesInfo();
+    validate();
+    
+    # Master
+    spreadMastersIfRequired();
+    # Slave
+    my $disparity = getSlaveDisparity();
+    spreadSlavesIfRequired();
+    
+    sub validate() {
+        my @masters = map { $_->{'rdNodeRole'} eq 'master' ? $_ : () } @{$podTable};
+    	if ( @masters > @{$k8NodeInfo->{allk8Nodes}} ) {
+    		print "Info: Skipping any action as num of master > number of k8 nodes..\n";
+    	    exit;
+    	}
+    }
+    
+    
+    sub spreadSlavesIfRequired() {
+        
+    
+    	# Get node with maximum disparity first
+        my @disparityMatrix = reverse sort { @{$a} <=> @{$b} } @${disparity}; 
+        #@disparityMatrix = grep defined, @disparityMatrix;
+        #@disparityMatrix = map { defined $_ ? $_ : () } @disparityMatrix;
+    
+        # Get list of slaves to be swapped roles.
+        my @slaveSwapList = ();
+        my $maxDisparityPerNode = @{$disparityMatrix[0]};
+    
+        for (my $disparityPass=0; $disparityPass < $maxDisparityPerNode; $disparityPass++) {
+            for (my $k8NodeIndex=0; $k8NodeIndex <= $#{disparityMatrix}; $k8NodeIndex++) {
+    		   #print "$disparityMatrix[$disparityPass] && $disparityMatrix[$k8NodeIndex][$disparityPass]";
+               if ( $disparityMatrix[$disparityPass] && $disparityMatrix[$k8NodeIndex][$disparityPass] ) {
+    			    push(@slaveSwapList,$disparityMatrix[$k8NodeIndex][$disparityPass]);
+    		   }
+            }
+        }
+        if ( ! @slaveSwapList ) {
+        	print "Info: No disparity found with slaves.\n" if ( @slaveSwapList < 2);
+    		exit;
+    	} elsif ( @slaveSwapList == 1 ) {
+         	print "Info: single host scenario (with no swap candidate in other k8 nodes) found.\n";
+    		exit;
+    	} else {
+        	print "Info: slave disparity found.\n";
+        }
+    
+    	# Swap slaves 
+    	for (my $swapIndex=0; $swapIndex < @slaveSwapList; $swapIndex++) {
+    		$pod1 = $slaveSwapList[$swapIndex];
+    		$pod2 = $slaveSwapList[++$swapIndex];
+    		#print "Info: Swapping Slaves: " . join($pod1->{podName}, $pod2->{podName}) . "\n";
+    		
+    		my $cmd1 = qq[kubectl exec -it ].
+    		  		   qq[$pod1->{podName}  -- redis-cli -p 6379 cluster replicate $pod2->{rdMasterNodeID} ];
+    		
+    		my $cmd2 = qq[kubectl exec -it ].
+    				   qq[$pod2->{podName}  -- redis-cli -p 6379 cluster replicate $pod1->{rdMasterNodeID} ];
+    
+    	    runRediClusterCmd($cmd1);
+    	    runRediClusterCmd($cmd2);
+    		#print "\n$cmd1";
+    		#print "\n$cmd2\n";
+        }
+    
+    }
+    
+    
+    sub getSlaveDisparity() {
+    
+        # Get Slave Disparity Metrix
+        my $disparity = ();
+        my $nodeIndex = 0;
+        foreach my $k8NodeName ( @{$k8NodeInfo->{allk8Nodes}} ) {
+            my @redisNodesOnk8Node = map { $_->{'k8Node'} eq $k8NodeName ? $_ : () } @{$podTable};
+            @redisNodesOnk8Node    = sort { $a->{"rdNodeRole"} cmp $b->{"rdNodeRole"} } @redisNodesOnk8Node;
+    
+            my $master = shift @redisNodesOnk8Node;
+            
+            for (my $index=0; $index <= $#{redisNodesOnk8Node}; $index++ ) {
+                my $slave = $redisNodesOnk8Node[$index];
+                #print "chekcing for pod:  $slave->{podName}\n";
+                my $disparityFound = 0;
+                if ( $slave->{rdMasterNodeID} eq $master->{rdNodeID} ) {
+                   $disparityFound = 1;
+                } else {
+                   #check is other slaves are its sibling
+                   for (my $nextIndex=$index + 1; $nextIndex <= $#{redisNodesOnk8Node}; $nextIndex++ ) {
+                       if ( $slave->{rdMasterNodeID} eq $redisNodesOnk8Node[$nextIndex]->{rdMasterNodeID} ) {
+                              $disparityFound = 1;
+                           break;
+                       }
+                   }
+                }
+    			if ($disparityFound) {
+                	#$disparity[$nodeIndex][$index] = { 'podName' => $slave->{"podName"}, 'rdMasterNodeID' => $slave->{"rdMasterNodeID"} } ;
+                	push(@{$disparity[$nodeIndex]},{ 'podName' => $slave->{"podName"}, 'rdMasterNodeID' => $slave->{"rdMasterNodeID"} } ) ;
+    			}
+            }
+            $nodeIndex++;
+        }
+            return \@disparity;
+    }
+    
+    sub spreadMastersIfRequired() {
+    
+       NODE_WITH_NO_MASTER: foreach my $nodeWithoutMaster (@{$k8NodeInfo->{k8NodesWithoutMaster}}) {
+          # For each k8Node without any master 
+          #    Check for each extra master on its hostNode
+          #        Find its slave on the this hostNode (i.e. without any master) 
+          # Such slave must be Found for 3x3 set-up:
+          # Then Promote as master # Re-Evaluate
+    
+          # Get All Redis Slaves on This k8 node
+          print "Info: K8 node without any master : $nodeWithoutMaster\n";
+          my @rdSlaveNodes =  map { ($_->{'k8Node'} eq $nodeWithoutMaster ) && ($_->{'rdNodeRole'} eq 'slave') ? $_ : () } @{$podTable};
+    
+               foreach my $nodeWithExtraMaster (@{$k8NodeInfo->{k8NodesWithExtraMaster}} ) {
+                  print "Info: k8 Node with extra master : $nodeWithExtraMaster\n";
+                  #my @rdSlaveNodes =  map { ($_->{'k8Node'} eq $nodeWithoutMaster ) && ($_->{'rdNodeRole'} eq 'slave') ? $_ : () } @{$podTable};
+    
+                  my @masterInstances = map { ($_->{'k8Node'} eq $nodeWithExtraMaster ) && ($_->{'rdNodeRole'} eq 'master') ? $_ : () } @{$podTable};        
+                  foreach my $master (@masterInstances) {
+                      my @slave = map { $_->{"rdMasterNodeID"} eq $master->{rdNodeID} ? $_ : () } @rdSlaveNodes;
+                      if ( @slave ) {
+                          promoteSlaveAsMaster($slave[0]);
+    					  my $isPromoted = 0;
+    				      my $slaveNodeID= $slave[0]->{rdNodeID};
+    					  while( ! $isPromoted ) {
+    						 sleep(8);
+    					     setk8NodesInfo();
+    						 my ($promotedNode) = map { $slaveNodeID eq $_->{rdNodeID} ? $_ : () } @{$podTable};
+    
+    						 if ( $promotedNode->{'rdNodeRole'} ne 'master' ) {
+    						 	print ("Info: Waiting for node promotion confirmation..\n");
+    						 } else {
+    							$isPromoted = 1;
+    						 	print ("Info: Node promotion confirmed.\n");
+    						 }
+    					  }
+                          next NODE_WITH_NO_MASTER;
+                      }
+                  }
+               }
+       }
+       print "Info: All redis masters are on separate k8 Nodes. \n"    if ( ! @{$k8NodeInfo->{k8NodesWithoutMaster}}) ;
+    }
+    
+    sub promoteSlaveAsMaster() {
+        my $slavePod = shift;    
+        #print "Info: Promoting Slave $slavePod->{'podName'} On $slavePod->{'k8Node'} as master";
+        my $cmd = qq[kubectl exec -it $slavePod->{'podName'} -- redis-cli -p 6379 cluster failover takeover];
+        runRediClusterCmd($cmd);
+        
+    }
+    sub runRediClusterCmd() {
+      my $cmd = shift;    
+      print "Info: Running Cmd:$cmd \n";
+      `$cmd;`;
+      sleep(8);
+    }
+    
+    
+    #foreach my $item (@{$podTable}) {
+    #}
+    
+    # find_nodes_without-a-single_master
+    sub setk8NodesInfo() {
+    
+       $podTable   = [];
+       $k8NodeInfo = [];
+    
+       getCurrentStatus();
+       # All k8 nodes
+       my @k8NodeList = uniq(map { $_->{'k8Node'} } @$podTable);
+    
+       # Find Nodes with At least One master
+       my @k8NodesWithMaster;
+       foreach my $nodeName (@k8NodeList) {
+          push(@k8NodesWithMaster, map { ($_->{'k8Node'} eq $nodeName) && ($_->{'rdNodeRole'} eq 'master')   ? $nodeName : ()  } @{$podTable} );
+       }
+    
+       # Find Nodes without any master = All nodes - Nodes with at least one Master
+       my %k8NodesMap = ();
+       foreach (@k8NodesWithMaster) { 
+               if ( exists $k8NodesMap{$_} ) {
+                       $k8NodesMap{$_}++;
+               } else {
+                       $k8NodesMap{$_} = 1;
+               }
+       }
+       my @k8NodesWithoutMaster = map { exists $k8NodesMap{$_} ? () : $_ } @k8NodeList;
+       my @k8NodesWithExtraMaster = uniq(map { $k8NodesMap{$_} > 1 ? $_ : () } @k8NodesWithMaster);
+    
+       $k8NodeInfo = { 'allk8Nodes' => \@k8NodeList, 'k8NodesWithExtraMaster' => \@k8NodesWithExtraMaster, 'k8NodesWithoutMaster' => \@k8NodesWithoutMaster };
+    }
+    
+    
+    
+    
+    
+    # Validate if number of masters ,= number of rea
+    
+    #
+    #sub filter
+    
+    =head
+    get 
+    podName where k8Node eq "x"
+        get position of k8node eq x 
+    where 
+    =cut
+    
+    exit;
+    
+    sub uniq {
+        my %seen;
+        grep !$seen{$_}++, @_;
+    }
+    
+    sub getCurrentStatus() {
+    
+        # Run pod list command    
+        my @getPods = `kubectl get po --no-headers  -o wide -l $podLabel |grep Running`;    chomp @getPods;
+        #my @getPods = `kubectl get po --no-headers  -o wide -l managed-by=redis-cluster-operator|grep Running`;    chomp @getPods;
+    
+        foreach my $podLine (@getPods) {
+            my @podData = split(/\s+/,$podLine);
+            my ($podName,$status,$age,$podIP,$podNode) = ($podData[0], $podData[2], $podData[4], $podData[5],$podData[6]);
+    
+            #print "$podName,$status,$age,$podIP,$podNode" ."\n"; 
+            my $podRow = { 'podIP' => $podIP, 'podName' => $podName, 'k8Node' => $podNode, 'podAge' => $age, 'podStatus' => $status };    
+            push (@{$podTable},$podRow)
+        }
+    
+        my $podName = $podTable->[0]{'podName'};
+        #print "Info:kubectl exec $podName  -- cat nodes.conf|sort -k3\n";
+        my @rdNodeData = `kubectl exec $podName  -- cat nodes.conf|sort -k3`;    chomp @rdNodeData;
+        foreach my $rdNodeLine (@rdNodeData) {
+            next if ($rdNodeLine !~ /master|slave/);
+                my @rdNodeData = split(/\s+/,$rdNodeLine);
+                my ($rdNodeID,$rdRole,$rdMasterNodeID,$epoch) = ($rdNodeData[0], $rdNodeData[2], $rdNodeData[3],$rdNodeData[5]);
+                my ($podIP) = split(/:/,$rdNodeData[1]);
+                $rdRole =~ s/myself,//;
+    
+                #print "$rdNodeID,$rdRole,$rdMasterNodeID,$podIP" ."\n";
+                my $rdElem = { 'podIP'    => $podIP, 
+                               'rdNodeID' => $rdNodeID,
+                               'rdRole'   => $rdRole,
+                               'rdMasterNodeID' => $rdMasterNodeID,
+                               'epoch'          => $epoch
+                };
+    
+            for(my $index=0; $index <= $#{$podTable}; $index++) {
+                if ( $podTable->[$index]{'podIP'} eq $podIP ) {
+                    #print "Matched\n";
+                    $podTable->[$index]{'rdNodeID'}       = $rdNodeID;
+                    $podTable->[$index]{'rdNodeRole'}        = $rdRole;
+                    $podTable->[$index]{'rdMasterNodeID'} = $rdMasterNodeID;
+                    $podTable->[$index]{'epoch'}          = $epoch;
+                }
+            }
+            #exit;
+    
+        }
+    }
+
+  relatenode.sh: |
+    #!/bin/sh
+    podLabel=${POD_LABEL}
+    firstPod=$(kubectl  get   po -o wide -l app.kubernetes.io/name=redis-cluster --no-headers=true|head -1|cut -d" " -f1)
+    
+    kubectl get po -o wide -l $podLabel |tail +2|awk '{printf("%s:%s:%s:%s\n",$6,$1,$7,$10)}'|sort  > /tmp/1.txt
+    kubectl exec  $firstPod  -- cat nodes.conf|sed 's/myself,//'|awk '/master|slave/ {print $2,$1,$3,$4}'|sort > /tmp/2.txt
+    join -t ":"  /tmp/1.txt /tmp/2.txt |sort -k3,4 | sed 's/ /:/g'|awk -F":" '{print $2,$7,$3,$1,$4,$6,$8}' > /tmp/3.txt
+    
+    echo "\n   POD_NAME      ROLE      k8NODE        POD_IP                   REDIS_NODE_ID                       REDIS_MASTER_NODE_ID"
+    grep $(cut -d" " -f4 /tmp/2.txt|sort -u|grep -v "-"|sed -n '1p') /tmp/3.txt
+    echo ""
+    grep $(cut -d" " -f4 /tmp/2.txt|sort -u|grep -v "-"|sed -n '2p') /tmp/3.txt
+    echo ""
+    grep $(cut -d" " -f4 /tmp/2.txt|sort -u|grep -v "-"|sed -n '3p') /tmp/3.txt
+    

@@ -1,0 +1,36 @@
+1.  Important: You must wait to ensure that all {{ .Values.rediscluster.replicaCount }} instances of redis are in "Running" state. You can use below command to watch if all the required instances are ready
+
+watch "kubectl -n {{ .Release.Namespace }} get po -l app.kubernetes.io/instance={{ .Release.Name }}"
+
+2. Run below command to create redis-cluster.
+
+kubectl -n {{ .Release.Namespace }} exec -it {{ .Values.rediscluster.name }}-0  -- sh -c "echo yes | redis-cli --cluster create --cluster-replicas 2 \
+$(kubectl -n {{ .Release.Namespace }} get po \
+{{ .Values.rediscluster.name }}-0 \
+{{ .Values.rediscluster.name }}-1 \
+{{ .Values.rediscluster.name }}-6 \ 
+{{ .Values.rediscluster.name }}-3 \
+{{ .Values.rediscluster.name }}-2 \
+{{ .Values.rediscluster.name }}-4 \ 
+{{ .Values.rediscluster.name }}-7 \ 
+{{ .Values.rediscluster.name }}-8 \ 
+{{ .Values.rediscluster.name }}-5 \
+-o=jsonpath='{range .items[*]}{.status.podIP}{":6379 "}{end}')"
+
+3. Once cluster is created, you can use below utility to see the related redis nodes (master and slaves) sets,
+   along with the k8 worknode details where each is placed.  
+
+   PLACENODE_POD=$(kubectl get --no-headers  po -l app={{ .Values.assigner.label }}  -o=jsonpath='{.items[0].metadata.name}')
+   kubectl exec -it ${PLACENODE_POD} -- sh /conf/relatenode.sh
+
+4. If previous step shows the undesired state for pod-antiaffinity use below perl program to make it as per desired state. 
+   It will NOT take any action when the set-up is with desired pod-antiaffinity
+   kubectl exec -it ${PLACENODE_POD} -- perl /conf/placenode.pl
+
+
+5. Run below commands to delete the helm release and the PVC
+   a. helm delete --purge {{ .Release.Name }}
+   b. kubectl delete pvc -l app.kubernetes.io/instance={{ .Release.Name }} -n {{ .Release.Namespace }}
+
+
+

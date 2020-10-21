@@ -1,0 +1,53 @@
+###################################################################################
+#  ============LICENSE_START=======================================================
+#
+#  ================================================================================
+#  Copyright (C) 2020 Hcl Technologies Limited.
+#  ================================================================================
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+# ============LICENSE_END=========================================================
+###################################################################################
+
+#################################################################
+# Application configuration defaults.
+#################################################################
+
+rediscluster:
+  nodetimeout: 15000
+  replicaCount: 9
+  name: redis-cluster
+
+image:
+  repository: redis
+  tag: 5.0.1-alpine
+  pullPolicy: IfNotPresent
+
+container:
+  name: redis
+
+topology:
+  policyUnstisfiable: DoNotSchedule
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+
+volume:
+  storage: "1Gi"
+
+# Assigner is reponsible for assigning appropriate master/slave roles to redis nodes
+assigner:
+  name: assigner
+  label: assigner
