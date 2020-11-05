@@ -45,14 +45,6 @@ spec:
       hostname: {{ include "common.name.e2mgr" . }} 
       imagePullSecrets:
         - name: {{ include "common.dockerregistry.credential" $imagectx }}
-      initContainers:
-        - name: redis-init
-          image: "redis"
-          command:
-          - "/bin/sh"
-          args:
-          - '-c'
-          - "redis-cli -h {{ include "common.servicename.dbaas.tcp" . }} -p {{ include "common.serviceport.dbaas.redis" . }} SETNX \"{e2Manager},GENERAL\" \"{\\\"enableRic\\\":true}\""
       containers:
         - name: {{ include "common.containername.e2mgr" . }}
           image: {{ include "common.dockerregistry.url" $imagectx }}/{{ .Values.e2mgr.image.name }}:{{ .Values.e2mgr.image.tag }}
