@@ -53,6 +53,9 @@ spec:
           #args: ["-c", "while true; do echo hello; sleep 10;done"]
           command: ["/bin/sh"]
           args: ["-c", "/alarm-adapter -f /alarmadaptercfg/config-file.json"]
+          env:
+            - name: PLT_NAMESPACE
+              value: {{ include "common.namespace.platform" . }}
           envFrom:
             - configMapRef:
                 name: {{ include "common.configmapname.alarmadapter" . }}-env
