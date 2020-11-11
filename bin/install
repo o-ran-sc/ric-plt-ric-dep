@@ -62,6 +62,7 @@ function wait_for_cats() {
 }
 
 KERNEL_OPTIMIZATION=false
+IS_HELM3=$(helm version --short|grep -e "^v3")
 
 while [ -n "$1" ]; do # while loop starts
 
@@ -92,7 +93,12 @@ if [ -z "$OVERRIDEYAML" ];then
     exit 1
 fi
 
-HAS_COMMON_PACKAGE=$(helm search local/ric-common | grep ric-common)
+if [ -z $IS_HELM3 ]
+then
+  HAS_COMMON_PACKAGE=$(helm search local/ric-common | grep ric-common)
+else 
+  HAS_COMMON_PACKAGE=$(helm search repo local/ric-common | grep ric-common)
+fi
 
 if [ -z "$HAS_COMMON_PACKAGE" ];then
     echo "****************************************************************************************************************"
@@ -218,8 +224,12 @@ subjects:
     name: tiller
     namespace: kube-system
 EOF
-kubectl apply -f ricplt-role.yaml
-rm ricplt-role.yaml
+
+if [ -z $IS_HELM3 ]
+then
+   kubectl apply -f ricplt-role.yaml
+   rm ricplt-role.yaml
+fi
 
 
 # Add kernel optimization for radis services
@@ -278,7 +288,12 @@ fi
 
 for component in $COMPONENTS; do
     helm dep up $DIR/../helm/$component
-    helm install -f $OVERRIDEYAML --namespace "${PLTNAMESPACE:-ricplt}" --name "${RELEASE_PREFIX}-$component" $DIR/../helm/$component
+    COMPONENT="${RELEASE_PREFIX}-$component"
+    if [ -z $IS_HELM3 ]
+    then
+      COMPONENT=" --name $COMPONENT"
+    fi
+    helm install -f $OVERRIDEYAML --namespace "${PLTNAMESPACE:-ricplt}" $COMPONENT $DIR/../helm/$component
     sleep 8
 done
 

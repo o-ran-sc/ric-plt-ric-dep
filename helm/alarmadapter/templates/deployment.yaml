@@ -64,7 +64,7 @@ spec:
           volumeMounts:
             - mountPath: /alarmadaptercfg
               name: appconfig-file
-              subpath: config-file.json
+              subPath: config-file.json
           ports:
             - name: "http"
               containerPort: {{ include "common.serviceport.alarmadapter.http" . }}
