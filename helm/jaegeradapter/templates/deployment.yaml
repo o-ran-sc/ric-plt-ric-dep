@@ -82,4 +82,4 @@ spec:
             httpGet:
               path: /
               port: {{ include "common.serviceport.jaegeradapter.httpquery" . }}
-              initialDelaySeconds: 5
+            initialDelaySeconds: 5

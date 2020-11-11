@@ -41,6 +41,10 @@ spec:
         release: {{ .Release.Name }}
     spec:
       hostname: {{ include "common.name.xapp-onboarder" . }}
+      securityContext:
+        fsGroup: 0
+        runAsUser: 0
+      restartPolicy: Always
       imagePullSecrets:
         {{- $newctx := dict "ctx" $ "defaultregistry" .Values.xapponboarder.image.xapponboarder.registry }}
         - name: {{ include "common.dockerregistry.credential" $newctx }}
@@ -50,9 +54,6 @@ spec:
           image: {{ include "common.dockerregistry.url" $newctx }}/{{ .Values.xapponboarder.image.chartmuseum.name }}:{{ .Values.xapponboarder.image.chartmuseum.tag }}
           {{- $newctx := dict "ctx" $ "defaultpullpolicy" .Values.xapponboarder.imagePullPolicy }}
           imagePullPolicy: {{ include "common.dockerregistry.pullpolicy" $newctx }}
-          securityContext:
-            fsGroup: 0
-            runAsUser: 0
           envFrom:
             - configMapRef:
                 name: {{ include "common.configmapname.xapp-onboarder" . }}-chartmuseum-env
@@ -86,4 +87,3 @@ spec:
           #  httpGet:
           #    path: /
           #    port: http
-          restartPolicy: Always
