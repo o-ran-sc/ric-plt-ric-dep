@@ -1,0 +1,56 @@
+################################################################################
+#   Copyright (c) 2019 AT&T Intellectual Property.                             #
+#   Copyright (c) 2019 Nokia.                                                  #
+#                                                                              #
+#   Licensed under the Apache License, Version 2.0 (the "License");            #
+#   you may not use this file except in compliance with the License.           #
+#   You may obtain a copy of the License at                                    #
+#                                                                              #
+#       http://www.apache.org/licenses/LICENSE-2.0                             #
+#                                                                              #
+#   Unless required by applicable law or agreed to in writing, software        #
+#   distributed under the License is distributed on an "AS IS" BASIS,          #
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   #
+#   See the License for the specific language governing permissions and        #
+#   limitations under the License.                                             #
+################################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.assigner.name }}-dep
+  namespace: {{ .Release.Namespace }}
+  labels:
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.assigner.label }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.assigner.label }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: kubectl
+        hostname: {{ .Values.assigner.label }}
+        image: "bitnami/kubectl:1.18"
+        command: ["/bin/sh"]
+        args: ["-c", "sleep 3000"]
+        env:
+        - name: "POD_LABEL"
+          value: app.kubernetes.io/instance={{ .Release.Name }}
+
+        volumeMounts:
+        - name: conf
+          mountPath: /conf
+          readOnly: false
+      volumes:
+      - name: conf
+        configMap:
+          name: {{ .Values.assigner.name }}-cm
+          defaultMode: 0755
+      serviceAccountName: {{ .Values.assigner.name }}-sa
