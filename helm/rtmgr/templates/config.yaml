@@ -144,6 +144,8 @@ data:
           "TS_UE_LIST=30000",
           "TS_QOE_PRED_REQ=30001",
           "TS_QOE_PREDICTION=30002",
+          "TS_ANOMALY_UPDATE=30003",
+          "TS_ANOMALY_ACK=30004",
           "MC_REPORT=30010",
           "DCAPTERM_RTPM_RMR_MSGTYPE=33001",
           "DCAPTERM_GEO_RMR_MSGTYPE=33002",
