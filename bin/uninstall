@@ -32,12 +32,22 @@ INFRANAMESPACE=$(echo "$NAMESPACE_BLOCK" | awk '/^ *infra:/{print $2}')
 XAPPNAMESPACE=$(echo "$NAMESPACE_BLOCK" | awk '/^ *xapp:/{print $2}')
 RELEASE_PREFIX=$(echo "$COMMON_BLOCK" | awk '/^ *releasePrefix:/{print $2}')
 
+IS_HELM3=$(helm version --short|grep -e "^v3")
 
 echo "Undeploying RIC platform components [$COMPONENTS]"
 
 
+HELM_FLAG=''
+if [ $IS_HELM3 ]
+then 
+  HELM_FLAG=' -n '${PLTNAMESPACE:-ricplt}
+else
+  HELM_FLAG='--purge'
+fi
+
+
 for component in $COMPONENTS; do
-    helm delete --purge ${RELEASE_PREFIX}-$component
+    helm delete $HELM_FLAG ${RELEASE_PREFIX}-$component
 done
 
 kubectl delete cm -n ${PLTNAMESPACE:-ricplt} ricplt-recipe

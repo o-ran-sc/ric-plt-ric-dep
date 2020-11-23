@@ -131,11 +131,11 @@ spec:
           #  httpGet:
           #    path: /
           #    port: http
-          restartPolicy: Always
           securityContext:
             # ubuntu
             #runAsUser: 1000
             #allowPrivilegeEscalation: false
+      restartPolicy: Always
       volumes:
         - name: config-volume
           configMap:
