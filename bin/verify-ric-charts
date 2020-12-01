@@ -67,6 +67,7 @@ $HELM_COMMAND package --save=false -d ./charts "$ROOT_DIR/dep/ric-common/Common-
 $HELM_COMMAND repo index ./charts
 # Make sure that helm local repo is added
 $HELM_COMMAND repo remove local
+$HELM_COMMAND repo remove stable
 $HELM_COMMAND repo add local http://127.0.0.1:8879/charts
 # Remove it/dep charts
 rm -rf ./dep
