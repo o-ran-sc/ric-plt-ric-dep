@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bad6cbe2_e1686f5c",
+        "filename": "INFO.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1000108
+      },
+      "writtenOn": "2020-12-07T14:25:49Z",
+      "side": 1,
+      "message": "link missing. I will add them in patchset two once available.",
+      "range": {
+        "startLine": 58,
+        "startChar": 15,
+        "endLine": 58,
+        "endChar": 22
+      },
+      "revId": "744190b5399969916806d00aa8fc07375057771c",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    }
+  ]
+}
