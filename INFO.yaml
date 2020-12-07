@@ -34,11 +34,11 @@ repositories:
     - ric-plt/ric-dep
 committers:
     - <<: *oran_ric_plt_ric_dep_ptl
-    - name: 'Lusheng Ji'
-      email: 'lji@research.att.com'
-      company: 'research.att'
-      id: 'wrider'
-      timezone: 'Unknown/Unknown'
+    - name: 'Zhe Huang'
+      email: 'zhehuang@research.att.com'
+      company: 'AT&T Labs-Research'
+      id: 'eefelixwong'
+      timezone: 'America/New_York'
     - name: 'Prabhu K'
       email: 'prabhu.k@nokia.com'
       company: 'nokia'
@@ -53,6 +53,9 @@ tsc:
     # yamllint disable rule:line-length
     approval: 'missing'
     changes:
-        - type: ''
-          name: ''
-          link: ''
+        - type: 'Removal'
+          name: 'Lusheng Ji'
+          link: 'https://lists.o-ran-sc.org/g/toc/message/364'
+        - type: 'Promotion'
+          name: 'Zhe Huang'
+          link: 'https://lists.o-ran-sc.org/g/toc/message/364'
