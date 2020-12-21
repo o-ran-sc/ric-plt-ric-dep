@@ -1,6 +1,5 @@
 ################################################################################
 #   Copyright (c) 2019 AT&T Intellectual Property.                             #
-#   Copyright (c) 2019 Nokia.                                                  #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -15,7 +14,35 @@
 #   limitations under the License.                                             #
 ################################################################################
 
-dependencies:
-  - name: ric-common
-    version: ^3.3.0
-    repository: "@local"
+
+{{- define "common.name.mrsub" -}}
+  {{- printf "mrsub" -}}
+{{- end -}}
+
+{{- define "common.fullname.mrsub" -}}
+  {{- $name := ( include "common.name.mrsub" . ) -}}
+  {{- $namespace := ( include "common.namespace.aux" . ) -}}
+  {{- printf "%s-%s" $namespace $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+
+
+{{- define "common.deploymentname.mrsub" -}}
+  {{- $name := ( include "common.fullname.mrsub" . ) -}}
+  {{- printf "deployment-%s" $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+
+{{- define "common.configmapname.mrsub" -}}
+  {{- $name := ( include "common.fullname.mrsub" . ) -}}
+  {{- printf "configmap-%s" $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+
+{{- define "common.containername.mrsub" -}}
+  {{- $name := ( include "common.fullname.mrsub" . ) -}}
+  {{- printf "container-%s" $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+
+{{- define "common.serviceport.mrsub.http" -}}8080{{- end -}}
