@@ -119,7 +119,7 @@ RELEASE_PREFIX=$(echo "$COMMON_BLOCK" | awk '/^ *releasePrefix:/{print $2}')
 LOCAL_REPOSITORY=$(echo "$COMMON_BLOCK" | awk '/^ *localregistry:/{print $2}')
 
 # replace the dbaasha with dbaas1 if deploying non HA DBaaS
-COMPONENTS=${LIST_OF_COMPONENTS:-"infrastructure dbaas xapp-onboarder appmgr rtmgr e2mgr e2term a1mediator submgr vespamgr jaegeradapter o1mediator alarmadapter"}
+COMPONENTS=${LIST_OF_COMPONENTS:-"infrastructure dbaas xapp-onboarder appmgr rtmgr e2mgr e2term a1mediator submgr vespamgr jaegeradapter o1mediator alarmmanager"}
 echo "Deploying RIC infra components [$COMPONENTS]"
 
 

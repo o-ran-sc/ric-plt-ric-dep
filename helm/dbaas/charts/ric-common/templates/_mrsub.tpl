@@ -1,5 +1,5 @@
+################################################################################
 #   Copyright (c) 2019 AT&T Intellectual Property.                             #
-#   Copyright (c) 2019 Nokia.                                                  #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -13,11 +13,36 @@
 #   See the License for the specific language governing permissions and        #
 #   limitations under the License.                                             #
 ################################################################################
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "common.configmapname.alarmadapter" . }}-env
-data:
-  RMR_RTG_SVC: {{ include "common.servicename.rtmgr.rmr" . }}:{{ include "common.serviceport.rtmgr.rmr.route" . }}
-  RMR_SEED_RT: "/uta_rtg.rt"
-  RMR_SRC_ID: {{ include "common.servicename.alarmadapter.rmr" . }}.{{ include "common.namespace.platform" . }}
+
+
+{{- define "common.name.mrsub" -}}
+  {{- printf "mrsub" -}}
+{{- end -}}
+
+{{- define "common.fullname.mrsub" -}}
+  {{- $name := ( include "common.name.mrsub" . ) -}}
+  {{- $namespace := ( include "common.namespace.aux" . ) -}}
+  {{- printf "%s-%s" $namespace $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+
+
+{{- define "common.deploymentname.mrsub" -}}
+  {{- $name := ( include "common.fullname.mrsub" . ) -}}
+  {{- printf "deployment-%s" $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+
+{{- define "common.configmapname.mrsub" -}}
+  {{- $name := ( include "common.fullname.mrsub" . ) -}}
+  {{- printf "configmap-%s" $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+
+{{- define "common.containername.mrsub" -}}
+  {{- $name := ( include "common.fullname.mrsub" . ) -}}
+  {{- printf "container-%s" $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+
+{{- define "common.serviceport.mrsub.http" -}}8080{{- end -}}
