@@ -1,5 +1,5 @@
+################################################################################
 #   Copyright (c) 2019 AT&T Intellectual Property.                             #
-#   Copyright (c) 2019 Nokia.                                                  #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -13,11 +13,25 @@
 #   See the License for the specific language governing permissions and        #
 #   limitations under the License.                                             #
 ################################################################################
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "common.configmapname.alarmadapter" . }}-env
-data:
-  RMR_RTG_SVC: {{ include "common.servicename.rtmgr.rmr" . }}:{{ include "common.serviceport.rtmgr.rmr.route" . }}
-  RMR_SEED_RT: "/uta_rtg.rt"
-  RMR_SRC_ID: {{ include "common.servicename.alarmadapter.rmr" . }}.{{ include "common.namespace.platform" . }}
+
+
+
+
+
+{{- define "locate" -}}
+  {{- $ctx := .ctx }}
+  {{- $keylist := .keylist }}
+  {{- $currentkey := first $keylist -}}
+  {{- $restkeys := rest $keylist -}}
+  {{- if empty $restkeys -}}
+    {{- $result := index $ctx $currentkey -}}
+    {{- if not (empty $result) -}}
+      {{- $result -}}
+    {{- end -}}
+  {{- else -}}
+    {{- with index $ctx $currentkey }}
+      {{- $newctx := dict "ctx" . "keylist" $restkeys -}}
+      {{- include "locate" $newctx -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

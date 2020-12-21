@@ -15,28 +15,35 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #==================================================================================
+#
+#
+#   Abstract: Subscription Manager service manifest 
+#   Date:		28 May 2019
+#
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ include "common.servicename.alarmadapter.rmr" . }}
+  name: {{ include "common.servicename.alarmmanager.rmr" . }}
   namespace: {{ include "common.namespace.platform" . }}
   labels:
-    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.alarmadapter" . }}
+    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.alarmmanager" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   selector:
-    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.alarmadapter" . }}
+    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.alarmmanager" . }}
     release: {{ .Release.Name }}	
   type: ClusterIP
   ports:
-  - name: rmrdata
-    port: {{ include "common.serviceport.alarmadapter.rmr.data" . }}
-    protocol: TCP
-    targetPort: rmrdata
-  - name: rmrroute
-    port: {{ include "common.serviceport.alarmadapter.rmr.route" . }}
-    protocol: TCP
-    targetPort: rmrroute
-
+    - name: rmrdata
+      port: {{ include "common.serviceport.alarmmanager.rmr.data" . }}
+      protocol: TCP
+      targetPort: rmrdata
+    - name: rmrroute
+      port: {{ include "common.serviceport.alarmmanager.rmr.route" . }}
+      protocol: TCP
+      targetPort: rmrroute
+  selector:
+    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.alarmmanager" . }}
+    release: {{ .Release.Name }}

@@ -19,6 +19,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ template "common.configmapname.dbaas" . }}-config
+  namespace: {{ include "common.namespace.platform" . }}
   labels:
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}

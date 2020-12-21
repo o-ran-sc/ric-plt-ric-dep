@@ -179,8 +179,8 @@ xapponboarder:
      tag: v0.8.2
   allow_redeploy: "True"
 
-alarmadapter:
+alarmmanager:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
-    name: ric-plt-alarmadapter
-    tag: 0.4.5
+    name: ric-plt-alarmmanager
+    tag: 0.5.9
