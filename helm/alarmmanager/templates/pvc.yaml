@@ -1,6 +1,5 @@
 ################################################################################
-#   Copyright (c) 2020 AT&T Intellectual Property.                             #
-#   Copyright (c) 2020 Nokia.                                                  #
+#   Copyright (c) 2019 AT&T Intellectual Property.                             #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -14,23 +13,17 @@
 #   See the License for the specific language governing permissions and        #
 #   limitations under the License.                                             #
 ################################################################################
-{{ $platformNameSpace := include "common.namespace.platform" . }}
-{{ $xAppNameSpace := include "common.namespace.xapp" . }}
-{{ $nameSpaceList := list $platformNameSpace $xAppNameSpace }}
-{{- range $nameSpaceList }}
-{{- $namespace := . }}
+{{- $topCtx :=  . }}
 ---
+kind: PersistentVolumeClaim
 apiVersion: v1
-kind: ConfigMap
 metadata:
-{{- if eq $namespace $platformNameSpace }}
-  name: {{ include "common.configmapname.alarmadapter" $ }}-appconfig
-{{- else }}
-  name: alarm-appconfig
-{{- end }}
-  namespace: {{ $namespace }}
-data:
-  ALARM_MGR_SERVICE_NAME: {{ include "common.servicename.alarmadapter.rmr" $ }}.{{ $platformNameSpace }}
-  ALARM_MGR_SERVICE_PORT: {{ include "common.serviceport.alarmadapter.rmr.data" $ | quote }}
-
-{{- end }}
+  name: {{ include "common.pvcname.alarmmanager" $topCtx }}
+  namespace: {{ include "common.namespace.platform" $topCtx }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.alarmmanager.dataVolSize }}
+  storageClassName: {{ .Values.alarmmanager.storageClassName }}
