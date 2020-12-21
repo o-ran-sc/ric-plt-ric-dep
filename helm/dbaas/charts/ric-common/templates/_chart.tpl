@@ -1,6 +1,5 @@
 ################################################################################
 #   Copyright (c) 2019 AT&T Intellectual Property.                             #
-#   Copyright (c) 2019 Nokia.                                                  #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -15,8 +14,7 @@
 #   limitations under the License.                                             #
 ################################################################################
 
-apiVersion: v1
-appVersion: "1.0"
-description: Helm chart for RIC Alarm Adapter
-name: alarmadapter
-version: 3.0.0
+
+{{- define "common.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}

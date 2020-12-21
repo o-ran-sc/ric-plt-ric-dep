@@ -28,7 +28,7 @@ echo "--> verify-ric-charts"
 if [[ "${1:-nope}" != "nope" ]]; then
     HELMVERSION=$1
 else
-    HELMVERSION=2.12.3
+    HELMVERSION=2.17.0
 fi
 if [[ "${2:-nope}" != "nope" ]]; then
     OVERRIDEYAML=$2
