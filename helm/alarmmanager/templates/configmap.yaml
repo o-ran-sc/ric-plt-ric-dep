@@ -1,5 +1,5 @@
 #==================================================================================
-#   Copyright (c) 2019,2020 AT&T Intellectual Property.
+#   Copyright (c) 2019 AT&T Intellectual Property.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -13,14 +13,15 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #==================================================================================
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "common.configmapname.alarmadapter" . }}-appconfig
+  name: {{ include "common.configmapname.alarmmanager" . }}-alarmmanagercfg
   namespace: {{ include "common.namespace.platform" . }}
 data:
-  config-file.json: |-
-    {
+  alarmmanagercfg: |-
+    {  
       "local": {
         "host": ":8080"
       },
@@ -35,24 +36,15 @@ data:
         "maxSize": 1024,
         "numWorkers": 1
       },
-      "promAlertManager": {
-        "address": {{ .Values.alarmadapter.alertManagerAddress | quote }},
-        "baseUrl": "/api/v2",
-        "schemes": "http",
-        "alertInterval": 30000
-      },
-      "alarmDefinitions": [
-        {
-          "specificProblem": 1234,
-          "Text": "Connection to DBAAS server lost"
+      "controls": {
+        "promAlertManager": {
+          "address": "cpro-alertmanager:80",
+          "baseUrl": "api/v2",
+          "schemes": "http",
+          "alertInterval": 30000
         },
-        {
-          "specificProblem": 1235,
-          "Text": "Distribution of internal routing table failed due to timeout"
-        },
-        {
-          "specificProblem": 1236,
-          "Text": "E2 connection to gNB lost"
-        }
-      ]
+        "maxActiveAlarms": 5000,
+        "maxAlarmHistory": 20000,
+        "alarmInfoPvFile": "/mnt/pv-ricplt-alarmmanager/alarminfo.json"
+      }
     }
