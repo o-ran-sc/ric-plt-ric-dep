@@ -1,6 +1,6 @@
 ################################################################################
-#   Copyright (c) 2019 AT&T Intellectual Property.                             #
-#   Copyright (c) 2019 Nokia.                                                  #
+#   Copyright (c) 2020 AT&T Intellectual Property.                             #
+#   Copyright (c) 2020 Nokia.                                                  #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -14,11 +14,23 @@
 #   See the License for the specific language governing permissions and        #
 #   limitations under the License.                                             #
 ################################################################################
-alarmadapter:
-  imagePullPolicy: IfNotPresent
-  image:
-    name: ric-plt-alarm-go
-    tag: 0.4.3
-    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+{{ $platformNameSpace := include "common.namespace.platform" . }}
+{{ $xAppNameSpace := include "common.namespace.xapp" . }}
+{{ $nameSpaceList := list $platformNameSpace $xAppNameSpace }}
+{{- range $nameSpaceList }}
+{{- $namespace := . }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+{{- if eq $namespace $platformNameSpace }}
+  name: {{ include "common.configmapname.alarmmanager" $ }}-appconfig
+{{- else }}
+  name: alarm-appconfig
+{{- end }}
+  namespace: {{ $namespace }}
+data:
+  ALARM_MGR_SERVICE_NAME: {{ include "common.servicename.alarmmanager.rmr" $ }}.{{ $platformNameSpace }}
+  ALARM_MGR_SERVICE_PORT: {{ include "common.serviceport.alarmmanager.rmr.data" $ | quote }}
 
-  alertManagerAddress: "r4-infrastructure-prometheus-alertmanager:80"
+{{- end }}

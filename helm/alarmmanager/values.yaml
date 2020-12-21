@@ -1,0 +1,30 @@
+################################################################################
+#   Copyright (c) 2019-2020 AT&T Intellectual Property.                        #
+#   Copyright (c) 2019-2020 Nokia.                                             #
+#                                                                              #
+#   Licensed under the Apache License, Version 2.0 (the "License");            #
+#   you may not use this file except in compliance with the License.           #
+#   You may obtain a copy of the License at                                    #
+#                                                                              #
+#       http://www.apache.org/licenses/LICENSE-2.0                             #
+#                                                                              #
+#   Unless required by applicable law or agreed to in writing, software        #
+#   distributed under the License is distributed on an "AS IS" BASIS,          #
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   #
+#   See the License for the specific language governing permissions and        #
+#   limitations under the License.                                             #
+################################################################################
+alarmmanager:
+  replicaCount: 1
+  imagePullPolicy: IfNotPresent
+  image:
+    name: ric-plt-alarmmanager
+    tag: 0.5.9
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc" #"ranco-dev-tools.eastus.cloudapp.azure.com:10001"
+  dataVolSize: 100Mi
+  storageClassName: local-storage
+
+  # Service ports are now defined in
+  # ric-common/Common-Template/helm/ric-common/templates/_ports.tpl file.
+  # If need to change a service port, make the code change necessary, then
+  # update the _ports.tpl file with the new port number.
