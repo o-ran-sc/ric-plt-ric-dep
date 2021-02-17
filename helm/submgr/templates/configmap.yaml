@@ -33,6 +33,13 @@ data:
       "hostAddr": {{ include "common.servicename.rtmgr.http" . | quote }}
       "port"    : {{ include "common.serviceport.rtmgr.http" . }}
       "baseUrl" : "/ric/v1"
+    "controls":
+      "e2tSubReqTimeout_ms": 2000
+      "e2tSubDelReqTime_ms": 2000
+      "e2tRecvMsgTimeout_ms": 2000
+      "e2tMaxSubReqTryCount": 2
+      "e2tMaxSubDelReqTryCount": 2
+      "readSubsFromDb": "true"
   submgrutartg: |
       newrt|start
       newrt|end
