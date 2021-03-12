@@ -52,4 +52,10 @@ dbaas:
 
   saReplicas: 1
   haReplicas: 3
+  #Timeout command below requires -t flag if installed DBAAS image is older than
+  #0.5.0. Reason is that DBAAS image version 0.5.0 and newer ones are based on
+  #newer Alpine 3.11 OS version and in this Alpine version timeout command
+  #doesn't have -t flag anymore.
+  probeTimeoutCommand: "timeout"
+  #probeTimeoutCommand: "timeout -t"
   probeTimeout: 10
