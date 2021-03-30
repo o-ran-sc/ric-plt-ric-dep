@@ -184,3 +184,9 @@ alarmmanager:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-alarmmanager
     tag: 0.5.9
+
+influxdb:
+  image:
+    registry: "influxdb"
+    name: influxdb
+    tag: "1.8.0-alpine"
