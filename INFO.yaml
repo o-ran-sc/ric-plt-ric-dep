@@ -49,10 +49,18 @@ committers:
       company: 'nokia'
       id: 'ranjitk'
       timezone: 'Unknown/Unknown'
+    - name: 'Shivendra Mishra'
+      email: 'shivendra.mishra@nokia.com'
+      company: 'nokia'
+      id: 'shivendra.mishra'
+      timezone: 'Unknown/Unknown'
 tsc:
     # yamllint disable rule:line-length
     approval: 'missing'
     changes:
+        - type: 'Promotion'
+          name: 'Shivendra Mishra'
+          link: 'https://lists.o-ran-sc.org/g/discuss/message/227'
         - type: 'Removal'
           name: 'Lusheng Ji'
           link: 'https://lists.o-ran-sc.org/g/toc/message/364'
