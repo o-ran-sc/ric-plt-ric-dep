@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "6749c208_43f5229b",
+        "filename": "helm/influxdb/OWNERS",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000487
+      },
+      "writtenOn": "2021-04-28T11:47:42Z",
+      "side": 1,
+      "message": "We have removed this file",
+      "parentUuid": "4550fd6c_1ba1fe75",
+      "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0c58ab19_8c236a55",
         "filename": "helm/influxdb/templates/_helpers.tpl",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2021-04-02T15:37:11Z",
       "side": 1,
       "message": "please integrate the following definitions into the common template.\nhttps://gerrit.o-ran-sc.org/r/gitweb?p\u003dit/dep.git;a\u003dtree;f\u003dric-common/Common-Template/helm/ric-common/templates;h\u003d5ec87eaffe4ef975f4d03f56a603b9a2b9988e90;hb\u003dHEAD",
+      "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c98ca251_f779a03b",
+        "filename": "helm/influxdb/templates/_helpers.tpl",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000487
+      },
+      "writtenOn": "2021-04-28T11:47:42Z",
+      "side": 1,
+      "message": "we retained _helpers.tpl in ric-dep.\nCopied _helpers.tpl into the common templates in it-dep repo(with the name _influxdb.tpl) and made the changes in it.",
+      "parentUuid": "0c58ab19_8c236a55",
       "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
       "unresolved": true
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "85f6f845_5678c563",
+        "filename": "helm/influxdb/templates/ingress.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1000487
+      },
+      "writtenOn": "2021-04-28T11:47:42Z",
+      "side": 1,
+      "message": "we retained ingress.yaml in ric-dep repo. \nCopied ingress details into the common templates in it-dep repo",
+      "parentUuid": "b46effc7_aebaff5f",
+      "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "47d4a104_a1513811",
         "filename": "helm/influxdb/templates/meta-service.yaml",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2021-04-02T15:37:11Z",
       "side": 1,
       "message": "please put the service port number into the common template.",
+      "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "782fe4b6_9f916f8e",
+        "filename": "helm/influxdb/templates/meta-service.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1000487
+      },
+      "writtenOn": "2021-04-28T11:47:42Z",
+      "side": 1,
+      "message": "We added the service port number into the common template",
+      "parentUuid": "47d4a104_a1513811",
       "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
       "unresolved": true
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "4382a0c6_e11f3caa",
+        "filename": "helm/influxdb/templates/service.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000487
+      },
+      "writtenOn": "2021-04-28T11:47:42Z",
+      "side": 1,
+      "message": "I have also added all these service ports to the common template",
+      "parentUuid": "42eaebe3_dc8eb360",
+      "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "64bd419b_3ea185e0",
         "filename": "helm/influxdb/values.yaml",
         "patchSetId": 3
@@ -101,6 +191,24 @@
       "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "51bef1c6_5adfff1a",
+        "filename": "helm/influxdb/values.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1000487
+      },
+      "writtenOn": "2021-04-28T11:47:42Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "64bd419b_3ea185e0",
+      "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": false
     }
   ]
 }
