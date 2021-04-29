@@ -1,6 +1,7 @@
 {
   "comments": [
     {
+      "unresolved": true,
       "key": {
         "uuid": "4550fd6c_1ba1fe75",
         "filename": "helm/influxdb/OWNERS",
@@ -14,10 +15,10 @@
       "side": 1,
       "message": "These are not the committers of the ricplt/ric-dep repo.\nIs this file for the internal repo?\nPlease remove this file if this is not intended for ricplt/ric-dep.",
       "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
-      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
-      "unresolved": true
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "6749c208_43f5229b",
         "filename": "helm/influxdb/OWNERS",
@@ -32,10 +33,28 @@
       "message": "We have removed this file",
       "parentUuid": "4550fd6c_1ba1fe75",
       "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
-      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
-      "unresolved": true
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0599abbc_93bc0596",
+        "filename": "helm/influxdb/OWNERS",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2021-04-29T18:45:48Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "6749c208_43f5229b",
+      "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "0c58ab19_8c236a55",
         "filename": "helm/influxdb/templates/_helpers.tpl",
@@ -49,10 +68,10 @@
       "side": 1,
       "message": "please integrate the following definitions into the common template.\nhttps://gerrit.o-ran-sc.org/r/gitweb?p\u003dit/dep.git;a\u003dtree;f\u003dric-common/Common-Template/helm/ric-common/templates;h\u003d5ec87eaffe4ef975f4d03f56a603b9a2b9988e90;hb\u003dHEAD",
       "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
-      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
-      "unresolved": true
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "c98ca251_f779a03b",
         "filename": "helm/influxdb/templates/_helpers.tpl",
@@ -67,10 +86,28 @@
       "message": "we retained _helpers.tpl in ric-dep.\nCopied _helpers.tpl into the common templates in it-dep repo(with the name _influxdb.tpl) and made the changes in it.",
       "parentUuid": "0c58ab19_8c236a55",
       "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
-      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
-      "unresolved": true
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "ae684b30_aa06fcf7",
+        "filename": "helm/influxdb/templates/_helpers.tpl",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2021-04-29T18:45:48Z",
+      "side": 1,
+      "message": "Can you also submit the common template definition to it/dep? We need to have both for testing.",
+      "parentUuid": "c98ca251_f779a03b",
+      "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "b46effc7_aebaff5f",
         "filename": "helm/influxdb/templates/ingress.yaml",
@@ -84,10 +121,10 @@
       "side": 1,
       "message": "Please put the ingress path into the common template instead of the values yaml file.",
       "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
-      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
-      "unresolved": true
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "85f6f845_5678c563",
         "filename": "helm/influxdb/templates/ingress.yaml",
@@ -102,10 +139,28 @@
       "message": "we retained ingress.yaml in ric-dep repo. \nCopied ingress details into the common templates in it-dep repo",
       "parentUuid": "b46effc7_aebaff5f",
       "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
-      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
-      "unresolved": true
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d2dbb1e3_32779ae6",
+        "filename": "helm/influxdb/templates/ingress.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2021-04-29T18:45:48Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "85f6f845_5678c563",
+      "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "47d4a104_a1513811",
         "filename": "helm/influxdb/templates/meta-service.yaml",
@@ -119,10 +174,10 @@
       "side": 1,
       "message": "please put the service port number into the common template.",
       "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
-      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
-      "unresolved": true
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "782fe4b6_9f916f8e",
         "filename": "helm/influxdb/templates/meta-service.yaml",
@@ -137,10 +192,28 @@
       "message": "We added the service port number into the common template",
       "parentUuid": "47d4a104_a1513811",
       "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
-      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
-      "unresolved": true
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "26a914ba_ae3783b2",
+        "filename": "helm/influxdb/templates/meta-service.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2021-04-29T18:45:48Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "782fe4b6_9f916f8e",
+      "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "42eaebe3_dc8eb360",
         "filename": "helm/influxdb/templates/service.yaml",
@@ -154,10 +227,10 @@
       "side": 1,
       "message": "Please put all the service ports to the common template.",
       "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
-      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
-      "unresolved": true
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "4382a0c6_e11f3caa",
         "filename": "helm/influxdb/templates/service.yaml",
@@ -172,10 +245,28 @@
       "message": "I have also added all these service ports to the common template",
       "parentUuid": "42eaebe3_dc8eb360",
       "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
-      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
-      "unresolved": true
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fb08c137_434e7170",
+        "filename": "helm/influxdb/templates/service.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000046
+      },
+      "writtenOn": "2021-04-29T18:45:48Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "4382a0c6_e11f3caa",
+      "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "64bd419b_3ea185e0",
         "filename": "helm/influxdb/values.yaml",
@@ -189,10 +280,10 @@
       "side": 1,
       "message": "please also include some of the typical parameters values into the example recipe.\nhttps://gerrit.o-ran-sc.org/r/gitweb?p\u003dric-plt/ric-dep.git;a\u003dblob;f\u003dRECIPE_EXAMPLE/example_recipe.yaml;h\u003d2e75b49c77d81b463e76e374f0fe9449381513d9;hb\u003dHEAD",
       "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
-      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
-      "unresolved": true
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "51bef1c6_5adfff1a",
         "filename": "helm/influxdb/values.yaml",
@@ -207,8 +298,7 @@
       "message": "Ack",
       "parentUuid": "64bd419b_3ea185e0",
       "revId": "c44c2e0e8d0a90eee2aef44d1a408792be63719d",
-      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
-      "unresolved": false
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     }
   ]
 }
