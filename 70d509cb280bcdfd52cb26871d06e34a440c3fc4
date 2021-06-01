@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ba927966_ce94882d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000108
+      },
+      "writtenOn": "2021-06-01T03:28:16Z",
+      "side": 1,
+      "message": "hi,\n\nthere\u0027s only a contributor license agreement for OSC repos that uses the Apache license. However, we have one exception and that\u0027s _copied_ code from other projects. That can be under other (compatible) licenses. We also need to comply with the licenses of that compatible license. So, correctly we have the LICENSE file stating the MIT license. By placing the files in a subdirectory \"3rdparty\" we make sure that automatic scanners detect this correctly (they\u0027d otherwise complain about copied code without correct license attribution).\n\nHowever, for all changes we do to the helm charts we need to do them under Apache license. There are now two options. Please chose one as per what you think you can do: (1) re-license everything (the original MIT-licensed code) and your modifications under Apache license or (2) keep the original code only under MIT license and license only your modifications under MIT license. In either case please explain what is intended - (1) or (2) - in a file, like in README.md. The actually Apache license file is already one directory up (in teh root dir of ric-plt/ric-dep). Also each file that you modify please add a similar copyright header as in helm/appmgr/Chart.yaml for example, i.e, stating that HCL holds some rights in parts of the file. And to avoid misunderstandings, I would actually first commit the original files in a separate commit (where everything is still under MIT only) and then the second commit for only the changes to these files. That second commit is then actually adding the softlink to actually enable the inclusion of InfluxDB. \n\nI know this is annoying \"non-productive\" work, but it\u0027s necessary to satisfy the legal aspects. ",
+      "revId": "70d509cb280bcdfd52cb26871d06e34a440c3fc4",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
