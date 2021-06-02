@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e050243c_46f4ac0e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000487
+      },
+      "writtenOn": "2021-06-02T11:53:13Z",
+      "side": 1,
+      "message": "\nCopied influxdb helm files(unmodified files) as part of first commit.  ",
+      "revId": "22ebf743884858441150813c18ba0751771e0eed",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
