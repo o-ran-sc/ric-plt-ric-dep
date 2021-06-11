@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "18e2916f_c5ebb340",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000487
+      },
+      "writtenOn": "2021-06-11T11:05:11Z",
+      "side": 1,
+      "message": "Issue-ID: RICAPP-169 - Inclusion of InfluxDB helm chart for KPIMON, AD, TS, QP xApps\n\nupdated 3rdparty influxdb templates to refer the definitions from the common template\nupdated supporting files in the ric-dep repo",
+      "revId": "b515b9665914751651377cd6e9fd7626b69174db",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
