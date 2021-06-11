@@ -1,9 +1,24 @@
+################################################################################
+#   Copyright (c) 2021 HCL Technolgies Limited.                                #
+#                                                                              #
+#   Licensed under the Apache License, Version 2.0 (the "License");            #
+#   you may not use this file except in compliance with the License.           #
+#   You may obtain a copy of the License at                                    #
+#                                                                              #
+#       http://www.apache.org/licenses/LICENSE-2.0                             #
+#                                                                              #
+#   Unless required by applicable law or agreed to in writing, software        #
+#   distributed under the License is distributed on an "AS IS" BASIS,          #
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   #
+#   See the License for the specific language governing permissions and        #
+#   limitations under the License.                                             #
+################################################################################
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "influxdb.fullname" . }}
+  name: {{ include "common.fullname.influxdb" . }}-meta
   labels:
-    {{- include "influxdb.labels" . | nindent 4 }}
+    {{- include "common.influxdb.labels" . | nindent 4 }}
 spec:
   {{- if .Values.enterprise.enabled }}
   replicas: {{ .Values.enterprise.clusterSize }}
@@ -12,12 +27,12 @@ spec:
   {{- end}}
   selector:
     matchLabels:
-      {{- include "influxdb.selectorLabels" . | nindent 6 }}
-  serviceName: "{{ include "influxdb.fullname" . }}"
+      {{- include "common.influxdb.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "common.fullname.influxdb" . }}-meta
   template:
     metadata:
       labels:
-        {{- include "influxdb.selectorLabels" . | nindent 8 }}
+        {{- include "common.influxdb.selectorLabels" . | nindent 8 }}
       {{- if .Values.podAnnotations }}
       annotations:
 {{ toYaml .Values.podAnnotations | indent 8 }}
@@ -48,46 +63,46 @@ spec:
         - name: {{ . }}
       {{- end}}
       {{- end }}
-      serviceAccountName: {{ include "influxdb.serviceAccountName" . }}
+      serviceAccountName: {{ include "common.influxdb.serviceAccountName" . }}
       containers:
-      - name: {{ include "influxdb.fullname" . }}
+      - name: {{ include "common.fullname.influxdb" . }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
         resources:
 {{ toYaml .Values.resources | indent 10 }}
         ports:
         - name: api
-          containerPort: {{ .Values.config.http.bind_address | default 8086 }}
+          containerPort: {{ include "common.serviceport.influxdb.http.bind_address" . | default 8086 }}
         {{- if .Values.config.graphite.enabled }}
         - name: graphite
-          containerPort: {{ .Values.config.graphite.bind_address | default 2003 }}
+          containerPort: {{ include "common.serviceport.influxdb.graphite.bind_address" . | default 2003 }}
         {{- end }}
         {{- if .Values.config.collectd.enabled }}
         - name: collectd
-          containerPort: {{ .Values.config.collectd.bind_address |  default 25826 }}
+          containerPort: {{ include "common.serviceport.influxdb.collectd.bind_address" . |  default 25826 }}
           protocol: UDP
         {{- end }}
         {{- if .Values.config.udp.enabled }}
         - name: udp
-          containerPort: {{ .Values.config.udp.bind_address | default 8089 }}
+          containerPort: {{ include "common.serviceport.influxdb.udp.bind_address" . | default 8089 }}
           protocol: UDP
         {{- end }}
         {{- if .Values.config.opentsdb.enabled }}
         - name: opentsdb
-          containerPort: {{ .Values.config.opentsdb.bind_address |  default 4242 }}
+          containerPort: {{ include "common.serviceport.influxdb.opentsdb.bind_address" . |  default 4242 }}
         {{- end }}
         - name: rpc
-          containerPort: {{ .Values.config.rpc.bind_address | default 8088 }}
+          containerPort: {{ include "common.serviceport.influxdb.rpc.bind_address" . | default 8088 }}
         {{- if .Values.enterprise.enabled }}
         - name: meta
-          containerPort: {{ .Values.config.meta.bind_address | default 8091 }}
+          containerPort: {{ include "common.serviceport.influxdb.meta.bind_address" . | default 8091 }}
         {{- end }}
         {{- if .Values.env }}
         env:
 {{ toYaml .Values.env | indent 10 }}
         {{- if .Values.enterprise.enabled }}
           - name: INFLUXDB_HOSTNAME # Values.env's HOSTNAME isn't fundamentally different from $HOSTNAME, but this way weg get a distinguished name at runtime.
-            value: "$(_HOSTNAME).{{ include "influxdb.fullname" . }}"
+            value: "$(_HOSTNAME).{{ include "common.fullname.influxdb" . }}"
         {{- end }}
         {{- end }}
         {{- if .Values.envFromSecret }}
@@ -119,7 +134,7 @@ spec:
           periodSeconds: {{ .Values.startupProbe.periodSeconds | default 5 }}
         {{- end }}
         volumeMounts:
-        - name: {{ include "influxdb.fullname" . }}-data
+        - name: {{ include "common.fullname.influxdb" . }}-data
           mountPath: /var/lib/influxdb
         - name: config
           mountPath: /etc/influxdb
@@ -136,19 +151,19 @@ spec:
       volumes:
       - name: config
         configMap:
-          name: {{ include "influxdb.fullname" . }}
+          name: {{ include "common.fullname.influxdb" . }}
       {{- if .Values.initScripts.enabled }}
       - name: init
         configMap:
-          name: {{ include "influxdb.fullname" . }}-init
+          name: {{ include "common.fullname.influxdb" . }}-init
       {{- end }}
       {{- if (not .Values.persistence.enabled ) }}
-      - name: {{ include "influxdb.fullname" . }}-data
+      - name: {{ include "common.fullname.influxdb" . }}-data
         emptyDir: {}
       {{- end }}
       # Cannot use existing claim in enterprise mode
       {{- if and .Values.persistence.enabled .Values.persistence.existingClaim (not .Values.enterprise.enabled) }}
-      - name: {{ include "influxdb.fullname" . }}-data
+      - name: {{ include "common.fullname.influxdb" . }}-data
         persistentVolumeClaim:
           claimName: {{ .Values.persistence.existingClaim }}
       {{- end }}
@@ -159,7 +174,7 @@ spec:
   {{- if and .Values.persistence.enabled (or (not .Values.persistence.existingClaim) .Values.enterprise.enabled) }}
   volumeClaimTemplates:
     - metadata:
-        name: {{ include "influxdb.fullname" . }}-data
+        name: {{ include "common.fullname.influxdb" . }}-data
         annotations:
         {{- range $key, $value := .Values.persistence.annotations }}
           {{ $key }}: "{{ $value }}"

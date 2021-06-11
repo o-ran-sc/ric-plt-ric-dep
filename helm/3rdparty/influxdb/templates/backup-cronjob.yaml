@@ -1,10 +1,25 @@
+################################################################################
+#   Copyright (c) 2021 HCL Technolgies Limited.                                #
+#                                                                              #
+#   Licensed under the Apache License, Version 2.0 (the "License");            #
+#   you may not use this file except in compliance with the License.           #
+#   You may obtain a copy of the License at                                    #
+#                                                                              #
+#       http://www.apache.org/licenses/LICENSE-2.0                             #
+#                                                                              #
+#   Unless required by applicable law or agreed to in writing, software        #
+#   distributed under the License is distributed on an "AS IS" BASIS,          #
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   #
+#   See the License for the specific language governing permissions and        #
+#   limitations under the License.                                             #
+################################################################################
 {{- if .Values.backup.enabled }}
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: {{ include "influxdb.fullname" . }}-backup
+  name: {{ include "common.fullname.influxdb" . }}-backup
   labels:
-    {{- include "influxdb.labels" . | nindent 4 }}
+    {{- include "common.influxdb.labels" . | nindent 4 }}
     app.kubernetes.io/component: backup
   annotations:
     {{- toYaml .Values.backup.annotations | nindent 4 }}
@@ -21,14 +36,14 @@ spec:
             {{ toYaml .Values.backup.podAnnotations | nindent 12 }}
           {{- end }}
           labels:
-            {{- include "influxdb.selectorLabels" . | nindent 12 }}
+            {{- include "common.influxdb.selectorLabels" . | nindent 12 }}
         spec:
           restartPolicy: OnFailure
           volumes:
           - name: backup
           {{- if .Values.backup.persistence.enabled }}
             persistentVolumeClaim:
-              claimName: {{ include "influxdb.fullname" . }}-backup
+              claimName: {{ include "common.fullname.influxdb" . }}-backup
           {{- else }}
             emptyDir: {}
           {{- end }}
@@ -46,7 +61,7 @@ spec:
               secretName: {{ .Values.backup.s3.credentialsSecret | quote }}
           {{- end }}
           {{- end }}
-          serviceAccountName: {{ include "influxdb.serviceAccountName" . }}
+          serviceAccountName: {{ include "common.influxdb.serviceAccountName" . }}
           initContainers:
           - name: influxdb-backup
             image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -59,7 +74,7 @@ spec:
             - '-c'
             - |
               influxd backup \
-                -host {{ include "influxdb.fullname" . }}.{{ .Release.Namespace }}.svc:{{ .Values.config.rpc.bind_address | default 8088 }} \
+                -host {{ include "common.fullname.influxdb" . }}.{{ .Release.Namespace }}.svc:{{ include "common.serviceport.influxdb.rpc.bind_address" . | default 8088 }} \
                 -portable /backup/"$(date +%Y%m%d%H%M%S)"
             resources:
               {{- toYaml .Values.backup.resources | nindent 14 }}

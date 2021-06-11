@@ -1,22 +1,37 @@
+################################################################################
+#   Copyright (c) 2021 HCL Technolgies Limited.                                #
+#                                                                              #
+#   Licensed under the Apache License, Version 2.0 (the "License");            #
+#   you may not use this file except in compliance with the License.           #
+#   You may obtain a copy of the License at                                    #
+#                                                                              #
+#       http://www.apache.org/licenses/LICENSE-2.0                             #
+#                                                                              #
+#   Unless required by applicable law or agreed to in writing, software        #
+#   distributed under the License is distributed on an "AS IS" BASIS,          #
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   #
+#   See the License for the specific language governing permissions and        #
+#   limitations under the License.                                             #
+################################################################################
 {{- if .Values.enterprise.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "influxdb.fullname" . }}-meta
+  name: {{ include "common.fullname.influxdb" . }}-meta
   labels:
-    {{- include "influxdb.labels" . | nindent 4 }}
+    {{- include "common.influxdb.labels" . | nindent 4 }}
     app.kubernetes.io/component: meta
 spec:
   replicas: {{ .Values.enterprise.meta.clusterSize }}
   selector:
     matchLabels:
-      {{- include "influxdb.selectorLabels" . | nindent 6 }}
+      {{- include "common.influxdb.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: meta
-  serviceName: "{{ include "influxdb.fullname" . }}-meta"
+  serviceName: "{{ include "common.fullname.influxdb" . }}-meta"
   template:
     metadata:
       labels:
-        {{- include "influxdb.selectorLabels" . | nindent 8 }}
+        {{- include "common.influxdb.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: meta
       {{- if .Values.podAnnotations }}
       annotations:
@@ -29,26 +44,26 @@ spec:
         - name: {{ . }}
       {{- end}}
       {{- end }}
-      serviceAccountName: {{ include "influxdb.serviceAccountName" . }}
+      serviceAccountName: {{ include "common.influxdb.serviceAccountName" . }}
       containers:
-      - name: "{{ include "influxdb.fullname" . }}-meta"
+      - name: "{{ include "common.fullname.influxdb" . }}-meta"
         image: "{{ .Values.image.repository }}:{{ .Values.enterprise.meta.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
         resources:
 {{ toYaml .Values.enterprise.meta.resources | indent 10 }}
         ports:
         - name: udp
-          containerPort: {{ .Values.config.udp.bind_address |  default 8089 }}
+          containerPort: {{ include "common.serviceport.influxdb.udp.bind_address" . |  default 8089 }}
         - name: rpc
-          containerPort: {{ .Values.config.rpc.bind_address | default 8088 }}
+          containerPort: {{ include "common.serviceport.influxdb.rpc.bind_address" . | default 8088 }}
         - name: meta
-          containerPort: {{ .Values.config.meta.bind_address | default 8091 }}
+          containerPort: {{ include "common.serviceport.influxdb.meta.bind_address" . | default 8091 }}
         {{- if .Values.env }}
         env:
 {{ toYaml .Values.env | indent 10 }}
           # Values.env's HOSTNAME isn't fundamentally different from $HOSTNAME, but this way we get a distinguished name for InfluxDB at runtime.
           - name: INFLUXDB_HOSTNAME
-            value: "$(_HOSTNAME).{{ include "influxdb.fullname" . }}-meta"
+            value: "$(_HOSTNAME).{{ include "common.fullname.influxdb" . }}-meta"
         {{- end }}
         livenessProbe:
           httpGet:
@@ -71,7 +86,7 @@ spec:
           periodSeconds: {{ .Values.startupProbe.periodSeconds | default 5 }}
         {{- end }}
         volumeMounts:
-        - name: {{ include "influxdb.fullname" . }}-meta
+        - name: {{ include "common.fullname.influxdb" . }}-meta
           mountPath: /var/lib/influxdb
         - name: config
           mountPath: /etc/influxdb
@@ -82,14 +97,14 @@ spec:
       volumes:
       - name: config
         configMap:
-          name: {{ include "influxdb.fullname" . }}-meta
+          name: {{ include "common.fullname.influxdb" . }}-meta
       {{- if .Values.initScripts.enabled }}
       - name: init
         configMap:
-          name: {{ include "influxdb.fullname" . }}-init
+          name: {{ include "common.fullname.influxdb" . }}-init
       {{- end }}
       {{- if (not .Values.persistence.enabled ) }}
-      - name: {{ include "influxdb.fullname" . }}-meta
+      - name: {{ include "common.fullname.influxdb" . }}-meta
         emptyDir: {}
       {{- end }}
     {{- if .Values.schedulerName }}
@@ -110,7 +125,7 @@ spec:
   {{- if .Values.persistence.enabled }}
   volumeClaimTemplates:
     - metadata:
-        name: {{ include "influxdb.fullname" . }}-meta
+        name: {{ include "common.fullname.influxdb" . }}-meta
         annotations:
         {{- range $key, $value := .Values.persistence.annotations }}
           {{ $key }}: "{{ $value }}"

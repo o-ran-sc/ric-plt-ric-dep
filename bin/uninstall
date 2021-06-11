@@ -2,6 +2,7 @@
 ################################################################################
 #   Copyright (c) 2019 AT&T Intellectual Property.                             #
 #   Copyright (c) 2019 Nokia.                                                  #
+#   Copyright (c) 2021 HCL Technologies Limited.                               #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -16,7 +17,7 @@
 #   limitations under the License.                                             #
 ################################################################################
 
-COMPONENTS="xapp-onboarder appmgr rtmgr e2mgr e2term a1mediator submgr vespamgr jaegeradapter dbaas infrastructure o1mediator alarmmanager"
+COMPONENTS="xapp-onboarder appmgr rtmgr e2mgr e2term a1mediator submgr vespamgr jaegeradapter dbaas infrastructure o1mediator alarmmanager influxdb"
 RECIPE_NAMESPACE=$(kubectl get cm --all-namespaces | grep ricplt-recipe | awk '{print $1}')
 kubectl get configmap  -n $RECIPE_NAMESPACE ricplt-recipe  -o jsonpath='{.data.recipe}' > /tmp/recipe.yaml
 

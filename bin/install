@@ -2,6 +2,7 @@
 ################################################################################
 #   Copyright (c) 2019 AT&T Intellectual Property.                             #
 #   Copyright (c) 2019 Nokia.                                                  #
+#   Copyright (c) 2021 HCL Technologies Limited.                               #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -119,7 +120,7 @@ RELEASE_PREFIX=$(echo "$COMMON_BLOCK" | awk '/^ *releasePrefix:/{print $2}')
 LOCAL_REPOSITORY=$(echo "$COMMON_BLOCK" | awk '/^ *localregistry:/{print $2}')
 
 # replace the dbaasha with dbaas1 if deploying non HA DBaaS
-COMPONENTS=${LIST_OF_COMPONENTS:-"infrastructure dbaas xapp-onboarder appmgr rtmgr e2mgr e2term a1mediator submgr vespamgr jaegeradapter o1mediator alarmmanager"}
+COMPONENTS=${LIST_OF_COMPONENTS:-"infrastructure dbaas xapp-onboarder appmgr rtmgr e2mgr e2term a1mediator submgr vespamgr jaegeradapter o1mediator alarmmanager influxdb"}
 echo "Deploying RIC infra components [$COMPONENTS]"
 
 

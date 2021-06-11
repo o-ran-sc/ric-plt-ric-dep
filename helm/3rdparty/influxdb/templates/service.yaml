@@ -1,3 +1,18 @@
+################################################################################
+#   Copyright (c) 2021 HCL Technolgies Limited.                                #
+#                                                                              #
+#   Licensed under the Apache License, Version 2.0 (the "License");            #
+#   you may not use this file except in compliance with the License.           #
+#   You may obtain a copy of the License at                                    #
+#                                                                              #
+#       http://www.apache.org/licenses/LICENSE-2.0                             #
+#                                                                              #
+#   Unless required by applicable law or agreed to in writing, software        #
+#   distributed under the License is distributed on an "AS IS" BASIS,          #
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   #
+#   See the License for the specific language governing permissions and        #
+#   limitations under the License.                                             #
+################################################################################
 apiVersion: v1
 kind: Service
 metadata:
@@ -5,42 +20,42 @@ metadata:
   annotations:
 {{ toYaml .Values.service.annotations | indent 4 }}
 {{- end }}
-  name: {{ include "influxdb.fullname" . }}
+  name: {{ include "common.fullname.influxdb" . }}
   labels:
-    {{- include "influxdb.labels" . | nindent 4 }}
+    {{- include "common.influxdb.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
   - name: api
-    port: {{ .Values.config.http.bind_address | default 8086 }}
+    port: {{ include "common.serviceport.influxdb.http.bind_address" . | default 8086 }}
     targetPort: api
   - name: rpc
-    port: {{ .Values.config.rpc.bind_address | default 8088 }}
+    port: {{ include "common.serviceport.influxdb.rpc.bind_address" . | default 8088 }}
     targetPort: rpc
   {{- if .Values.config.graphite.enabled }}
   - name: graphite
-    port: {{ .Values.config.graphite.bind_address | default 2003 }}
+    port: {{ include "common.serviceport.influxdb.graphite.bind_address" . | default 2003 }}
     targetPort: graphite
   {{- end }}
   {{- if .Values.config.collectd.enabled }}
   - name: collectd
-    port: {{ .Values.config.collectd.bind_address | default 25826 }}
+    port: {{ include "common.serviceport.influxdb.collectd.bind_address" . | default 25826 }}
     protocol: UDP
     targetPort: collectd
   {{- end }}
   {{- if .Values.config.udp.enabled }}
   - name: udp
-    port: {{ .Values.config.udp.bind_address | default 8089 }}
+    port: {{ include "common.serviceport.influxdb.udp.bind_address" . | default 8089 }}
     protocol: UDP
     targetPort: udp
   {{- end }}
   {{- if .Values.config.opentsdb.enabled }}
   - name: opentsdb
-    port: {{ .Values.config.opentsdb.bind_address | default 4242 }}
+    port: {{ include "common.serviceport.influxdb.opentsdb.bind_address" . | default 4242 }}
     targetPort: opentsdb
   {{- end }}
   selector:
-    {{- include "influxdb.selectorLabels" . | nindent 4 }}
+    {{- include "common.influxdb.selectorLabels" . | nindent 4 }}
 {{- if .Values.service.loadBalancerIP }}
   loadBalancerIP: {{ .Values.service.loadBalancerIP }}
 {{- end }}
