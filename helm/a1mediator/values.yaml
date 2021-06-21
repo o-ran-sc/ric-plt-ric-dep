@@ -38,3 +38,4 @@ a1mediator:
     a1_rcv_retry_times: 20
     ins_del_no_resp_ttl: 5
     ins_del_resp_ttl: 10
+  loglevel: "INFO"
