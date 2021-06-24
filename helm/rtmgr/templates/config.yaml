@@ -70,6 +70,8 @@ data:
          "host": ":8080"
        "logger":
          "level": 4
+       "periodicRoutes":
+         "enable"		   
        "rmr":
          "protPort": "tcp:4560"
          "maxSize": 1024
