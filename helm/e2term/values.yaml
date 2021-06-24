@@ -66,6 +66,6 @@ health:
 
     readiness:
       command: "/opt/e2/rmr_probe -h 0.0.0.0"
-      initialDelaySeconds: 15
-      periodSeconds: 10
+      initialDelaySeconds: 120
+      periodSeconds: 60
       enabled: true
