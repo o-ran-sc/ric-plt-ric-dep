@@ -32,3 +32,5 @@ data:
     rte|20011|{{ include "common.servicename.a1mediator.rmr" . }}.{{ include "common.namespace.platform" . }}:{{ include "common.serviceport.a1mediator.rmr.data" . }}
     rte|20012|{{ include "common.servicename.a1mediator.rmr" . }}.{{ include "common.namespace.platform" . }}:{{ include "common.serviceport.a1mediator.rmr.data" . }}
     newrt|end
+  loglevel.txt: |
+    log-level: {{ .Values.loglevel }}
