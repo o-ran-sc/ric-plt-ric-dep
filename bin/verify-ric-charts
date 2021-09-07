@@ -40,7 +40,7 @@ HELM_COMMAND=helm
 if ! $($HELM_COMMAND > /dev/null);then
     echo "Download and install Helm"
     if [ ! -e helm-v${HELMVERSION}-linux-amd64.tar.gz ]; then
-      wget -nv https://storage.googleapis.com/kubernetes-helm/helm-v${HELMVERSION}-linux-amd64.tar.gz
+      wget -nv https://get.helm.sh/helm-v${HELMVERSION}-linux-amd64.tar.gz
     fi
     tar -xvf ./helm-v${HELMVERSION}-linux-amd64.tar.gz
     mv linux-amd64/helm ./
