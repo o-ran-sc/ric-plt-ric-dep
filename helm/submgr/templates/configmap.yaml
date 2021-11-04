@@ -33,13 +33,23 @@ data:
       "hostAddr": {{ include "common.servicename.rtmgr.http" . | quote }}
       "port"    : {{ include "common.serviceport.rtmgr.http" . }}
       "baseUrl" : "/ric/v1"
+    "db":
+      "sessionNamespace": "XMSession"
+      "host": ":6379"
+      "prot": "tcp"
+      "maxIdle": 80
+      "maxActive": 12000
     "controls":
       "e2tSubReqTimeout_ms": 2000
       "e2tSubDelReqTime_ms": 2000
       "e2tRecvMsgTimeout_ms": 2000
       "e2tMaxSubReqTryCount": 2
       "e2tMaxSubDelReqTryCount": 2
+      "checkE2State": "true"
       "readSubsFromDb": "true"
+      "dbTryCount": 200
+      "dbRetryForever": "true"
+      "waitRouteCleanup_ms": 5000
   submgrutartg: |
       newrt|start
       newrt|end
