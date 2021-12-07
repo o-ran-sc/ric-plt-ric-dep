@@ -16,6 +16,7 @@
 ################################################################################
 {{- $topCtx :=  . }}
 {{- $health := .Values.health }}
+{{- $common_env := .Values.common_env_variables }}
 {{- range keys .Values.e2term }}
 {{- $key := . }}
 {{- with index $topCtx.Values.e2term . }}
@@ -126,6 +127,23 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "common.configmapname.e2term" $topCtx }}-env-{{ $key }}
+          env:
+            - name: SYSTEM_NAME
+              value: "SEP"
+            - name: CONFIG_MAP_NAME
+              value: "{{ $common_env.ConfigMapName }}"
+            - name: HOST_NAME
+              valueFrom:
+               fieldRef:
+                fieldPath: spec.nodeName
+            - name: SERVICE_NAME
+              value: "{{ $common_env.ServiceName }}"
+            - name: CONTAINER_NAME
+              value: "{{ include "common.containername.e2term" $topCtx }}"
+            - name: POD_NAME
+              valueFrom:
+               fieldRef:
+                fieldPath: metadata.name
           ports:
             - name: "rmrroute-{{ $key }}"
               containerPort: {{ include "common.serviceport.e2term.rmr.route" $topCtx }}

@@ -59,13 +59,19 @@ e2term:
 
 health:
     liveness:
-      command: "/opt/e2/rmr_probe -h 0.0.0.0"
+      command: "ip=`hostname -i`;export RMR_SRC_ID=$ip;/opt/e2/rmr_probe -h $ip"
       initialDelaySeconds: 10
       periodSeconds: 10
       enabled: true
 
     readiness:
-      command: "/opt/e2/rmr_probe -h 0.0.0.0"
+      command: "ip=`hostname -i`;export RMR_SRC_ID=$ip;/opt/e2/rmr_probe -h $ip"
       initialDelaySeconds: 120
       periodSeconds: 60
       enabled: true
+
+loglevel: ERR
+
+common_env_variables:
+  ConfigMapName: "/etc/config/log-level"
+  ServiceName: "RIC_E2_TERM"
