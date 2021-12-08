@@ -16,6 +16,23 @@
       "message": "[RIC-816] install script to support \"optional components\" \nChanges have been made in ric-dep/bin/install as mentioned in ticket RIC-816. Kindly review and merge if it suits the requirement.",
       "revId": "95e88f225a4ca95291a3672dddaed2c4ab3eb630",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5e16e130_b9e58b6f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000108
+      },
+      "writtenOn": "2021-12-08T11:42:35Z",
+      "side": 1,
+      "message": "can you upload a new patchset with max 50 char heading and all the details in the description part of teh commit message",
+      "revId": "95e88f225a4ca95291a3672dddaed2c4ab3eb630",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     }
   ]
 }
