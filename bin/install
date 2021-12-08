@@ -119,11 +119,6 @@ XAPPNAMESPACE=$(echo "$NAMESPACE_BLOCK" | awk '/^ *xapp:/{print $2}')
 RELEASE_PREFIX=$(echo "$COMMON_BLOCK" | awk '/^ *releasePrefix:/{print $2}')
 LOCAL_REPOSITORY=$(echo "$COMMON_BLOCK" | awk '/^ *localregistry:/{print $2}')
 
-# replace the dbaasha with dbaas1 if deploying non HA DBaaS
-COMPONENTS=${LIST_OF_COMPONENTS:-"infrastructure dbaas xapp-onboarder appmgr rtmgr e2mgr e2term a1mediator submgr vespamgr jaegeradapter o1mediator alarmmanager influxdb"}
-echo "Deploying RIC infra components [$COMPONENTS]"
-
-
 if ! kubectl get ns ${PLTNAMESPACE:-ricplt}> /dev/null 2>&1; then
     kubectl create ns ${PLTNAMESPACE:-ricplt}
 fi
@@ -133,6 +128,32 @@ fi
 if ! kubectl get ns ${XAPPNAMESPACE:-ricxapp}> /dev/null 2>&1; then
     kubectl create ns ${XAPPNAMESPACE:-ricxapp}
 fi
+
+IS_INFLUX_PERSIST=$( kubectl get storageclass nfs 2>/dev/null | awk '{print $1}' | grep nfs)
+if [[ ${LIST_OF_COMPONENTS} == *"influxdb"* ]]; then
+	if [ -z "$IS_INFLUX_PERSIST" ]; then
+        	echo  "nfs storage does not exist, create PersistentVolume through the storage class for the influxdb database"
+        	LIST_OF_COMPONENTS=$(echo "$LIST_OF_COMPONENTS" | sed "s/influxdb//")
+            echo "skipping influxdb component"
+	else
+        	echo "nfs storage exist"
+        fi
+fi
+
+# replace the dbaasha with dbaas1 if deploying non HA DBaaS
+COMPONENTS="infrastructure dbaas appmgr rtmgr e2mgr e2term a1mediator submgr vespamgr o1mediator alarmmanager $LIST_OF_COMPONENTS"
+
+echo "Deploying RIC infra components [$COMPONENTS]"
+if [[ ${COMPONENTS} != *"influxdb"* ]]; then
+        OPTIONAL_COMPONENTS="influxdb"
+fi
+if [[ ${COMPONENTS} != *"jaegeradapter"* ]]; then
+        OPTIONAL_COMPONENTS={"$OPTIONAL_COMPONENTS jaegeradapter"}
+fi
+if [ ! -z "$OPTIONAL_COMPONENTS" ]; then
+        echo "Note that the following optional components are NOT being deployed: $OPTIONAL_COMPONENTS. To deploy them add them with -c to the default component list of the install command"
+fi
+
 FOUND_RECIPE=$(kubectl get configmap -n ${PLTNAMESPACE:-ricplt} ricplt-recipe 2>/dev/null )
 if [ ! -z "$FOUND_RECIPE" ]; then
     kubectl delete configmap -n ${PLTNAMESPACE:-ricplt} ricplt-recipe
@@ -285,7 +306,6 @@ wait_for_cats redis-kernel-optimizer ${INFRANAMESPACE:-ricinfra}
 kubectl delete -f kernel_optimizer.yaml
 rm kernel_optimizer.yaml
 fi
-
 
 for component in $COMPONENTS; do
     helm dep up $DIR/../helm/$component
