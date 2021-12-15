@@ -121,6 +121,9 @@ spec:
         ports:
         - name: redis
           containerPort: {{ include "common.serviceport.dbaas.redis" . }}
+        envFrom:
+        - configMapRef:
+            name: {{ include "common.configmapname.dbaas" . }}-appconfig
         volumeMounts:
         - mountPath: /data
 {{- if $.Values.dbaas.enableHighAvailability }}
@@ -152,6 +155,9 @@ spec:
         ports:
           - name: sentinel
             containerPort: {{ include "common.serviceport.dbaas.sentinel" . }}
+        envFrom:
+        - configMapRef:
+            name: {{ include "common.configmapname.dbaas" . }}-appconfig
         volumeMounts:
         - mountPath: /data
           name: data
