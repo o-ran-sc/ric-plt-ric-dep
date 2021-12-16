@@ -59,6 +59,30 @@
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "59342bd5_57832780",
+        "filename": "bin/install",
+        "patchSetId": 5
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1000108
+      },
+      "writtenOn": "2021-12-16T14:28:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "adfde33f_805a7e59",
+      "range": {
+        "startLine": 132,
+        "startChar": 10,
+        "endLine": 132,
+        "endChar": 14
+      },
+      "revId": "1b1f06bf8865e4970785d6d4a946537e528325c4",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "541ad96c_48d1521c",
@@ -72,6 +96,30 @@
       "writtenOn": "2021-12-08T12:19:18Z",
       "side": 1,
       "message": "xapp-onboarder is not needed anymore (dmscli handles this now). pls remove in line 144",
+      "range": {
+        "startLine": 144,
+        "startChar": 33,
+        "endLine": 144,
+        "endChar": 48
+      },
+      "revId": "1b1f06bf8865e4970785d6d4a946537e528325c4",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "286206d5_e1050840",
+        "filename": "bin/install",
+        "patchSetId": 5
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1000108
+      },
+      "writtenOn": "2021-12-16T14:28:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "541ad96c_48d1521c",
       "range": {
         "startLine": 144,
         "startChar": 33,
