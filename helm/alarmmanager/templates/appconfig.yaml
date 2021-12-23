@@ -26,11 +26,12 @@ metadata:
 {{- if eq $namespace $platformNameSpace }}
   name: {{ include "common.configmapname.alarmmanager" $ }}-appconfig
 {{- else }}
-  name: alarm-appconfig
+  name: alarmmanager-appconfig
 {{- end }}
   namespace: {{ $namespace }}
 data:
-  ALARM_MGR_SERVICE_NAME: {{ include "common.servicename.alarmmanager.rmr" $ }}.{{ $platformNameSpace }}
-  ALARM_MGR_SERVICE_PORT: {{ include "common.serviceport.alarmmanager.rmr.data" $ | quote }}
+  ALARM_MANAGER_SERVICE_NAME: {{ include "common.servicename.alarmmanager.rmr" $ }}.{{ $platformNameSpace }}
+  ALARM_MANAGER_SERVICE_PORT: {{ include "common.serviceport.alarmmanager.rmr.data" $ | quote }}
+  ALARM_MANAGER_URL: http://{{ include "common.servicename.alarmmanager.http" $ }}:{{ include "common.serviceport.alarmmanager.http" . }}
 
 {{- end }}
