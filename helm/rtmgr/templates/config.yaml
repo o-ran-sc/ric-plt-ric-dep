@@ -147,6 +147,9 @@ data:
           "MC_REPORT=30010",
           "DCAPTERM_RTPM_RMR_MSGTYPE=33001",
           "DCAPTERM_GEO_RMR_MSGTYPE=33002",
+          "RIC_SERVICE_UPDATE=12030",
+          "RIC_SERVICE_UPDATE_ACK=12031",
+          "RIC_SERVICE_UPDATE_FAILURE=12032",
           ]
 
        "PlatformRoutes": [
@@ -180,5 +183,6 @@ data:
          { 'messagetype': 'E2_TERM_KEEP_ALIVE_RESP', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint': 'E2MAN', 'meid': ''},
          { 'messagetype': 'A1_POLICY_QUERY', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint': 'A1MEDIATOR', 'meid': ''},
          { 'messagetype': 'A1_POLICY_RESP', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint': 'A1MEDIATOR', 'meid': ''},
+         { 'messagetype': 'RIC_SERVICE_UPDATE', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint': 'E2MAN', 'meid': ''},
           ]
 
