@@ -1,6 +1,6 @@
 ################################################################################
 #   Copyright (c) 2020 AT&T Intellectual Property.                             #
-#   Copyright (c) 2020 Nokia.                                                  #
+#   Copyright (c) 2020-2022 Nokia.                                             #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -16,14 +16,18 @@
 ################################################################################
 {{ $platformNameSpace := include "common.namespace.platform" . }}
 {{ $xAppNameSpace := include "common.namespace.xapp" . }}
-{{ $nameSpaceList := list $platformNameSpace $xAppNameSpace }}
+{{ $nameSpaceList := list $.Release.Namespace $platformNameSpace $xAppNameSpace | uniq }}
+{{ $addrlist := include "dbaasServerAddrList" . }}
+{{ $masterNames := include "dbaas.env.sentinel.master.name.list" . }}
+{{ $redisPorts := include "dbaas.env.redis.port.list" . }}
+{{ $sentinelPorts := include "dbaas.env.sentinel.port.list" . }}
 {{- range $nameSpaceList }}
 {{- $namespace := . }}
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-{{- if eq $namespace $platformNameSpace }}
+{{- if or (eq $namespace $platformNameSpace) (eq $namespace $.Release.Namespace) }}
   name: {{ include "common.configmapname.dbaas" $ }}-appconfig
 {{- else }}
   name: dbaas-appconfig
@@ -31,12 +35,15 @@ metadata:
   namespace: {{ $namespace }}
 data:
 {{- if $.Values.dbaas.enableHighAvailability }}
-  DBAAS_SERVICE_SENTINEL_PORT: {{ include "common.serviceport.dbaas.sentinel" . | quote }}
-  DBAAS_MASTER_NAME: {{ $.Values.dbaas.redis.masterGroupName }}
+  DBAAS_SERVICE_SENTINEL_PORT: {{ $sentinelPorts | quote }}
+  DBAAS_MASTER_NAME: {{ $masterNames }}
   DBAAS_NODE_COUNT: {{ $.Values.dbaas.haReplicas | quote }}
 {{- else }}
   DBAAS_NODE_COUNT: {{ $.Values.dbaas.saReplicas | quote }}
 {{- end }}
-  DBAAS_SERVICE_HOST: {{ include "common.servicename.dbaas.tcp" $ }}.{{ $platformNameSpace }}
-  DBAAS_SERVICE_PORT: {{ include "common.serviceport.dbaas.redis" $ | quote }}
+  DBAAS_SERVICE_HOST: {{ include "common.servicename.dbaas.tcp" $ }}-cluster-0.{{ $.Release.Namespace }}
+  DBAAS_SERVICE_PORT: {{ $redisPorts | quote }}
+{{- if gt (int $.Values.dbaas.clusterSize) 1 }}
+  DBAAS_CLUSTER_ADDR_LIST: {{ $addrlist | quote }}
+{{- end }}
 {{- end }}

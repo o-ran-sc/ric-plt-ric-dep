@@ -1,6 +1,6 @@
 ################################################################################
 #   Copyright (c) 2020 AT&T Intellectual Property.                             #
-#   Copyright (c) 2020 Nokia.                                                  #
+#   Copyright (c) 2020-2022 Nokia.                                             #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -19,7 +19,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ template "common.configmapname.dbaas" . }}-config
-  namespace: {{ include "common.namespace.platform" . }}
+  namespace: {{ $.Release.Namespace }}
   labels:
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
@@ -28,6 +28,7 @@ metadata:
 data:
   redis.conf: |
     dir "/data"
+    port {{ include "common.serviceport.dbaas.redis" . }}
 {{- if $.Values.dbaas.enableHighAvailability }}
     {{- range $key, $value := .Values.dbaas.redis.ha_config }}
     {{ $key }} {{ $value }}
@@ -41,6 +42,7 @@ data:
 {{- if $.Values.dbaas.enableHighAvailability }}
   sentinel.conf: |
     dir "/data"
+    port {{ include "common.serviceport.dbaas.sentinel" . }}
     {{- $root := . -}}
     {{- range $key, $value := .Values.dbaas.sentinel.config }}
     sentinel {{ $key }} {{ $root.Values.dbaas.redis.masterGroupName }} {{ $value }}
@@ -50,101 +52,144 @@ data:
   init.sh: |
     HOSTNAME="$(hostname)"
     INDEX="${HOSTNAME##*-}"
-    MASTER="$(redis-cli -h {{ template "common.servicename.dbaas.tcp" . }}.{{ include "common.namespace.platform" . }} -p {{ include "common.serviceport.dbaas.sentinel" .  }} sentinel get-master-addr-by-name {{ .Values.dbaas.redis.masterGroupName }} | grep -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')"
-    MASTER_GROUP="{{ .Values.dbaas.redis.masterGroupName }}"
+    CLUSTER_INDEX=$1
+    SENTINEL_PORT=$(({{ include "common.serviceport.dbaas.sentinel" . }} + ${CLUSTER_INDEX}))
+    SERVICE="{{ include "common.servicename.dbaas.tcp" . }}-cluster-${CLUSTER_INDEX}.{{ $.Release.Namespace }}.svc.cluster.local"
+    POD_ADDR="{{ include "common.statefulsetname.dbaas" . }}-cluster-${CLUSTER_INDEX}-server-$INDEX.$SERVICE"
+    MASTER_GROUP="{{ .Values.dbaas.redis.masterGroupName }}-cluster-${CLUSTER_INDEX}"
+    MASTER_ADDR="$(redis-cli -h ${SERVICE} -p ${SENTINEL_PORT} sentinel get-master-addr-by-name ${MASTER_GROUP} | cut -d$'\n' -f1)"
     QUORUM="{{ .Values.dbaas.sentinel.quorum }}"
     REDIS_CONF=/data/conf/redis.conf
-    REDIS_PORT={{ include "common.serviceport.dbaas.redis" . }}
+    REDIS_PORT=$(({{ include "common.serviceport.dbaas.redis" . }} + ${CLUSTER_INDEX}))
     SENTINEL_CONF=/data/conf/sentinel.conf
-    SENTINEL_PORT={{ include "common.serviceport.dbaas.sentinel" . }}
-    SERVICE={{ include "common.servicename.dbaas.tcp" . }}
+    MIN_REPLICAS_TO_WRITE="{{ .Values.dbaas.redis.minReplicasToWrite }}"
+    MIN_REPLICAS_MAX_LAG="{{ .Values.dbaas.redis.minReplicasMaxLag }}"
+    BUFFER_REPLICA_HARD_LIMIT="{{ .Values.dbaas.redis.clientOutputBufferReplicaHardLimit }}"
+    BUFFER_REPLICA_SOFT_LIMIT="{{ .Values.dbaas.redis.clientOutputBufferReplicaSoftLimit }}"
+    BUFFER_REPLICA_SOFT_SECONDS="{{ .Values.dbaas.redis.clientOutputBufferReplicaSoftSeconds }}"
+    DNS_WAIT_TIME=10
     set -eu
+
+    redis_port_update() {
+        sed -i "s/port {{ include "common.serviceport.dbaas.redis" . }}/port ${REDIS_PORT}/" "${REDIS_CONF}"
+    }
+
+    sentinel_port_update() {
+        sed -i "s/port {{ include "common.serviceport.dbaas.sentinel" . }}/port ${SENTINEL_PORT}/" "${SENTINEL_CONF}"
+    }
 
     sentinel_update() {
         echo "Updating sentinel config"
-        sed -i "1s/^/$(cat sentinel-id)\\n/" "$SENTINEL_CONF"
-        sed -i "2s/^/sentinel monitor $MASTER_GROUP $1 $REDIS_PORT $QUORUM \\n/" "$SENTINEL_CONF"
-        echo "sentinel announce-ip $ANNOUNCE_IP" >> $SENTINEL_CONF
+        echo "  master = $1"
+        echo "  pod = $POD_ADDR"
+        sentinel_port_update
+        sed -i "1s/^/sentinel resolve-hostnames yes\\n/" "$SENTINEL_CONF"
+        sed -i "2s/^/sentinel announce-hostnames yes\\n/" "$SENTINEL_CONF"
+        sed -i "3s/^/sentinel monitor $MASTER_GROUP $1 $REDIS_PORT $QUORUM \\n/" "$SENTINEL_CONF"
+        sed -i "s/dbaasmaster /$MASTER_GROUP /g" "$SENTINEL_CONF"
+        echo "sentinel announce-ip $POD_ADDR" >> $SENTINEL_CONF
         echo "sentinel announce-port $SENTINEL_PORT" >> $SENTINEL_CONF
     }
 
     redis_update() {
         echo "Updating redis config"
-        echo "slaveof $1 $REDIS_PORT" >> "$REDIS_CONF"
-        echo "slave-announce-ip $ANNOUNCE_IP" >> $REDIS_CONF
-        echo "slave-announce-port $REDIS_PORT" >> $REDIS_CONF
+        echo "  pod = $POD_ADDR"
+        redis_port_update
+        echo "replicaof $1 $REDIS_PORT" >> "$REDIS_CONF"
+        echo "replica-announce-ip $POD_ADDR" >> $REDIS_CONF
+        echo "replica-announce-port $REDIS_PORT" >> $REDIS_CONF
+        echo "min-replicas-to-write $MIN_REPLICAS_TO_WRITE" >> $REDIS_CONF
+        echo "min-replicas-max-lag $MIN_REPLICAS_MAX_LAG" >> $REDIS_CONF
+        echo "client-output-buffer-limit replica $BUFFER_REPLICA_HARD_LIMIT $BUFFER_REPLICA_SOFT_LIMIT $BUFFER_REPLICA_SOFT_SECONDS" >> $REDIS_CONF
     }
 
     redis_master_update() {
         echo "Updating redis default master config"
-        echo "slave-announce-ip $ANNOUNCE_IP" >> $REDIS_CONF
-        echo "slave-announce-port $REDIS_PORT" >> $REDIS_CONF
+        echo "  pod = $POD_ADDR"
+        redis_port_update
+        echo "replica-announce-ip $POD_ADDR" >> $REDIS_CONF
+        echo "replica-announce-port $REDIS_PORT" >> $REDIS_CONF
+        echo "min-replicas-to-write $MIN_REPLICAS_TO_WRITE" >> $REDIS_CONF
+        echo "min-replicas-max-lag $MIN_REPLICAS_MAX_LAG" >> $REDIS_CONF
+        echo "client-output-buffer-limit replica $BUFFER_REPLICA_HARD_LIMIT $BUFFER_REPLICA_SOFT_LIMIT $BUFFER_REPLICA_SOFT_SECONDS" >> $REDIS_CONF
     }
 
     copy_config() {
-        if [ -f "$SENTINEL_CONF" ]; then
-            grep "sentinel myid" "$SENTINEL_CONF" > sentinel-id || true
-        fi
         cp /readonly-config/redis.conf "$REDIS_CONF"
         cp /readonly-config/sentinel.conf "$SENTINEL_CONF"
     }
 
-    setup_defaults() {
-        echo "Setting up defaults"
-        if [ "$INDEX" = "0" ]; then
-            echo "Setting this pod as the default master"
-            sed -i "s/^.*slaveof.*//" "$REDIS_CONF"
-            redis_master_update
-            sentinel_update "$ANNOUNCE_IP"
-        else
-            DEFAULT_MASTER="$(getent hosts "{{ include "common.statefulsetname.dbaas" . }}-server-0.$SERVICE" | awk '{ print $1 }')"
-            if [ -z "$DEFAULT_MASTER" ]; then
-                echo "Unable to resolve host"
-                exit 1
-            fi
-            echo "Setting default slave config.."
-            redis_update "$DEFAULT_MASTER"
-            sentinel_update "$DEFAULT_MASTER"
-        fi
+    copy_lifecycle_scripts() {
+        scripts_dir="/data/scripts"
+        mkdir -p ${scripts_dir}
+        cp /readonly-config/prestop-redis.sh ${scripts_dir}/
+        cp /readonly-config/prestop-sentinel.sh ${scripts_dir}/
+        chmod -R 0755 ${scripts_dir}
     }
 
-    find_master() {
-        echo "Attempting to find master"
-        if [ "$(redis-cli -h "$MASTER"{{ if .Values.auth }} -a "$AUTH"{{ end }} ping)" != "PONG" ]; then
-           echo "Can't ping master, attempting to force failover"
-           if redis-cli -h "$SERVICE" -p "$SENTINEL_PORT" sentinel failover "$MASTER_GROUP" | grep -q 'NOGOODSLAVE' ; then
-               setup_defaults
-               return 0
-           fi
-           sleep 10
-           MASTER="$(redis-cli -h $SERVICE -p $SENTINEL_PORT sentinel get-master-addr-by-name $MASTER_GROUP | grep -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')"
-           if [ "$MASTER" ]; then
-               sentinel_update "$MASTER"
-               redis_update "$MASTER"
-           else
-              echo "Could not failover, exiting..."
-              exit 1
-           fi
-        else
-            echo "Found reachable master, updating config"
-            sentinel_update "$MASTER"
-            redis_update "$MASTER"
-        fi
+    setup_primary() {
+        echo "Setting this pod as the default primary"
+        sed -i "s/^.*replicaof.*//" "$REDIS_CONF"
+        redis_master_update
+        sentinel_update "$POD_ADDR"
+    }
+
+    setup_replica() {
+        echo "Setting default replica config.."
+        redis_update "$MASTER_ADDR"
+        sentinel_update "$MASTER_ADDR"
+    }
+
+    sdown_flag_on() {
+        get_sentinel_master_cmd="redis-cli -h ${SERVICE} -p ${SENTINEL_PORT} sentinel master ${MASTER_GROUP}"
+        eval ${get_sentinel_master_cmd} | grep -Fq "s_down"
+    }
+
+    wait_primary_s_down_flag_cleared() {
+        loop_cnt=1
+        while sdown_flag_on
+        do
+            echo "INFO wait primary is up (loop ${loop_cnt})"
+            sleep 1s
+            if [[ `expr ${loop_cnt} % 11` -eq 0 ]]; then
+                echo "Primary is still s_down. Trying manual sentinel failover"
+                stat=$(redis-cli -h ${SERVICE} -p ${SENTINEL_PORT} sentinel failover ${MASTER_GROUP})
+                echo "Manual sentinel failover done: ${stat}"
+            fi
+            loop_cnt=$((${loop_cnt} + 1))
+        done
+    }
+
+    wait_dns() {
+        local dns_wait_time=$1
+        loop_cnt=1
+        while [ -z "${MASTER_ADDR}" ]
+        do
+            echo "INFO Workaround for redis primary address. Maybe the DNS just fails (${loop_cnt})"
+            if [[ ${loop_cnt} -ge ${dns_wait_time} ]]; then
+                echo "INFO No primary redis found, default to primary"
+                break
+            fi
+            sleep 1s
+            sentinel_get_master_addr_cmd="redis-cli -h ${SERVICE} -p ${SENTINEL_PORT} sentinel get-master-addr-by-name ${MASTER_GROUP}"
+            MASTER_ADDR="$(${sentinel_get_master_addr_cmd} | cut -d$'\n' -f1)"
+            loop_cnt=$((${loop_cnt} + 1))
+        done
     }
 
     mkdir -p /data/conf/
 
-    echo "Initializing config.."
+    echo "`date` Initializing config.."
     copy_config
+    copy_lifecycle_scripts
 
-    #    ANNOUNCE_IP=$(getent hosts "{{ include "common.statefulsetname.dbaas" . }}-server-$INDEX.$SERVICE" | awk '{ print $1 }')
-    if [ -z "$ANNOUNCE_IP" ]; then
-        "Could not resolve the announce ip for this pod"
-        exit 1
-    elif [ "$MASTER" ]; then
-        find_master
+    wait_dns ${DNS_WAIT_TIME}
+
+    if [ -z "${MASTER_ADDR}" ]; then
+        setup_primary
     else
-        setup_defaults
+        wait_primary_s_down_flag_cleared
+        setup_replica
     fi
 
     if [ "${AUTH:-}" ]; then
@@ -152,6 +197,61 @@ data:
         sed -i "s/replace-default-auth/$AUTH/" "$REDIS_CONF" "$SENTINEL_CONF"
     fi
 
-    echo "Ready..."
+    echo "`date` Ready..."
 
+  prestop-redis.sh: |
+    CLUSTER_INDEX=$(echo $(hostname) | sed 's/.*-cluster-\(.*\)-server-.*/\1/')
+    REDIS_PORT=$(({{ include "common.serviceport.dbaas.redis" . }} + ${CLUSTER_INDEX}))
+    MAX_FAILOVER_TIME=$(({{ .Values.dbaas.terminationGracePeriodSeconds }} - 1))
+
+    failover_finished() {
+        ROLE=$(redis-cli -h 127.0.0.1 -p ${REDIS_PORT} role | head -1)
+        [[ "$ROLE" != "master" ]]
+    }
+
+    if ! failover_finished; then
+       loop_cnt=1
+       while ! failover_finished
+       do
+          sleep 1s
+          if [[ ${loop_cnt} -ge ${MAX_FAILOVER_TIME} ]]; then
+              echo "Failover never finished!"
+              exit 1
+          fi
+          loop_cnt=$((${loop_cnt} + 1))
+       done
+       echo "Failover done."
+    fi
+    echo "prestop-redis done."
+    exit 0
+
+  prestop-sentinel.sh: |
+    CLUSTER_INDEX=$(echo $(hostname) | sed 's/.*-cluster-\(.*\)-server-.*/\1/')
+    SENTINEL_PORT=$(({{ include "common.serviceport.dbaas.sentinel" . }} + ${CLUSTER_INDEX}))
+    MASTER_GROUP="{{ .Values.dbaas.redis.masterGroupName }}-cluster-${CLUSTER_INDEX}"
+    SERVICE="{{ include "common.servicename.dbaas.tcp" . }}-cluster-${CLUSTER_INDEX}.{{ $.Release.Namespace }}.svc.cluster.local"
+    SERVER_FQDN="${HOSTNAME}.${SERVICE}"
+    MAX_FAILOVER_TIME=$(({{ .Values.dbaas.terminationGracePeriodSeconds }} - 1))
+
+    failover_finished() {
+        MASTER_ADDR=$(redis-cli -p ${SENTINEL_PORT} sentinel get-master-addr-by-name ${MASTER_GROUP} | cut -d$'\n' -f1)
+        [[ "$MASTER_ADDR" != "${SERVER_FQDN}" ]]
+    }
+
+    if ! failover_finished; then
+       redis-cli -h "$SERVICE" -p "$SENTINEL_PORT" sentinel failover "$MASTER_GROUP"
+       loop_cnt=1
+       while ! failover_finished
+       do
+          sleep 1s
+          if [[ ${loop_cnt} -ge ${MAX_FAILOVER_TIME} ]]; then
+              echo "${SERVER_FQDN} failover failed!"
+              exit 1
+          fi
+          loop_cnt=$((${loop_cnt} + 1))
+       done
+       echo "${MASTER_ADDR} failover done."
+    fi
+    echo "prestop-sentinel done."
+    exit 0
 {{- end }}

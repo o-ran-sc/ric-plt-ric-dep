@@ -56,3 +56,13 @@
 
 {{- define "common.serviceport.dbaas.redis" -}}6379{{- end -}}
 {{- define "common.serviceport.dbaas.sentinel" -}}26379{{- end -}}
+
+{{- define "dbaasServerAddrList" -}}
+  {{- $name := ( include "common.servicename.dbaas.tcp" . ) -}}
+  {{- range $idx, $e := until ($.Values.dbaas.clusterSize|int) -}}
+    {{- printf "%s-cluster-%d.%s" $name $idx $.Release.Namespace -}}
+    {{- if lt $idx  ( sub ($.Values.dbaas.clusterSize|int) 1 ) -}}
+      {{- printf "," -}}
+    {{- end -}}
+  {{- end }}
+{{- end -}}

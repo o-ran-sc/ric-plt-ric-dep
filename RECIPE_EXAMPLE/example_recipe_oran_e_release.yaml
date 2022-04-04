@@ -87,7 +87,7 @@ dbaas:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-dbaas
-    tag: 0.5.5
+    tag: 0.6.1
   enableHighAvailability: false
   # Enable pod anti affinity only if you have more than 3 k8s nodes
   enablePodAntiAffinity: false
