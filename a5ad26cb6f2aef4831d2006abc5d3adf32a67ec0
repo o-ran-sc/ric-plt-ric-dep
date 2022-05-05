@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "87561eb3_11c975ad",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000108
+      },
+      "writtenOn": "2022-05-05T11:49:56Z",
+      "side": 1,
+      "message": "looks ready for merge, but pls. put the commit message in normal format, i.e., short heading and details after that separated by an empty line. \n\nThe Issue ID just put as a single line like this before the signatures:\n\nIssue-ID: RIC-903",
+      "revId": "a5ad26cb6f2aef4831d2006abc5d3adf32a67ec0",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
