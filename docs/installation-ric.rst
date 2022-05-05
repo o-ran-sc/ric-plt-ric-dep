@@ -28,12 +28,14 @@ Clone the ric-plt/dep git repository that has deployment scripts and support fil
 
 .. code:: bash
 
-  git clone "https://gerrit.o-ran-sc.org/r/ric-plt/ric-dep" 
+  git clone "https://gerrit.o-ran-sc.org/r/ric-plt/ric-dep"
 
 Modify the deployment recipe
 ----------------------------
 
-Edit the recipe files ./RECIPE_EXAMPLE/example_recipe.yaml.
+Edit the recipe files ./RECIPE_EXAMPLE/example_recipe_latest_stable.yaml (which is 
+a softlink that points to the latest release version). "example_recipe_latest_unstable.yaml
+points to the latest example file that is under current development.
 
 .. code:: bash
 
@@ -82,7 +84,7 @@ After the recipes are edited and helm started, the Near Realtime RIC platform is
 .. code:: bash
 
   cd ric-dep/bin
-  ./install -f ../RECIPE_EXAMPLE/PLATFORM/example_recipe.yaml
+  ./install -f ../RECIPE_EXAMPLE/PLATFORM/example_recipe_latest_stable.yaml
 
 
 Checking the Deployment Status
@@ -201,3 +203,13 @@ Restarting the VM
 
 After a reboot of the VM, and a suitable delay for initialization,
 all the containers should be running again as shown above.
+
+RIC Applications
+----------------
+
+.. include:: installation-xapps.rst
+
+OPTIONALLY use Redis Cluster (instead of Redis standalone)
+----------------------------------------------------------
+
+.. include:: installation-rediscluster.rst
