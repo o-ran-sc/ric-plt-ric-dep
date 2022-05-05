@@ -61,7 +61,7 @@ a1mediator:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-a1
-    tag: 2.1.9
+    tag: 2.5.1
   rmr_timeout_config:
     a1_rcv_retry_times: 20
     ins_del_no_resp_ttl: 5
@@ -76,7 +76,7 @@ appmgr:
    appmgr:
      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
      name: ric-plt-appmgr
-     tag: 0.4.3
+     tag: 0.5.4
    chartmuseum:
      registry: "docker.io"
      name: chartmuseum/chartmuseum
@@ -112,7 +112,7 @@ e2term:
     image:
       registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
       name: ric-plt-e2
-      tag: 5.0.8
+      tag: 5.5.0
     privilegedmode: false
     hostnetworkmode: false
     env:
@@ -147,26 +147,26 @@ rtmgr:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-rtmgr
-    tag: 0.6.3
+    tag: 0.8.2
 
 submgr:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-submgr
-    tag: 0.4.3
+    tag: 0.8.2
 
 vespamgr:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-vespamgr
-    tag: 0.4.0
+    tag: 0.7.5
   prometheusurl: "http://r4-infrastructure-prometheus-server.ricplt"
 
 o1mediator:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-o1
-    tag: 0.4.4
+    tag: 0.5.3
 
 xapponboarder:
   image:
@@ -184,7 +184,7 @@ alarmmanager:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-alarmmanager
-    tag: 0.5.9
+    tag: 0.5.11
 
 influxdb:
   image:
