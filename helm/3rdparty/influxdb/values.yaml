@@ -102,7 +102,7 @@ enterprise:
 ## Defaults indicated below
 ##
 setDefaultUser:
-  enabled: false
+  enabled: true
 
   ## Image of the container used for job
   ## Default: appropriate/curl:latest
@@ -239,8 +239,10 @@ config:
   retention: {}
   shard_precreation: {}
   monitor: {}
-  http: {}
-  logging: {}
+  http:
+    auth-enabled: true
+  logging:
+    level: "debug"
   subscriber: {}
   graphite: {}
   collectd: {}
