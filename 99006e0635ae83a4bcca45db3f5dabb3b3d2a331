@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f0303fef_79f6e5d2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000108
+      },
+      "writtenOn": "2022-05-10T12:30:32Z",
+      "side": 1,
+      "message": "Ranjit gave his +2 offline (as he has gerrit login problems). So I merge this one now.",
+      "revId": "99006e0635ae83a4bcca45db3f5dabb3b3d2a331",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
