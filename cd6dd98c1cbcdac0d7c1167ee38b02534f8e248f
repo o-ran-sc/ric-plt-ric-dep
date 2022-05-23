@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bce0328c_bb792c63",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000108
+      },
+      "writtenOn": "2022-05-23T12:19:39Z",
+      "side": 1,
+      "message": "Appalainaidu has access problems to gerrit, but he gave his +2 by e-mail. I am merging this now",
+      "revId": "cd6dd98c1cbcdac0d7c1167ee38b02534f8e248f",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
