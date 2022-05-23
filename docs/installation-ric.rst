@@ -30,6 +30,29 @@ Clone the ric-plt/dep git repository that has deployment scripts and support fil
 
   git clone "https://gerrit.o-ran-sc.org/r/ric-plt/ric-dep"
 
+Deploying the Infrastructure and Platform Groups
+------------------------------------------------
+
+Use the scripts below to install kubernetes, kubernetes-CNI, helm and docker on a fresh 
+Ubuntu 20.04 installation. Note that since May 2022 there's no need for anything form the repo it/dep
+anymore.
+
+.. code:: bash
+
+  # install kubernetes, kubernetes-CNI, helm and docker 
+  cd ric-dep/bin
+  ./install_k8s_and_helm.sh
+
+  # install chartmuseum into helm and add ric-common templates
+  ./install_common_templates_to_helm.sh
+
+After the recipes are edited and helm started, the Near Realtime RIC platform is ready to be deployed.
+
+.. code:: bash
+
+  cd ric-dep/bin
+  ./install -f ../RECIPE_EXAMPLE/PLATFORM/example_recipe_latest_stable.yaml
+
 Modify the deployment recipe
 ----------------------------
 
@@ -61,31 +84,6 @@ points to the latest example file that is under current development.
 
 For more advanced recipe configuration options, please refer to the recipe configuration guideline.
 
-
-Deploying the Infrastructure and Platform Groups
-------------------------------------------------
-
-Copy the ric-common helm charts for it/dep, configure the helm repo and start local helm server
-
-.. code:: bash
-
-   git clone "https://gerrit.o-ran-sc.org/r/it/dep"
-   HELM_HOME=$(helm home)
-   COMMON_CHART_VERSION=$(cat dep/ric-common/Common-Template/helm/ric-common/Chart.yaml | grep version | awk '{print $2}')
-   helm package -d /tmp dep/ric-common/Common-Template/helm/ric-common
-   cp /tmp/ric-common-$COMMON_CHART_VERSION.tgz $HELM_HOME/repository/local/
-   helm repo index $HELM_HOME/repository/local/
-   helm serve >& /dev/null &
-   helm repo remove local
-   helm repo add local http://127.0.0.1:8879/charts
-
-
-After the recipes are edited and helm started, the Near Realtime RIC platform is ready to be deployed.
-
-.. code:: bash
-
-  cd ric-dep/bin
-  ./install -f ../RECIPE_EXAMPLE/PLATFORM/example_recipe_latest_stable.yaml
 
 
 Checking the Deployment Status
