@@ -36,7 +36,6 @@ The set up was tested with kubernetes v1.19 cluster with
    #. Pod topology spread constraint enabled
       Reference: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints
    #. CEPH as the Cluster Storage Solution.
-	  Reference: https://github.com/rook/rook.github.io/blob/master/docs/rook/v1.4/ceph-filesystem.md
    #. Three worker nodes in the kubernet cluster
 
 Execution
