@@ -46,12 +46,7 @@ This section explains the installation of Near Realtime RAN Intelligent Controll
 Prerequisites
 =============
 
-Refer to the following links to set up the pre-requisites
-
-VM installation - https://docs.o-ran-sc.org/projects/o-ran-sc-it-dep/en/latest/installation-guides.html#virtualbox-vms-as-installation-hosts
-
-k8s installation - https://docs.o-ran-sc.org/projects/o-ran-sc-it-dep/en/latest/installation-guides.html#one-node-kubernetes-cluster
-
+The steps below assume a clean installation of Ubuntu 20.04 (no k8s, no docker, no helm)
 
 Installing Near Realtime RIC in RIC Cluster
 ===========================================
