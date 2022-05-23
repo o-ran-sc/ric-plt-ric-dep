@@ -46,12 +46,9 @@ anymore.
   # install chartmuseum into helm and add ric-common templates
   ./install_common_templates_to_helm.sh
 
-After the recipes are edited and helm started, the Near Realtime RIC platform is ready to be deployed.
+After the recipes are edited and helm started, the Near Realtime RIC platform is ready to be deployed, 
+but first update the deployment recipe as per instructions in the next section.
 
-.. code:: bash
-
-  cd ric-dep/bin
-  ./install -f ../RECIPE_EXAMPLE/PLATFORM/example_recipe_latest_stable.yaml
 
 Modify the deployment recipe
 ----------------------------
@@ -84,6 +81,16 @@ points to the latest example file that is under current development.
 
 For more advanced recipe configuration options, please refer to the recipe configuration guideline.
 
+Installing the RIC
+------------------
+
+After updating the recipe you can deploy the RIC with the command below. Note that generally use the 
+latest recipe marked stable or one from a specific release.
+
+.. code:: bash
+
+  cd ric-dep/bin
+  ./install -f ../RECIPE_EXAMPLE/PLATFORM/example_recipe_latest_stable.yaml
 
 
 Checking the Deployment Status
