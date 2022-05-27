@@ -29,11 +29,17 @@ dbaas:
     masterGroupName: dbaasmaster
     sa_config:
       ## For /data/conf/redis.conf
+      # For now DBAAS has no discs, that's why disable AOF and RDB file snapshot saving
+      appendonly: "no"
+      save: ""
       protected-mode: "no"
       loadmodule: "/usr/local/libexec/redismodule/libredismodule.so"
       bind: 0.0.0.0
     ha_config:
       ## For /data/conf/redis.conf
+      # For now DBAAS has no discs, that's why disable AOF and RDB file snapshot saving
+      appendonly: "no"
+      save: ""
       min-slaves-to-write: 1
       min-slaves-max-lag: 5
       maxmemory: "0"
