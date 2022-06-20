@@ -25,12 +25,16 @@ nohup helm servecm --port=8879 --context-path=/charts --storage local --storage-
 yes
 EOF
 
-echo "sleeping for 5 seconds"
-sleep 5
-
-echo "checking that servecm is working with this curl command"
-curl --silent --output /dev/null  http://127.0.0.1:8879/charts
-echo "success="$?
+CURL_CMD="curl --silent --output /dev/null  http://127.0.0.1:8879/charts"
+`${CURL_CMD}`
+READY=$?
+while [ ${READY} != 0 ]; do
+        echo "servecm not yet running. sleeping for 2 seconds"
+        sleep 2
+        `${CURL_CMD}`
+        READY=$?
+done
+echo "servcm up and running"
 
 eval $(helm env |grep HELM_REPOSITORY_CACHE)
 echo ${HELM_REPOSITORY_CACHE}
