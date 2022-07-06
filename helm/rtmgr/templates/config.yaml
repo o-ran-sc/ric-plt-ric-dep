@@ -153,6 +153,8 @@ data:
           "RIC_E2NODE_CONFIG_UPDATE=12070",
           "RIC_E2NODE_CONFIG_UPDATE_ACK==12071",
           "RIC_E2NODE_CONFIG_UPDATE_FAILURE=12072",
+          "RIC_E2_RESET_REQ=12004",
+          "RIC_E2_RESET_RESP=12005",
           ]
 
        "PlatformRoutes": [
@@ -188,5 +190,6 @@ data:
          { 'messagetype': 'A1_POLICY_RESP', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint': 'A1MEDIATOR', 'meid': ''},
          { 'messagetype': 'RIC_SERVICE_UPDATE', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint': 'E2MAN', 'meid': ''},
          { 'messagetype': 'RIC_E2NODE_CONFIG_UPDATE', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint': 'E2MAN', 'meid': ''},
+         { 'messagetype': 'RIC_E2_RESET_REQ', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint': 'E2MAN', 'meid': ''},
           ]
 
