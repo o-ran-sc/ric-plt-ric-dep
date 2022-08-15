@@ -338,7 +338,8 @@ EOF
 
   kubectl get pods --all-namespaces
 
-  kubectl apply -f "https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
+  # we refer to version 0.18.1 because later versions use namespace kube-flannel instead of kube-system TODO
+  kubectl apply -f "https://raw.githubusercontent.com/flannel-io/flannel/v0.18.1/Documentation/kube-flannel.yml"
 
   wait_for_pods_running 8 kube-system
 
