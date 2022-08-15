@@ -29,9 +29,9 @@ common:
           name: it-dep-secret
           tag:  0.0.2
         tiller:
-          registry: gcr.io
-          name: kubernetes-helm/tiller
-          tag: v2.12.3
+          registry: ghcr.io
+          name: helm/tiller
+          tag: v2.16.12
       secret:
         create: true
         tillerSecretName: ricxapp-tiller-secret
