@@ -2,6 +2,7 @@
 ##############################################################################
 #
 #   Copyright (c) 2019 AT&T Intellectual Property.
+#   Copyright (c) 2022 Samsung Electronics Co., Ltd.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -28,7 +29,7 @@ echo "--> verify-ric-charts"
 if [[ "${1:-nope}" != "nope" ]]; then
     HELMVERSION=$1
 else
-    HELMVERSION=2.17.0
+    HELMVERSION=3.9.0
 fi
 if [[ "${2:-nope}" != "nope" ]]; then
     OVERRIDEYAML=$2
@@ -36,6 +37,8 @@ fi
 
 ROOT_DIR="$(pwd)"
 HELM_COMMAND=helm
+CHARTMUSEUM_COMMAND=chartmuseum
+CHARTMUSEUM_VERSION=0.14.0
 
 if ! $($HELM_COMMAND > /dev/null);then
     echo "Download and install Helm"
@@ -45,32 +48,33 @@ if ! $($HELM_COMMAND > /dev/null);then
     tar -xvf ./helm-v${HELMVERSION}-linux-amd64.tar.gz
     mv linux-amd64/helm ./
     HELM_COMMAND=./helm
-    $HELM_COMMAND init -c
 fi
+
 # Set up ric common template
 # Download it/dep common template charts
 git clone --single-branch --branch master "https://gerrit.o-ran-sc.org/r/it/dep" ./dep
 
-# Start Helm local repo if there isn't one
-if [ ! -z $(pgrep "$HELM_COMMAND") ]; then
-    echo "Stopping existing local Helm server."
-    kill -9 "$(pgrep "$HELM_COMMAND")"
-fi
-if [ ! -d ./charts ]; then
-    mkdir ./charts
-fi
-echo "Starting local Helm server"
-nohup $HELM_COMMAND serve --repo-path charts >& /dev/null &
-# Package ric-common and serve it using Helm local repo
-$HELM_COMMAND package --save=false -d ./charts "$ROOT_DIR/dep/ric-common/Common-Template/helm/ric-common"
-$HELM_COMMAND package --save=false -d ./charts "$ROOT_DIR/dep/ric-common/Common-Template/helm/aux-common"
-$HELM_COMMAND repo index ./charts
-# Make sure that helm local repo is added
-$HELM_COMMAND repo remove local
-$HELM_COMMAND repo remove stable
-$HELM_COMMAND repo add local http://127.0.0.1:8879/charts
-# Remove it/dep charts
-rm -rf ./dep
+nohup helm servecm --port=8879 --context-path=/charts  --storage local >& /dev/null &
+
+eval $(helm env |grep HELM_REPOSITORY_CACHE)
+HELM_LOCAL_REPO="${HELM_REPOSITORY_CACHE}/local/"
+
+HELM_HOME=$(helm home)
+COMMON_CHART_VERSION=$(cat $ROOT_DIR/../ric-common/Common-Template/helm/ric-common/Chart.yaml | grep version | awk '{print $2}')
+helm package -d /tmp $ROOT_DIR/../ric-common/Common-Template/helm/ric-common
+cp /tmp/ric-common-$COMMON_CHART_VERSION.tgz $HELM_LOCAL_REPO
+
+AUX_COMMON_CHART_VERSION=$(cat $ROOT_DIR/../ric-common/Common-Template/helm/aux-common/Chart.yaml | grep version | awk '{print $2}')
+helm package -d /tmp $ROOT_DIR/../ric-common/Common-Template/helm/aux-common
+cp /tmp/aux-common-$AUX_COMMON_CHART_VERSION.tgz $HELM_LOCAL_REPO
+
+
+helm repo index $HELM_HOME/repository/local/
+
+echo "Make sure that helm local repo is added"
+helm repo remove local
+helm repo remove stable
+helm repo add local http://127.0.0.1:8879/charts
 
 # Create array of helm charts
 echo "Finding all Helm charts"
