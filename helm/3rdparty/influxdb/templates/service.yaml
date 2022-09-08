@@ -1,68 +1,40 @@
-################################################################################
-#   Copyright (c) 2021 HCL Technolgies Limited.                                #
-#                                                                              #
-#   Licensed under the Apache License, Version 2.0 (the "License");            #
-#   you may not use this file except in compliance with the License.           #
-#   You may obtain a copy of the License at                                    #
-#                                                                              #
-#       http://www.apache.org/licenses/LICENSE-2.0                             #
-#                                                                              #
-#   Unless required by applicable law or agreed to in writing, software        #
-#   distributed under the License is distributed on an "AS IS" BASIS,          #
-#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   #
-#   See the License for the specific language governing permissions and        #
-#   limitations under the License.                                             #
-################################################################################
 apiVersion: v1
 kind: Service
 metadata:
-{{- if .Values.service.annotations }}
+  name: {{ template "influxdb.fullname" . }}
+  labels: {{- include "influxdb.labels" . | nindent 4 }}
+{{- with .Values.service.annotations }}
   annotations:
-{{ toYaml .Values.service.annotations | indent 4 }}
+{{ toYaml . | indent 4 }}
 {{- end }}
-  name: {{ include "common.fullname.influxdb" . }}
-  labels:
-    {{- include "common.influxdb.labels" . | nindent 4 }}
 spec:
+{{- if (or (eq .Values.service.type "ClusterIP") (empty .Values.service.type)) }}
+  type: ClusterIP
+  {{- if .Values.service.clusterIP }}
+  clusterIP: {{ .Values.service.clusterIP }}
+  {{end}}
+{{- else if eq .Values.service.type "LoadBalancer" }}
   type: {{ .Values.service.type }}
+  {{- if .Values.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+{{ toYaml .Values.service.loadBalancerSourceRanges | indent 4 }}
+  {{- end -}}
+{{- else }}
+  type: {{ .Values.service.type }}
+{{- end }}
   ports:
-  - name: api
-    port: {{ include "common.serviceport.influxdb.http.bind_address" . | default 8086 }}
-    targetPort: api
-  - name: rpc
-    port: {{ include "common.serviceport.influxdb.rpc.bind_address" . | default 8088 }}
-    targetPort: rpc
-  {{- if .Values.config.graphite.enabled }}
-  - name: graphite
-    port: {{ include "common.serviceport.influxdb.graphite.bind_address" . | default 2003 }}
-    targetPort: graphite
-  {{- end }}
-  {{- if .Values.config.collectd.enabled }}
-  - name: collectd
-    port: {{ include "common.serviceport.influxdb.collectd.bind_address" . | default 25826 }}
-    protocol: UDP
-    targetPort: collectd
-  {{- end }}
-  {{- if .Values.config.udp.enabled }}
-  - name: udp
-    port: {{ include "common.serviceport.influxdb.udp.bind_address" . | default 8089 }}
-    protocol: UDP
-    targetPort: udp
-  {{- end }}
-  {{- if .Values.config.opentsdb.enabled }}
-  - name: opentsdb
-    port: {{ include "common.serviceport.influxdb.opentsdb.bind_address" . | default 4242 }}
-    targetPort: opentsdb
+    - name: {{ .Values.service.portName }}
+      port: {{ .Values.service.port }}
+      protocol: TCP
+      targetPort: {{ .Values.service.targetPort }}
+{{- if (and (eq .Values.service.type "NodePort") (not (empty .Values.service.nodePort))) }}
+      nodePort: {{ .Values.service.nodePort }}
+{{- end }}
+  {{- if .Values.extraExposePorts }}
+  {{- tpl (toYaml .Values.extraExposePorts) . | indent 4 }}
   {{- end }}
   selector:
-    {{- include "common.influxdb.selectorLabels" . | nindent 4 }}
-{{- if .Values.service.loadBalancerIP }}
-  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
-{{- end }}
-{{- if .Values.service.externalIPs }}
-  externalIPs:
-{{ toYaml .Values.service.externalIPs | indent 4 }}
-{{- end }}
-{{- if .Values.service.externalTrafficPolicy }}
-  externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy }}
-{{- end }}
+    {{- include "influxdb.selectorLabels" . | nindent 4 }}
