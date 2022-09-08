@@ -2,6 +2,7 @@
 ##############################################################################
 #
 #   Copyright (c) 2019 AT&T Intellectual Property.
+#   Copyright (c) 2022 Samsung Electronics Co., Ltd.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -28,7 +29,7 @@ echo "--> verify-ric-charts"
 if [[ "${1:-nope}" != "nope" ]]; then
     HELMVERSION=$1
 else
-    HELMVERSION=2.17.0
+    HELMVERSION=3.9.0
 fi
 if [[ "${2:-nope}" != "nope" ]]; then
     OVERRIDEYAML=$2
@@ -36,6 +37,8 @@ fi
 
 ROOT_DIR="$(pwd)"
 HELM_COMMAND=helm
+CHARTMUSEUM_COMMAND=chartmuseum
+CHARTMUSEUM_VERSION=0.14.0
 
 if ! $($HELM_COMMAND > /dev/null);then
     echo "Download and install Helm"
@@ -45,27 +48,41 @@ if ! $($HELM_COMMAND > /dev/null);then
     tar -xvf ./helm-v${HELMVERSION}-linux-amd64.tar.gz
     mv linux-amd64/helm ./
     HELM_COMMAND=./helm
-    $HELM_COMMAND init -c
 fi
+
 # Set up ric common template
 # Download it/dep common template charts
 git clone --single-branch --branch master "https://gerrit.o-ran-sc.org/r/it/dep" ./dep
 
 # Start Helm local repo if there isn't one
-if [ ! -z $(pgrep "$HELM_COMMAND") ]; then
+# In Helm3, running local repo requires chartmuseum and helm-servecm plugin
+if ! $($CHARTMUSEUM_COMMAND > /dev/null);then
+    echo "Download and install chartmuseum"
+    wget -nv https://get.helm.sh/chartmuseum-v${CHARTMUSEUM_VERSION}-linux-amd64.tar.gz
+    tar -xvf ./chartmuseum-v${CHARTMUSEUM_VERSION}-linux-amd64.tar.gz
+    mv linux-amd64/chartmuseum ./
+    CHARTMUSEUM_COMMAND=./chartmuseum
+
+    curl https://raw.githubusercontent.com/helm/chartmuseum/main/scripts/get-chartmuseum | bash
+    $HELM_COMMAND plugin install https://github.com/jdolitsky/helm-servecm
+fi
+
+if [ ! -z $(pgrep servecm) ]; then
     echo "Stopping existing local Helm server."
-    kill -9 "$(pgrep "$HELM_COMMAND")"
+    kill -9 "$(pgrep servecm)"
 fi
 if [ ! -d ./charts ]; then
-    mkdir ./charts
+    mkdir ./local-repo
 fi
 echo "Starting local Helm server"
-nohup $HELM_COMMAND serve --repo-path charts >& /dev/null &
+nohup $HELM_COMMAND servecm --port=8879 --storage local --storage-local-rootdir ./local-repo --context-path=/charts >& /dev/null &
+
 # Package ric-common and serve it using Helm local repo
-$HELM_COMMAND package --save=false -d ./charts "$ROOT_DIR/dep/ric-common/Common-Template/helm/ric-common"
-$HELM_COMMAND package --save=false -d ./charts "$ROOT_DIR/dep/ric-common/Common-Template/helm/aux-common"
-$HELM_COMMAND repo index ./charts
+$HELM_COMMAND package --destination ./local-repo "$ROOT_DIR/dep/ric-common/Common-Template/helm/ric-common"
+$HELM_COMMAND package --destination ./local-repo "$ROOT_DIR/dep/ric-common/Common-Template/helm/aux-common"
+
 # Make sure that helm local repo is added
+$HELM_COMMAND repo index ./local-repo
 $HELM_COMMAND repo remove local
 $HELM_COMMAND repo remove stable
 $HELM_COMMAND repo add local http://127.0.0.1:8879/charts
