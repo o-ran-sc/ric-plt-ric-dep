@@ -1,195 +1,168 @@
-################################################################################
-#   Copyright (c) 2021 HCL Technolgies Limited.                                #
-#                                                                              #
-#   Licensed under the Apache License, Version 2.0 (the "License");            #
-#   you may not use this file except in compliance with the License.           #
-#   You may obtain a copy of the License at                                    #
-#                                                                              #
-#       http://www.apache.org/licenses/LICENSE-2.0                             #
-#                                                                              #
-#   Unless required by applicable law or agreed to in writing, software        #
-#   distributed under the License is distributed on an "AS IS" BASIS,          #
-#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   #
-#   See the License for the specific language governing permissions and        #
-#   limitations under the License.                                             #
-################################################################################
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "common.fullname.influxdb" . }}-meta
+  name: {{ template "influxdb.fullname" . }}
   labels:
-    {{- include "common.influxdb.labels" . | nindent 4 }}
+    {{- include "influxdb.labels" . | nindent 4 }}
 spec:
-  {{- if .Values.enterprise.enabled }}
-  replicas: {{ .Values.enterprise.clusterSize }}
-  {{ else }}
   replicas: 1
-  {{- end}}
   selector:
     matchLabels:
-      {{- include "common.influxdb.selectorLabels" . | nindent 6 }}
-  serviceName: {{ include "common.fullname.influxdb" . }}-meta
+      {{- include "influxdb.selectorLabels" . | nindent 6 }}
+  serviceName: "{{ include "influxdb.fullname" . }}"
   template:
     metadata:
       labels:
-        {{- include "common.influxdb.selectorLabels" . | nindent 8 }}
+      {{- include "influxdb.selectorLabels" . | nindent 8 }}
+      {{- if .Values.podLabels }}
+{{ toYaml .Values.podLabels | indent 8 }}
+      {{- end }}
       {{- if .Values.podAnnotations }}
       annotations:
 {{ toYaml .Values.podAnnotations | indent 8 }}
       {{- end }}
     spec:
-      {{- if .Values.schedulerName }}
-      schedulerName: "{{ .Values.schedulerName }}"
-      {{- end }}
-      {{- if .Values.nodeSelector }}
-      nodeSelector:
-{{ toYaml .Values.nodeSelector | indent 8 }}
-      {{- end -}}
-      {{- if .Values.affinity }}
-      affinity:
-{{ toYaml .Values.affinity | indent 8 }}
-      {{- end }}
-      {{- if .Values.tolerations }}
-      tolerations:
-{{ toYaml .Values.tolerations | indent 8 }}
-      {{- end }}
-      {{- if .Values.securityContext }}
-      securityContext:
-{{ toYaml .Values.securityContext | indent 8 }}
-      {{- end }}
-      {{- if .Values.image.pullSecrets }}
-      imagePullSecrets:
-      {{- range .Values.image.pullSecrets }}
-        - name: {{ . }}
-      {{- end}}
-      {{- end }}
-      serviceAccountName: {{ include "common.influxdb.serviceAccountName" . }}
-      containers:
-      - name: {{ include "common.fullname.influxdb" . }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
-        resources:
-{{ toYaml .Values.resources | indent 10 }}
-        ports:
-        - name: api
-          containerPort: {{ include "common.serviceport.influxdb.http.bind_address" . | default 8086 }}
-        {{- if .Values.config.graphite.enabled }}
-        - name: graphite
-          containerPort: {{ include "common.serviceport.influxdb.graphite.bind_address" . | default 2003 }}
+      volumes:
+        - name: data
+        {{- if .Values.persistence.enabled }}
+          {{- if not (empty .Values.persistence.name) }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.name }}
+          {{- else }}
+          persistentVolumeClaim:
+            claimName: {{ template "influxdb.fullname" . }}
+          {{- end }}
+        {{- else }}
+          emptyDir: {}
         {{- end }}
-        {{- if .Values.config.collectd.enabled }}
-        - name: collectd
-          containerPort: {{ include "common.serviceport.influxdb.collectd.bind_address" . |  default 25826 }}
-          protocol: UDP
-        {{- end }}
-        {{- if .Values.config.udp.enabled }}
-        - name: udp
-          containerPort: {{ include "common.serviceport.influxdb.udp.bind_address" . | default 8089 }}
-          protocol: UDP
-        {{- end }}
-        {{- if .Values.config.opentsdb.enabled }}
-        - name: opentsdb
-          containerPort: {{ include "common.serviceport.influxdb.opentsdb.bind_address" . |  default 4242 }}
-        {{- end }}
-        - name: rpc
-          containerPort: {{ include "common.serviceport.influxdb.rpc.bind_address" . | default 8088 }}
-        {{- if .Values.enterprise.enabled }}
-        - name: meta
-          containerPort: {{ include "common.serviceport.influxdb.meta.bind_address" . | default 8091 }}
-        {{- end }}
-        {{- if .Values.env }}
-        env:
-{{ toYaml .Values.env | indent 10 }}
-        {{- if .Values.enterprise.enabled }}
-          - name: INFLUXDB_HOSTNAME # Values.env's HOSTNAME isn't fundamentally different from $HOSTNAME, but this way weg get a distinguished name at runtime.
-            value: "$(_HOSTNAME).{{ include "common.fullname.influxdb" . }}"
-        {{- end }}
-        {{- end }}
-        {{- if .Values.envFromSecret }}
-        envFrom:
-        - secretRef:
-            name: {{ .Values.envFromSecret }}
-        {{- end }}
-        livenessProbe:
-          httpGet:
-            path: {{ .Values.livenessProbe.path | default "/ping" }}
-            port: api
-            scheme: {{ .Values.livenessProbe.scheme | default "HTTP" }}
-          initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds | default 30 }}
-          timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds | default 5 }}
-        readinessProbe:
-          httpGet:
-            path: {{ .Values.readinessProbe.path | default "/ping" }}
-            port: api
-            scheme: {{ .Values.readinessProbe.scheme | default "HTTP" }}
-          initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds | default 5 }}
-          timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds | default 1 }}
-        {{- if .Values.startupProbe.enabled }}
-        startupProbe:
-          httpGet:
-            path: {{ .Values.startupProbe.path | default "/ping" }}
-            port: api
-            scheme: {{ .Values.startupProbe.scheme | default "HTTP" }}
-          failureThreshold: {{ .Values.startupProbe.failureThreshold | default 6 }}
-          periodSeconds: {{ .Values.startupProbe.periodSeconds | default 5 }}
-        {{- end }}
-        volumeMounts:
-        - name: {{ include "common.fullname.influxdb" . }}-data
-          mountPath: /var/lib/influxdb
-        - name: config
-          mountPath: /etc/influxdb
         {{- if .Values.initScripts.enabled }}
         - name: init
-          mountPath: /docker-entrypoint-initdb.d
+          configMap:
+            name: {{ include "influxdb.fullname" . }}-init
+            defaultMode: 0744
         {{- end }}
-        {{- if .Values.mountPoints }}
-{{ toYaml .Values.mountPoints | indent 8 }}
+        {{- if .Values.volumes }}
+          {{- toYaml .Values.volumes | nindent 8 }}
         {{- end }}
-      {{- if .Values.extraContainers }}
-{{ toYaml .Values.extraContainers | indent 6}}
+      serviceAccountName: {{ include "influxdb.serviceAccountName" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: {{ .Values.service.portName }}
+              containerPort: 8086
+              protocol: TCP
+          env:
+            # Automated setup will not run if an existing boltdb file is found at the configured path.
+            # This behavior allows for the InfluxDB container to reboot post-setup without encountering "DB is already set up" errors.
+            - name: DOCKER_INFLUXDB_INIT_MODE
+              value: setup
+            # The username to set for the system's initial super-user (Required).
+            - name: DOCKER_INFLUXDB_INIT_USERNAME
+              value: {{ .Values.adminUser.user }}
+            # The password to set for the system's inital super-user (Required).
+            - name: DOCKER_INFLUXDB_INIT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  {{- if .Values.adminUser.existingSecret }}
+                  name: {{ .Values.adminUser.existingSecret -}}
+                  {{ else }}
+                  name: {{ template "influxdb.fullname" . }}-auth
+                  {{- end }}
+                  key: admin-password
+            # The name to set for the system's initial organization (Required).
+            - name: DOCKER_INFLUXDB_INIT_ORG
+              value: {{ .Values.adminUser.organization }}
+            # The name to set for the system's initial bucket (Required).
+            - name: DOCKER_INFLUXDB_INIT_BUCKET
+              value: {{ .Values.adminUser.bucket }}
+            # The duration the system's initial bucket should retain data. If not set, the initial bucket will retain data forever.
+            - name: DOCKER_INFLUXDB_INIT_RETENTION
+              value: {{ .Values.adminUser.retention_policy }}
+            # The authentication token to associate with the system's initial super-user. If not set, a token will be auto-generated by the system.
+            - name: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  {{- if .Values.adminUser.existingSecret }}
+                  name: {{ .Values.adminUser.existingSecret -}}
+                  {{ else }}
+                  name: {{ template "influxdb.fullname" . }}-auth
+                  {{- end }}
+                  key: admin-token
+            # Path to the BoltDB database.
+            - name: INFLUXD_BOLT_PATH
+              value: {{ .Values.persistence.mountPath }}/influxd.bolt
+            # Path to persistent storage engine files where InfluxDB stores all Time-Structure Merge Tree (TSM) data on disk.
+            - name: INFLUXD_ENGINE_PATH
+              value: {{ .Values.persistence.mountPath }}
+            {{- with .Values.env }}
+            # Extra environment variables from .Values.env
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- if .Values.securityContext }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- end }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.livenessProbe.path | default "/health" }}
+              port: http
+              scheme: {{ .Values.livenessProbe.scheme | default "HTTP" }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds | default 0 }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds | default 10 }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds | default 1 }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold | default 3 }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.readinessProbe.path | default "/health" }}
+              port: http
+              scheme: {{ .Values.readinessProbe.scheme | default "HTTP" }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds | default 0 }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds | default 10 }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds | default 1 }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold | default 1 }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold | default 3 }}
+          {{- if .Values.startupProbe.enabled }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.startupProbe.path | default "/health" }}
+              port: http
+              scheme: {{ .Values.startupProbe.scheme | default "HTTP" }}
+            initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds | default 30 }}
+            periodSeconds: {{ .Values.startupProbe.periodSeconds | default 5 }}
+            timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds | default 1 }}
+            failureThreshold: {{ .Values.startupProbe.failureThreshold | default 6 }}
+          {{- end }}
+          volumeMounts:
+          - name: data
+            mountPath: {{ .Values.persistence.mountPath }}
+            subPath: {{ .Values.persistence.subPath }}
+          {{- if .Values.initScripts.enabled }}
+          - name: init
+            mountPath: /docker-entrypoint-initdb.d
+          {{- end }}
+          {{- if .Values.mountPoints }}
+            {{- toYaml .Values.mountPoints | nindent 10 }}
+          {{- end }}
+          resources:
+            {{ .Values.resources | toYaml | nindent 12 | trim }}
+
+      {{- if .Values.securityContext.runAsGroup }}
+      securityContext:
+        fsGroup: {{ .Values.securityContext.runAsGroup }}
       {{- end }}
-      volumes:
-      - name: config
-        configMap:
-          name: {{ include "common.fullname.influxdb" . }}
-      {{- if .Values.initScripts.enabled }}
-      - name: init
-        configMap:
-          name: {{ include "common.fullname.influxdb" . }}-init
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{ toYaml . | nindent 8 | trim }}
       {{- end }}
-      {{- if (not .Values.persistence.enabled ) }}
-      - name: {{ include "common.fullname.influxdb" . }}-data
-        emptyDir: {}
+
+      {{- with .Values.affinity }}
+      affinity:
+        {{ toYaml . | nindent 8 | trim }}
       {{- end }}
-      # Cannot use existing claim in enterprise mode
-      {{- if and .Values.persistence.enabled .Values.persistence.existingClaim (not .Values.enterprise.enabled) }}
-      - name: {{ include "common.fullname.influxdb" . }}-data
-        persistentVolumeClaim:
-          claimName: {{ .Values.persistence.existingClaim }}
+
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{ toYaml . | nindent 8 | trim }}
       {{- end }}
-      {{- if .Values.volumes }}
-{{ toYaml .Values.volumes | indent 6 }}
-      {{- end }}
-  # Must use volume claim template in enterprise mode
-  {{- if and .Values.persistence.enabled (or (not .Values.persistence.existingClaim) .Values.enterprise.enabled) }}
-  volumeClaimTemplates:
-    - metadata:
-        name: {{ include "common.fullname.influxdb" . }}-data
-        annotations:
-        {{- range $key, $value := .Values.persistence.annotations }}
-          {{ $key }}: "{{ $value }}"
-        {{- end }}
-      spec:
-        accessModes:
-          - {{ .Values.persistence.accessMode | quote}}
-        resources:
-          requests:
-            storage: {{ .Values.persistence.size | quote }}
-      {{- if .Values.persistence.storageClass }}
-      {{- if (eq "-" .Values.persistence.storageClass) }}
-        storageClassName: ""
-      {{- else }}
-        storageClassName: "{{ .Values.persistence.storageClass }}"
-      {{- end }}
-      {{- end }}
-  {{- end }}
