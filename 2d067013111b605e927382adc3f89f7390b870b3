@@ -16,6 +16,23 @@
       "message": "this change should go to the master branch. I.e., we should not touch old releases (like \"e\", or \"f\")",
       "revId": "2d067013111b605e927382adc3f89f7390b870b3",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e963bcc1_4bea4210",
+        "filename": "RECIPE_EXAMPLE/example_recipe_oran_e_release.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 1000108
+      },
+      "writtenOn": "2022-09-13T08:21:55Z",
+      "side": 1,
+      "message": "actually this is the e-release \"recipe\". do not modify that one, but rather the ones for the current work in master. I.e. these ones: example_recipe_latest_unstable_with_refs_to_staging.yaml example_recipe_latest_unstable.yaml",
+      "revId": "2d067013111b605e927382adc3f89f7390b870b3",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     }
   ]
 }
