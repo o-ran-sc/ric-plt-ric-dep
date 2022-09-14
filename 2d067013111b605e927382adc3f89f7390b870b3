@@ -18,6 +18,23 @@
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f5fb0aeb_74ba3f74",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001907
+      },
+      "writtenOn": "2022-09-14T10:57:31Z",
+      "side": 1,
+      "message": "Thanks to all your comments. A new branch with additional changes will be pushed. (I cannot find how to edit target branch in this current commit)",
+      "revId": "2d067013111b605e927382adc3f89f7390b870b3",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e963bcc1_4bea4210",
