@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "65eddf97_6f2b1598",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001907
+      },
+      "writtenOn": "2022-09-14T12:14:25Z",
+      "side": 1,
+      "message": "Logs : https://logs.o-ran-sc.org/production/vex-sjc-oran-jenkins-prod-1/ric-plt-ric-dep-chart-shell-verify-master/160/console.log.gz\nHelm3 chart : https://artifacthub.io/packages/helm/influxdata/influxdb2\n\nJob Build with helm2 occured error. Influxdb2 chart requires helm3 or later.",
+      "revId": "14966b208ca07bb7dc9b1c98ba6d1ad89c97e2e2",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
