@@ -1,6 +1,7 @@
 ################################################################################
 #   Copyright (c) 2019 AT&T Intellectual Property.                             #
 #   Copyright (c) 2021 HCL Technologies Limited.                               #
+#   Copyright (c) 2022 Samsung Electronics Co., Ltd.                           #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -61,7 +62,7 @@ a1mediator:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-a1
-    tag: 2.5.1
+    tag: 2.5.2
   rmr_timeout_config:
     a1_rcv_retry_times: 20
     ins_del_no_resp_ttl: 5
@@ -76,7 +77,7 @@ appmgr:
    appmgr:
      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
      name: ric-plt-appmgr
-     tag: 0.5.4
+     tag: 0.5.6
    chartmuseum:
      registry: "docker.io"
      name: chartmuseum/chartmuseum
@@ -87,7 +88,7 @@ dbaas:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-dbaas
-    tag: 0.5.5
+    tag: 0.6.1
   enableHighAvailability: false
   # Enable pod anti affinity only if you have more than 3 k8s nodes
   enablePodAntiAffinity: false
@@ -97,7 +98,7 @@ e2mgr:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-e2mgr
-    tag: 5.4.19
+    tag: 6.0.0
   privilegedmode: false
   globalRicId:
     ricId: "AACCE"
@@ -112,7 +113,7 @@ e2term:
     image:
       registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
       name: ric-plt-e2
-      tag: 5.5.0
+      tag: 6.0.0
     privilegedmode: false
     hostnetworkmode: false
     env:
@@ -147,13 +148,13 @@ rtmgr:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-rtmgr
-    tag: 0.8.2
+    tag: 0.9.1
 
 submgr:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-submgr
-    tag: 0.8.2
+    tag: 0.9.3
 
 vespamgr:
   image:
@@ -166,28 +167,17 @@ o1mediator:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-o1
-    tag: 0.5.3
+    tag: 0.6.0
 
-xapponboarder:
-  image:
-   xapponboarder:
-     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
-     name: xapp-onboarder
-     tag: 1.0.7
-   chartmuseum:
-     registry: "docker.io"
-     name: chartmuseum/chartmuseum
-     tag: v0.8.2
-  allow_redeploy: "True"
 
 alarmmanager:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-alarmmanager
-    tag: 0.5.11
+    tag: 0.5.13
 
 influxdb:
   image:
     registry: "influxdb"
     name: influxdb
-    tag: "1.8.0-alpine"
+    tag: "2.2.0-alpine"
