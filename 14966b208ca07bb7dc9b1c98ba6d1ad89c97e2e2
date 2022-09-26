@@ -16,6 +16,24 @@
       "message": "Logs : https://logs.o-ran-sc.org/production/vex-sjc-oran-jenkins-prod-1/ric-plt-ric-dep-chart-shell-verify-master/160/console.log.gz\nHelm3 chart : https://artifacthub.io/packages/helm/influxdata/influxdb2\n\nJob Build with helm2 occured error. Influxdb2 chart requires helm3 or later.",
       "revId": "14966b208ca07bb7dc9b1c98ba6d1ad89c97e2e2",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f9ceca5e_a03f70f9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000108
+      },
+      "writtenOn": "2022-09-26T09:05:56Z",
+      "side": 1,
+      "message": "\u003e Logs : https://logs.o-ran-sc.org/production/vex-sjc-oran-jenkins-prod-1/ric-plt-ric-dep-chart-shell-verify-master/160/console.log.gz\n\u003e Helm3 chart : https://artifacthub.io/packages/helm/influxdata/influxdb2\n\u003e \n\u003e Job Build with helm2 occured error. Influxdb2 chart requires helm3 or later.\n\n the file .../bin/verify-ric-charts seems indeed still to be using helm2. Can you update it to helm 3 as part of this patch?\n\nNote that the actual deployment in bin/install_common_templates_to_helm.sh already uses helm3",
+      "parentUuid": "65eddf97_6f2b1598",
+      "revId": "14966b208ca07bb7dc9b1c98ba6d1ad89c97e2e2",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     }
   ]
 }
