@@ -1,6 +1,7 @@
 ################################################################################
 #   Copyright (c) 2019 AT&T Intellectual Property.                             #
 #   Copyright (c) 2021 HCL Technologies Limited.                               #
+#   Copyright (c) 2022 Samsung Electronics Co., Ltd.                           #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -179,4 +180,4 @@ influxdb:
   image:
     registry: "influxdb"
     name: influxdb
-    tag: "1.8.0-alpine"
+    tag: "2.2.0-alpine"
