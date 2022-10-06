@@ -34,6 +34,24 @@
       "parentUuid": "65eddf97_6f2b1598",
       "revId": "14966b208ca07bb7dc9b1c98ba6d1ad89c97e2e2",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "58dd9dd1_c65f7bc1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001907
+      },
+      "writtenOn": "2022-10-06T00:41:32Z",
+      "side": 1,
+      "message": "I got build success with tons of patchsets (which makes me embarrassing, please let me know how to re-run jenkins job build without noticing anywhere(e-mail, history, etc.)).\n\nIf this may occure a technical problem, I will make a new commit.",
+      "parentUuid": "f9ceca5e_a03f70f9",
+      "revId": "14966b208ca07bb7dc9b1c98ba6d1ad89c97e2e2",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     }
   ]
 }
