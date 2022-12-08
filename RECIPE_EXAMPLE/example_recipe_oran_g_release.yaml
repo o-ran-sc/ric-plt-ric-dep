@@ -1,7 +1,6 @@
 ################################################################################
 #   Copyright (c) 2019 AT&T Intellectual Property.                             #
 #   Copyright (c) 2021 HCL Technologies Limited.                               #
-#   Copyright (c) 2022 Samsung Electronics Co., Ltd.                           #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -62,7 +61,7 @@ a1mediator:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-a1
-    tag: 2.5.1
+    tag: 2.5.2
   rmr_timeout_config:
     a1_rcv_retry_times: 20
     ins_del_no_resp_ttl: 5
@@ -75,7 +74,7 @@ appmgr:
      name: it-dep-init
      tag: 0.0.1
    appmgr:
-     registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
      name: ric-plt-appmgr
      tag: 0.5.7
    chartmuseum:
@@ -86,7 +85,7 @@ appmgr:
 
 dbaas:
   image:
-    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-dbaas
     tag: 0.6.2
   enableHighAvailability: false
@@ -96,7 +95,7 @@ dbaas:
 
 e2mgr:
   image:
-    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-e2mgr
     tag: 6.0.1
   privilegedmode: false
@@ -111,7 +110,7 @@ e2mgr:
 e2term:
   alpha:
     image:
-      registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
       name: ric-plt-e2
       tag: 6.0.1
     privilegedmode: false
@@ -146,13 +145,13 @@ jaegeradapter:
 
 rtmgr:
   image:
-    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-rtmgr
     tag: 0.9.4
 
 submgr:
   image:
-    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-submgr
     tag: 0.9.5
 
@@ -165,14 +164,14 @@ vespamgr:
 
 o1mediator:
   image:
-    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-o1
     tag: 0.6.1
 
 
 alarmmanager:
   image:
-    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-alarmmanager
     tag: 0.5.14
 
