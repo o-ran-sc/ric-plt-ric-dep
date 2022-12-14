@@ -1,6 +1,7 @@
 ################################################################################
 #   Copyright (c) 2019 AT&T Intellectual Property.                             #
 #   Copyright (c) 2021 HCL Technologies Limited.                               #
+#   Copyright (c) 2022 Samsung Electronics Co., Ltd.                           #
 #                                                                              #
 #   Licensed under the Apache License, Version 2.0 (the "License");            #
 #   you may not use this file except in compliance with the License.           #
@@ -61,7 +62,7 @@ a1mediator:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-a1
-    tag: 2.5.2
+    tag: 3.0.1
   rmr_timeout_config:
     a1_rcv_retry_times: 20
     ins_del_no_resp_ttl: 5
@@ -130,18 +131,6 @@ jaegeradapter:
     name: jaegertracing/all-in-one
     tag: 1.12
 
-
-#rsm:
-#  image:
-#    init:
-#      name: redis
-#      tag: latest
-#      registry: "docker.io"
-#    main:
-#      name: ric-plt-resource-status-manager
-#      tag: 3.0.1
-#      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
-#  privilegedmode: false
 
 rtmgr:
   image:
