@@ -60,9 +60,9 @@ prometheus:
 
 a1mediator:
   image:
-    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
     name: ric-plt-a1
-    tag: 2.5.1
+    tag: 3.0.1
   rmr_timeout_config:
     a1_rcv_retry_times: 20
     ins_del_no_resp_ttl: 5
@@ -75,7 +75,7 @@ appmgr:
      name: it-dep-init
      tag: 0.0.1
    appmgr:
-     registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
      name: ric-plt-appmgr
      tag: 0.5.7
    chartmuseum:
@@ -86,7 +86,7 @@ appmgr:
 
 dbaas:
   image:
-    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-dbaas
     tag: 0.6.2
   enableHighAvailability: false
@@ -165,14 +165,14 @@ vespamgr:
 
 o1mediator:
   image:
-    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-o1
     tag: 0.6.1
 
 
 alarmmanager:
   image:
-    registry: "nexus3.o-ran-sc.org:10004/o-ran-sc"
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-alarmmanager
     tag: 0.5.14
 
