@@ -21,6 +21,14 @@ helm plugin install https://github.com/jdolitsky/helm-servecm
 eval $(helm env |grep HELM_REPOSITORY_CACHE) 
 echo ${HELM_REPOSITORY_CACHE}
 
+# servecm can download chartmuseum binary, but the hardcoded location does not work anymore
+# so, we download it now before starting servecm, so that it's available when servecm
+# tries to start the chartmuseum binary
+curl -LO https://get.helm.sh/chartmuseum-v0.15.0-linux-386.tar.gz
+tar xzvf chartmuseum-v0.15.0-linux-386.tar.gz
+chmod +x ./linux-386/chartmuseum
+cp ./linux-386/chartmuseum /usr/local/bin
+
 nohup helm servecm --port=8879 --context-path=/charts --storage local --storage-local-rootdir $HELM_REPOSITORY_CACHE/local/ <<EOF &
 yes
 EOF
