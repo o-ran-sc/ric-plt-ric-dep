@@ -114,6 +114,8 @@ spec:
           - mountPath: /tmp/rmr_verbose
             name: local-router-file
             subPath: rmr_verbose
+          - mountPath: {{ dir $common_env.ConfigMapName }}
+            name: local-loglevel-file
 {{ if .pizpub.enabled }}
           - mountPath: "{{ .env.messagecollectorfile }}"
             name: vol-shared
@@ -195,6 +197,9 @@ spec:
         - name: local-router-file
           configMap:
             name: {{ include "common.configmapname.e2term" $topCtx }}-router-configmap
+        - name: local-loglevel-file
+          configMap:
+            name: {{ include "common.configmapname.e2term" $topCtx }}-loglevel-configmap
 {{ if .pizpub.enabled }}
         - name: localtime
           hostPath:

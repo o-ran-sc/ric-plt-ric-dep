@@ -22,7 +22,7 @@
 
 common:
   releasePrefix: r4
-# If a local docker registry is used, please specify it using the following option 
+# If a local docker registry is used, please specify it using the following option
 #  localregistry: nexus3.o-ran-sc.org:10004
 
 # Change the overall image pull policy using the following option
@@ -113,7 +113,7 @@ e2term:
     image:
       registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
       name: ric-plt-e2
-      tag: 6.0.1
+      tag: 6.0.2
     privilegedmode: false
     hostnetworkmode: false
     env:
