@@ -170,7 +170,7 @@ elif [[ ${UBUNTU_RELEASE} == 18.* ]]; then
 elif [[ ${UBUNTU_RELEASE} == 20.* ]]; then
   echo "Installing on Ubuntu $UBUNTU_RELEASE (Focal Fossal)"
   if [ ! -z "${DOCKERV}" ]; then
-    DOCKERVERSION="${DOCKERV}-0ubuntu1~20.04.1"  # 20.10.21-0ubuntu1~20.04.1
+    DOCKERVERSION="${DOCKERV}-0ubuntu1~20.04.2"  # 20.10.21-0ubuntu1~20.04.2
   fi
 else
   echo "Unsupported Ubuntu release ($UBUNTU_RELEASE) detected.  Exit."
