@@ -85,7 +85,7 @@ data:
     routingManager:
       {{- if hasKey .Values.e2mgr "baseUrl" }}
       baseUrl: {{ .Values.e2mgr.baseUrl }}
-      {{- else }}
+      {{- else}}
       baseUrl: "http://service-ricplt-rtmgr-http:3800/ric/v1/handles/"
       {{- end }}
 
@@ -160,4 +160,16 @@ data:
       ranManipulationMessageChannel: "RAN_MANIPULATION"
       {{- end }}
       
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: e2mgr-loglevel
+  namespace: {{ include "common.namespace.platform" . }}
+
+data:
+  logcfg: |
+   {{.Values.appConfigFile | nindent 2}}
+   
+ 
 ---
