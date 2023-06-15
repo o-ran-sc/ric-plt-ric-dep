@@ -16,6 +16,7 @@
 ################################################################################
 {{- $imagectx := dict "ctx" . "defaultregistry" .Values.e2mgr.image.registry }}
 {{- $pullpolicyctx := dict "ctx" . "defaultpullpolicy" .Values.e2mgr.imagePullPolicy }}
+{{- $common_env := .Values.common_env_variables }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -53,6 +54,8 @@ spec:
           - mountPath: /opt/E2Manager/router.txt
             name: local-router-file
             subPath: router.txt
+          - mountPath: /etc/config
+            name: e2mgr-loglevel-volume
           - mountPath: /opt/E2Manager/resources/configuration.yaml
             name: local-configuration-file
             subPath: configuration.yaml
@@ -97,3 +100,10 @@ spec:
         - name: local-configuration-file
           configMap:
             name: {{ include "common.configmapname.e2mgr" . }}-configuration-configmap
+        - name: e2mgr-loglevel-volume
+          configMap:
+            name: {{ include "common.configmapname.e2mgr" . }}-loglevel-configmap
+              items:
+                - key: logcfg
+                  path: log-level.yaml
+                  mode: 0644
