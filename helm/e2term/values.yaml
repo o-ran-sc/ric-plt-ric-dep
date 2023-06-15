@@ -70,7 +70,7 @@ health:
       periodSeconds: 60
       enabled: true
 
-loglevel: 2
+loglevel: 3
 
 common_env_variables:
   ConfigMapName: "/etc/config/log-level"

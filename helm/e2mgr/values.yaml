@@ -26,7 +26,7 @@ e2mgr:
     name: ric-plt-e2mgr
     tag: 3.0.1
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
-
+  
   privilegedmode: false
   
   replicaCount: 1
@@ -46,6 +46,10 @@ e2mgr:
     initialDelaySeconds: 3
     periodSeconds: 10
     enabled: true
+
+  common_env_variables:
+    ServiceName: "RIC_E2_MGR"
+    ConfigMapName: "/etc/config/log-level.yaml"
 
   # Service ports are now defined in 
   # ric-common/Common-Template/helm/ric-common/templates/_ports.tpl file.
