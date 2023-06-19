@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "01812a31_7ffc13f2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000108
+      },
+      "writtenOn": "2023-06-19T05:42:57Z",
+      "side": 1,
+      "message": "in the",
+      "revId": "6e479ce5444d0f6aa8eecc79d5df37f2b309f653",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "06751e09_49ea9bad",
@@ -14,6 +31,23 @@
       "writtenOn": "2023-06-19T04:53:31Z",
       "side": 1,
       "message": "This could just be as below. No need to have values.yaml for this\n\ndata:\n  logcfg: \"loglevel: 3\"",
+      "revId": "6e479ce5444d0f6aa8eecc79d5df37f2b309f653",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9ff6c3da_782677db",
+        "filename": "helm/e2mgr/templates/configmap.yaml",
+        "patchSetId": 7
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1000108
+      },
+      "writtenOn": "2023-06-19T05:42:57Z",
+      "side": 1,
+      "message": "could also change the default level of E2term to 3 at the same time.",
       "revId": "6e479ce5444d0f6aa8eecc79d5df37f2b309f653",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     },
