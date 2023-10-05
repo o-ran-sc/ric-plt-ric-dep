@@ -1,0 +1,88 @@
+################################################################################
+#   Copyright (c) 2023 Abhijit Gadgil.
+#                                                                              #
+#   Licensed under the Apache License, Version 2.0 (the "License");            #
+#   you may not use this file except in compliance with the License.           #
+#   You may obtain a copy of the License at                                    #
+#                                                                              #
+#       http://www.apache.org/licenses/LICENSE-2.0                             #
+#                                                                              #
+#   Unless required by applicable law or agreed to in writing, software        #
+#   distributed under the License is distributed on an "AS IS" BASIS,          #
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   #
+#   See the License for the specific language governing permissions and        #
+#   limitations under the License.                                             #
+################################################################################
+
+apiVersion: v2
+name: nearrtric
+version: 0.1.0
+description: Umbrella Helm Chart for NearRT RAN Intelligent Controller from O-RAN SC.
+home: https://wiki.o-ran-sc.org/pages/viewpage.action?pageId=1179659
+sources:
+  - https://gerrit.o-ran-sc.org/r/#/admin/projects/
+kubeVersion: " >= 1.22"
+
+dependencies:
+  # Required components
+  - name: appmgr
+    version: ~0.x
+    repository: "@local"
+
+  - name: dbaas
+    version: ~0.x
+    repository: "@local"
+
+  - name: e2mgr
+    version: ~0.x
+    repository: "@local"
+
+  - name: e2term
+    version: ~0.x
+    repository: "@local"
+
+  - name: submgr
+    version: ~0.x
+    repository: "@local"
+
+  - name: rtmgr
+    version: ~0.x
+    repository: "@local"
+
+  # Optional Components.
+  - name: a1mediator
+    version: ~0.x
+    repository: "@local"
+    condition: nearrtric.installA1Mediator
+
+  - name: alarmmanager
+    version: ~0.x
+    repository: "@local"
+    condition: nearrtric.installAlarmManager
+
+  # TODO: Maybe a third party component?
+  - name: jaegeradapter
+    version: ~0.x
+    repository: "@local"
+    condition: nearrtric.installJaegerAdapter
+
+  - name: o1mediator
+    version: ~0.x
+    repository: "@local"
+    condition: nearrtric.installO1Mediator
+
+  - name: vespamgr
+    version: ~0.x
+    repository: "@local"
+    condition: nearrtric.installVespamgr
+
+  - name: xapp-onboarder
+    version: ~0.x
+    repository: "@local"
+    condition: nearrtric.installXappOnboarder
+
+  # Third Party Components
+  - name: influxdb2
+    version: ~2.1.0
+    repository: "@influxdata"
+    condition: nearrtric.installInfluxDB

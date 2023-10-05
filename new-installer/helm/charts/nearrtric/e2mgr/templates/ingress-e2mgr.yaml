@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "common.ingressname.e2mgr" . }}
+spec:
+  rules:
+  - http:
+      paths:
+      - path: {{ include "common.kongpath.ric.e2mgr" . }}
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "common.servicename.e2mgr.http" . }}
+            port:
+              number: {{ include "common.serviceport.e2mgr.http" . }}
