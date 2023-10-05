@@ -1,0 +1,217 @@
+################################################################################
+#   Copyright (c) 2019 AT&T Intellectual Property.                             #
+#   Copyright (c) 2019 Nokia.                                                  #
+#                                                                              #
+#   Licensed under the Apache License, Version 2.0 (the "License");            #
+#   you may not use this file except in compliance with the License.           #
+#   You may obtain a copy of the License at                                    #
+#                                                                              #
+#       http://www.apache.org/licenses/LICENSE-2.0                             #
+#                                                                              #
+#   Unless required by applicable law or agreed to in writing, software        #
+#   distributed under the License is distributed on an "AS IS" BASIS,          #
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   #
+#   See the License for the specific language governing permissions and        #
+#   limitations under the License.                                             #
+################################################################################
+{{- $topCtx :=  . }}
+{{- $health := .Values.health }}
+{{- $common_env := .Values.common_env_variables }}
+{{- range keys .Values.e2term }}
+{{- $key := . }}
+{{- with index $topCtx.Values.e2term . }}
+
+{{- $imagectx := dict "ctx" $topCtx "defaultregistry" .image.registry }}
+{{- $pullpolicyctx := dict "ctx" $topCtx "defaultpullpolicy" .imagePullPolicy }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "common.deploymentname.e2term" $topCtx }}-{{ $key }}
+  namespace: {{ include "common.namespace.platform" $topCtx }}
+  labels:
+    app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}-{{ $key }}
+    chart: {{ $topCtx.Chart.Name }}-{{ $topCtx.Chart.Version | replace "+" "_" }}
+    release: {{ $topCtx.Release.Name }}
+    heritage: {{ $topCtx.Release.Service }}
+spec:
+  replicas: {{ .replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}-{{ $key }}
+      release: {{ $topCtx.Release.Name }}
+  template:
+    metadata:
+        {{- if $.Values.global }}
+          {{- if $.Values.global.danm_networks }}
+            {{- $networklist := list }}
+            {{- range $network := $.Values.global.danm_networks }}
+              {{- if $network.tenants }}
+                {{- if $network.tenants.e2term }}
+                  {{- if (hasKey $network.tenants.e2term $key) }}
+                    {{- $networklist = append $networklist $network }}
+                  {{- end }}
+                {{- end }}
+              {{- end }}
+            {{- end }}
+            {{- if $networklist }}
+      annotations:
+        danm.k8s.io/interfaces: |
+          [
+            {{- range $network := $networklist }}
+              {{- printf "\n            {\"clusterNetwork\": \"%s\"" $network.name }}
+              {{- with index $network.tenants.e2term $key }}
+              {{- if .ip }}
+                {{- printf ", \"ip\": \"%s\"" .ip }}
+              {{- else }}
+                {{- printf ", \"ip\": \"dynamic\"" }}
+              {{- end }}
+              {{- if .ip6 }}
+                {{- printf ", \"ip6\": \"%s\"" .ip6 }}
+              {{- end }}
+              {{- if .proutes }}
+                {{- printf ", \"proutes\": {" }}
+                {{- range $subnet, $gw := .proutes }}
+                  {{- if eq $subnet ( first ( keys .proutes ))}}
+                    {{- printf "\"%s\": \"%s\"" $subnet $gw }}
+                  {{- else }}
+                    {{- printf ", \"%s\": \"%s\"" $subnet $gw }}
+                  {{- end }}
+                {{- end }}
+                {{- printf "}" }}
+              {{- end }}
+              {{- end }}
+              {{- if ne $network.name (last $networklist).name }}
+              {{- printf "}," }}
+              {{- else }}
+              {{- printf "}" }}
+              {{- end }}
+            {{- end }}
+          ]
+            {{- end }}
+          {{- end }}
+        {{- end }}
+      labels:
+        app: {{ include "common.namespace.platform" $topCtx }}-{{ include "common.name.e2term" $topCtx }}-{{ $key }}
+        release: {{ $topCtx.Release.Name }}
+    spec:
+      hostname: {{ include "common.name.e2term" $topCtx }}-{{ $key }}
+      hostNetwork: {{ .hostnetworkmode }}
+      dnsPolicy: ClusterFirstWithHostNet
+      imagePullSecrets:
+        - name: {{ include "common.dockerregistry.credential" $imagectx }}
+      {{- with .nodeselector }}
+      nodeSelector: {{ toYaml . | trim | nindent 8 -}}
+      {{- end }}
+      containers:
+        - name: {{ include "common.containername.e2term" $topCtx }}
+          image: {{ include "common.dockerregistry.url" $imagectx }}/{{ .image.name }}:{{ .image.tag }}
+          imagePullPolicy: {{ include "common.dockerregistry.pullpolicy" $pullpolicyctx }}
+          volumeMounts:
+          - mountPath: /opt/e2/router.txt
+            name: local-router-file
+            subPath: router.txt
+          - mountPath: /tmp/rmr_verbose
+            name: local-router-file
+            subPath: rmr_verbose
+          - mountPath: {{ $common_env.ConfigMapName }}
+            name: local-loglevel-file
+            subPath: log-level
+{{ if .pizpub.enabled }}
+          - mountPath: "{{ .env.messagecollectorfile }}"
+            name: vol-shared
+            readOnly: false
+            subPath: "{{ .pizpub.scanDirectory }}"
+{{ else }}
+          - mountPath: "{{ .env.messagecollectorfile }}"
+            name: vol-shared
+            readOnly: false
+{{ end }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "common.configmapname.e2term" $topCtx }}-env-{{ $key }}
+          env:
+            - name: SYSTEM_NAME
+              value: "SEP"
+            - name: CONFIG_MAP_NAME
+              value: "{{ $common_env.ConfigMapName }}"
+            - name: HOST_NAME
+              valueFrom:
+               fieldRef:
+                fieldPath: spec.nodeName
+            - name: SERVICE_NAME
+              value: "{{ $common_env.ServiceName }}"
+            - name: CONTAINER_NAME
+              value: "{{ include "common.containername.e2term" $topCtx }}"
+            - name: POD_NAME
+              valueFrom:
+               fieldRef:
+                fieldPath: metadata.name
+          ports:
+            - name: "rmrroute-{{ $key }}"
+              containerPort: {{ include "common.serviceport.e2term.rmr.route" $topCtx }}
+            - name: "rmrdata-{{ $key }}"
+              containerPort: {{ include "common.serviceport.e2term.rmr.data" $topCtx }}
+            - name: "sctp-{{ $key }}"
+              containerPort: 36422
+              protocol: SCTP
+            - name: "prmts-{{ $key }}"
+              containerPort: {{ include "common.serviceport.e2term.prometheus" $topCtx }}
+          stdin: true
+          tty: true
+          securityContext:
+            privileged: {{ .privilegedmode }}
+          {{- if eq $health.liveness.enabled true }}
+          readinessProbe:
+            exec:
+              command: [ "/bin/sh", "-c", "{{ $health.readiness.command }}:{{ include "common.serviceport.e2term.rmr.data" . }}" ]
+            initialDelaySeconds: {{ $health.readiness.initialDelaySeconds }}
+            periodSeconds: {{ $health.readiness.periodSeconds }}
+          {{- end }}
+          {{- if eq $health.liveness.enabled true }}
+          livenessProbe:
+            exec:
+              command: [ "/bin/sh", "-c", "{{ $health.liveness.command }}:{{ include "common.serviceport.e2term.rmr.data" . }}" ]
+            initialDelaySeconds: {{ $health.liveness.initialDelaySeconds }}
+            periodSeconds: {{ $health.liveness.periodSeconds }}
+          {{- end }}
+{{ if .pizpub.enabled }}
+        - name: {{ include "common.containername.e2term" $topCtx }}-pizpub
+          {{- $pizpubimagectx := dict "ctx" $topCtx "defaultregistry" .pizpub.image.registry }}
+          image: {{ include "common.dockerregistry.url" $pizpubimagectx }}/{{ .pizpub.image.name }}:{{ .pizpub.image.tag }}
+          imagePullPolicy: {{ include "common.dockerregistry.pullpolicy" $pullpolicyctx }}
+          volumeMounts:
+          - mountPath: /etc/localtime
+            name: localtime
+            readOnly: true
+          - mountPath: "{{ .pizpub.dataRootDir }}"
+            name: vol-shared
+            readOnly: false
+          - name: pizpub-config
+            mountPath: /opt/app/config/conf/
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "/opt/app/config/conf/cleaner.sh", "{{ .pizpub.dataRootDir }}/{{ .pizpub.processedDirectory }}", "3"]
+{{ end }}
+      volumes:
+        - name: local-router-file
+          configMap:
+            name: {{ include "common.configmapname.e2term" $topCtx }}-router-configmap
+        - name: local-loglevel-file
+          configMap:
+            name: {{ include "common.configmapname.e2term" $topCtx }}-loglevel-configmap
+{{ if .pizpub.enabled }}
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+        - name: pizpub-config
+          configMap:
+            name: {{ include "common.configmapname.e2term" $topCtx }}-pizpub-{{ $key }}
+{{ end }}
+        - name: vol-shared
+          persistentVolumeClaim:
+            claimName: {{ include "common.pvcname.e2term" $topCtx }}-{{ $key }}
+
+{{- end }}
+{{- end }}
