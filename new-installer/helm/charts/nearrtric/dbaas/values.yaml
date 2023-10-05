@@ -1,0 +1,67 @@
+################################################################################
+#   Copyright (c) 2020 AT&T Intellectual Property.                             #
+#   Copyright (c) 2020 Nokia.                                                  #
+#                                                                              #
+#   Licensed under the Apache License, Version 2.0 (the "License");            #
+#   you may not use this file except in compliance with the License.           #
+#   You may obtain a copy of the License at                                    #
+#                                                                              #
+#       http://www.apache.org/licenses/LICENSE-2.0                             #
+#                                                                              #
+#   Unless required by applicable law or agreed to in writing, software        #
+#   distributed under the License is distributed on an "AS IS" BASIS,          #
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   #
+#   See the License for the specific language governing permissions and        #
+#   limitations under the License.                                             #
+################################################################################
+
+dbaas:
+  image:
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
+    name: ric-plt-dbaas
+    tag: 0.6.1
+  imagePullPolicy: IfNotPresent
+  enableHighAvailability: false
+  enablePodAntiAffinity: false
+  terminationGracePeriodSeconds: 5
+
+  redis:
+    masterGroupName: dbaasmaster
+    sa_config:
+      ## For /data/conf/redis.conf
+      # For now DBAAS has no discs, that's why disable AOF and RDB file snapshot saving
+      appendonly: "no"
+      save: ""
+      protected-mode: "no"
+      loadmodule: "/usr/local/libexec/redismodule/libredismodule.so"
+      bind: 0.0.0.0
+    ha_config:
+      ## For /data/conf/redis.conf
+      # For now DBAAS has no discs, that's why disable AOF and RDB file snapshot saving
+      appendonly: "no"
+      save: ""
+      min-slaves-to-write: 1
+      min-slaves-max-lag: 5
+      maxmemory: "0"
+      maxmemory-policy: "volatile-lru"
+      protected-mode: "no"
+      loadmodule: "/usr/local/libexec/redismodule/libredismodule.so"
+
+  sentinel:
+    quorum: 2
+    protected-mode: "no"
+    config:
+      ## For /data/conf/sentinel.conf
+      down-after-milliseconds: 5000
+      failover-timeout: 60000
+      parallel-syncs: 1
+
+  saReplicas: 1
+  haReplicas: 3
+  #Timeout command below requires -t flag if installed DBAAS image is older than
+  #0.5.0. Reason is that DBAAS image version 0.5.0 and newer ones are based on
+  #newer Alpine 3.11 OS version and in this Alpine version timeout command
+  #doesn't have -t flag anymore.
+  probeTimeoutCommand: "timeout"
+  #probeTimeoutCommand: "timeout -t"
+  probeTimeout: 10

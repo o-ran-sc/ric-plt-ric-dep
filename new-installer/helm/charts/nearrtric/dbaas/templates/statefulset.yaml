@@ -1,0 +1,174 @@
+################################################################################
+#   Copyright (c) 2019 AT&T Intellectual Property.                             #
+#   Copyright (c) 2019 Nokia.                                                  #
+#                                                                              #
+#   Licensed under the Apache License, Version 2.0 (the "License");            #
+#   you may not use this file except in compliance with the License.           #
+#   You may obtain a copy of the License at                                    #
+#                                                                              #
+#       http://www.apache.org/licenses/LICENSE-2.0                             #
+#                                                                              #
+#   Unless required by applicable law or agreed to in writing, software        #
+#   distributed under the License is distributed on an "AS IS" BASIS,          #
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   #
+#   See the License for the specific language governing permissions and        #
+#   limitations under the License.                                             #
+################################################################################
+{{- $ctx := dict "ctx" . "defaultregistry" .Values.dbaas.image.registry }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "common.statefulsetname.dbaas" . }}-server
+  namespace: {{ include "common.namespace.platform" . }}
+  labels:
+    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaas" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaas" . }}
+      release: {{ .Release.Name }}
+  serviceName: {{ template "common.servicename.dbaas.tcp" . }}
+{{- if $.Values.dbaas.enableHighAvailability }}
+  replicas: {{ .Values.dbaas.haReplicas }}
+{{- else }}
+  replicas: {{ .Values.dbaas.saReplicas }}
+{{- end }}
+  podManagementPolicy: OrderedReady
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaas" . }}
+        release: {{ .Release.Name }}
+    spec:
+{{- if $.Values.dbaas.enablePodAntiAffinity }}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaas" . }}
+                  release: {{ .Release.Name }}
+              topologyKey: kubernetes.io/hostname
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaas" . }}
+                    release: {{ .Release.Name }}
+                topologyKey: topology.kubernetes.io/zone
+{{- end }}
+      imagePullSecrets:
+        {{- $ctx := dict "ctx" . "defaultregistry" .Values.dbaas.image.registry }}
+        - name: {{ include "common.dockerregistry.credential" $ctx }}
+      terminationGracePeriodSeconds: {{ .Values.dbaas.terminationGracePeriodSeconds }}
+{{- if $.Values.dbaas.enableHighAvailability }}
+      initContainers:
+      - name: config-init
+        image: {{ include "common.dockerregistry.url" $ctx }}/{{ .Values.dbaas.image.name }}:{{ .Values.dbaas.image.tag }}
+        imagePullPolicy: {{ include "common.dockerregistry.pullpolicy" $ctx  }}
+        command:
+        - sh
+        args:
+        - /readonly-config/init.sh
+        env:
+        - name: ANNOUNCE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        volumeMounts:
+        - name: config
+          mountPath: /readonly-config
+          readOnly: true
+        - name: data
+          mountPath: /data
+{{- end }}
+      shareProcessNamespace: true
+      containers:
+      - name: {{ include "common.containername.dbaas" . }}-redis
+        image: {{ include "common.dockerregistry.url" $ctx }}/{{ .Values.dbaas.image.name }}:{{ .Values.dbaas.image.tag }}
+        imagePullPolicy: {{ include "common.dockerregistry.pullpolicy" $ctx  }}
+        command:
+        - redis-server
+        args:
+{{- if $.Values.dbaas.enableHighAvailability }}
+        - /data/conf/redis.conf
+{{- else }}
+        - /data/redis.conf
+{{- end }}
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - {{ .Values.dbaas.probeTimeoutCommand }} {{ .Values.dbaas.probeTimeout }} redis-cli -p {{ include "common.serviceport.dbaas.redis" . }} ping
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - {{ .Values.dbaas.probeTimeoutCommand }} {{ .Values.dbaas.probeTimeout }} redis-cli -p {{ include "common.serviceport.dbaas.redis" . }} ping
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        ports:
+        - name: redis
+          containerPort: {{ include "common.serviceport.dbaas.redis" . }}
+        envFrom:
+        - configMapRef:
+            name: {{ include "common.configmapname.dbaas" . }}-appconfig
+        volumeMounts:
+        - mountPath: /data
+{{- if $.Values.dbaas.enableHighAvailability }}
+          name: data
+      - name: {{ include "common.containername.dbaas" . }}-sentinel
+        image: {{ include "common.dockerregistry.url" $ctx }}/{{ .Values.dbaas.image.name }}:{{ .Values.dbaas.image.tag }}
+        imagePullPolicy: {{ include "common.dockerregistry.pullpolicy" $ctx  }}
+        command:
+          - redis-server
+        args:
+          - /data/conf/sentinel.conf
+          - --sentinel
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - {{ .Values.dbaas.probeTimeoutCommand }} {{ .Values.dbaas.probeTimeout }} redis-cli -p {{ include "common.serviceport.dbaas.redis" . }} ping
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - {{ .Values.dbaas.probeTimeoutCommand }} {{ .Values.dbaas.probeTimeout }} redis-cli -p {{ include "common.serviceport.dbaas.redis" . }} ping
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        ports:
+          - name: sentinel
+            containerPort: {{ include "common.serviceport.dbaas.sentinel" . }}
+        envFrom:
+        - configMapRef:
+            name: {{ include "common.configmapname.dbaas" . }}-appconfig
+        volumeMounts:
+        - mountPath: /data
+          name: data
+{{- else }}
+          name: config
+{{- end }}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ template "common.configmapname.dbaas" . }}-config
+{{- if $.Values.dbaas.enableHighAvailability }}
+      - name: data
+        emptyDir: {}
+{{- end }}
