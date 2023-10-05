@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "common.ingressname.xapp-onboarder" . }}-server
+spec:
+  rules:
+  - http:
+      paths:
+      - path: {{ include "common.kongpath.ric.xapp-onboarder" . }}
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "common.servicename.xapp-onboarder.server" . }}
+            port:
+              number: {{ include "common.serviceport.xapp-onboarder.server" . }}

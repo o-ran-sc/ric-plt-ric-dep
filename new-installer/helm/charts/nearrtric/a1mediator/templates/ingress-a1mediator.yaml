@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "common.ingressname.a1mediator" . }}
+spec:
+  rules:
+  - http:
+      paths:
+      - path: {{ include "common.kongpath.ric.a1mediator" . }}
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "common.servicename.a1mediator.http" . }}
+            port:
+              number: {{ include "common.serviceport.a1mediator.http" . }}
