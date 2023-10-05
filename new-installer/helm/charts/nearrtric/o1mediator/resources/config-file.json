@@ -1,0 +1,28 @@
+{
+    "local": {
+        "host": ":8080"
+    },
+    "logger": {
+        "level": 4
+    },
+    "db": {
+        "namespaces": ["sdl", "rnib"]
+    },
+    "rmr": {
+        "protPort": "tcp:4560",
+        "maxSize": 65536,
+        "numWorkers": 1
+    },
+    "sbi": {
+        "appmgrAddr": "{{ include "common.servicename.appmgr.http" . }}:{{ include "common.serviceport.appmgr.http" . }}",
+        "alertmgrAddr": {{ .Values.o1mediator.prometheusAMUrl | quote }},
+        "timeout": 30
+    },
+    "nbi": {
+        "schemas": ["o-ran-sc-ric-xapp-desc-v1", "o-ran-sc-ric-ueec-config-v1"]
+    },
+    "controls": {
+        "active": true
+    }
+}
+
