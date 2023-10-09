@@ -62,7 +62,7 @@ a1mediator:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-a1
-    tag: 3.1.2
+    tag: 3.2.1
   rmr_timeout_config:
     a1_rcv_retry_times: 20
     ins_del_no_resp_ttl: 5

@@ -71,11 +71,11 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /a1-p/healthcheck
+              path: /A1-P/v2/healthcheck
               port: http
           readinessProbe:
             httpGet:
-              path: /a1-p/healthcheck
+              path: /A1-P/v2/healthcheck
               port: http
       volumes:
         - name: "a1conf"
