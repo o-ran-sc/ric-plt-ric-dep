@@ -16,6 +16,23 @@
       "message": "Kindly review and merge.",
       "revId": "d60f44b4a1c6a5592ab7b392c9537b8b15670fd3",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e668dd70_e0c6103c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000108
+      },
+      "writtenOn": "2023-10-30T12:57:35Z",
+      "side": 1,
+      "message": "This needs to go hand in hand with a new release of\nthe A1 mediator container image - otherwise it won\u0027t work. Could you release a new A1 mediator image?",
+      "revId": "d60f44b4a1c6a5592ab7b392c9537b8b15670fd3",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     }
   ]
 }
