@@ -46,6 +46,30 @@
       },
       "revId": "7c185b3d5327cdf9403bc3a302618e80d077e910",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "016613f5_28608027",
+        "filename": "RECIPE_EXAMPLE/example_recipe_oran_h_release.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1001361
+      },
+      "writtenOn": "2023-11-02T09:00:09Z",
+      "side": 1,
+      "message": "done ,hope change in RECIPE_EXAMPLE/example_recipe_latest_unstable.yaml  is fine",
+      "parentUuid": "42eebdbc_80f0a9d9",
+      "range": {
+        "startLine": 65,
+        "startChar": 13,
+        "endLine": 65,
+        "endChar": 14
+      },
+      "revId": "7c185b3d5327cdf9403bc3a302618e80d077e910",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     }
   ]
 }
