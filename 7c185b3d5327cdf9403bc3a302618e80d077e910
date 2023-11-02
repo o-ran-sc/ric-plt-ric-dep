@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5e7d7bd1_d14e07a7",
+        "filename": "RECIPE_EXAMPLE/example_recipe_oran_h_release.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1000108
+      },
+      "writtenOn": "2023-11-02T07:39:39Z",
+      "side": 1,
+      "message": "Pls. don\u0027t modify the h release recipe. Could you just create one for the I release, i.e., example_recipe_oran_i_release.yaml as a fresh copy of the h release and do version change in that one?",
+      "range": {
+        "startLine": 65,
+        "startChar": 13,
+        "endLine": 65,
+        "endChar": 14
+      },
+      "revId": "7c185b3d5327cdf9403bc3a302618e80d077e910",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    }
+  ]
+}
