@@ -25,9 +25,12 @@ package controller
 import (
 	"context"
 
+	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
+	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	ricdeployv1 "ricdeploy/api/v1"
 )
@@ -53,7 +56,44 @@ type RicPlatformReconciler struct {
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.15.0/pkg/reconcile
 func (r *RicPlatformReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 
-	// TODO(user): your logic here
+	logger := log.FromContext(ctx)
+	logger.Info("Reconcilling RIC")
+	instance := &ricdeployv1.RicPlatform{}
+	err := r.Get(context.TODO(), req.NamespacedName, instance)
+	if err != nil {
+		if errors.IsNotFound(err) {
+			// object not found, could have been deleted after reconcile request, hence don't requeue
+			return ctrl.Result{}, nil
+		}
+		// error reading the object, requeue the request
+		return ctrl.Result{}, err
+	}
+
+	// name of our custom finalizer
+	myFinalizerName := "batch.tutorial.kubebuilder.io/finalizer"
+	// examine DeletionTimestamp to determine if object is under deletion
+	if instance.ObjectMeta.DeletionTimestamp.IsZero() {
+		// Adding a Finaliser also adds the DeletionTimestamp while deleting
+		if !controllerutil.ContainsFinalizer(instance, myFinalizerName) {
+			controllerutil.AddFinalizer(instance, myFinalizerName)
+			if err := r.Update(ctx, instance); err != nil {
+				return ctrl.Result{}, err
+			}
+		}
+	} else {
+		// The object is being deleted
+		if controllerutil.ContainsFinalizer(instance, myFinalizerName) {
+			// remove our finalizer from the list and update it.
+			controllerutil.RemoveFinalizer(instance, myFinalizerName)
+			if err := r.Update(ctx, instance); err != nil {
+				return ctrl.Result{}, err
+			}
+		}
+
+		// Stop reconciliation as the item is being deleted
+		return ctrl.Result{}, nil
+	}
+
 	return ctrl.Result{}, nil
 }
 
