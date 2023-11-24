@@ -16,6 +16,52 @@
       "message": "Also added `helm repo update` to Makefile",
       "revId": "7cec2610dc4e52efeb5386263005430d65d13682",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0f0ec0ec_51e9766e",
+        "filename": "new-installer/README.md",
+        "patchSetId": 4
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1000108
+      },
+      "writtenOn": "2023-11-24T15:41:50Z",
+      "side": 1,
+      "message": "Add note: If behind a firewall, you might want to set/export the environment variables HTTP_PROXY, HTTPS_PROXY and NO_PROXY before starting minikube. Otherwise Kubernetes will not be able to fetch container images.",
+      "range": {
+        "startLine": 70,
+        "startChar": 7,
+        "endLine": 70,
+        "endChar": 35
+      },
+      "revId": "7cec2610dc4e52efeb5386263005430d65d13682",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f2d1912c_c9277d4a",
+        "filename": "new-installer/README.md",
+        "patchSetId": 4
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 1000108
+      },
+      "writtenOn": "2023-11-24T15:41:50Z",
+      "side": 1,
+      "message": "add note that these files have to follow the example given in new-installer/helm-overrides/nearrtric/minimal-nearrt-ric.yaml",
+      "range": {
+        "startLine": 207,
+        "startChar": 54,
+        "endLine": 207,
+        "endChar": 87
+      },
+      "revId": "7cec2610dc4e52efeb5386263005430d65d13682",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     }
   ]
 }
