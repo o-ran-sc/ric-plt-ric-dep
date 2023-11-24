@@ -1,0 +1,157 @@
+################################################################################
+#   Copyright (c) 2020 AT&T Intellectual Property.                             #
+#   Copyright (c) 2020 Nokia.                                                  #
+#                                                                              #
+#   Licensed under the Apache License, Version 2.0 (the "License");            #
+#   you may not use this file except in compliance with the License.           #
+#   You may obtain a copy of the License at                                    #
+#                                                                              #
+#       http://www.apache.org/licenses/LICENSE-2.0                             #
+#                                                                              #
+#   Unless required by applicable law or agreed to in writing, software        #
+#   distributed under the License is distributed on an "AS IS" BASIS,          #
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   #
+#   See the License for the specific language governing permissions and        #
+#   limitations under the License.                                             #
+################################################################################
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "common.configmapname.dbaas" . }}-config
+  namespace: {{ include "common.namespace.platform" . }}
+  labels:
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.dbaas" . }}
+data:
+  redis.conf: |
+    dir "/data"
+{{- if $.Values.dbaas.enableHighAvailability }}
+    {{- range $key, $value := .Values.dbaas.redis.ha_config }}
+    {{ $key }} {{ $value }}
+    {{- end }}
+{{- else }}
+    {{- range $key, $value := .Values.dbaas.redis.sa_config }}
+    {{ $key }} {{ $value }}
+    {{- end }}
+{{- end }}
+
+{{- if $.Values.dbaas.enableHighAvailability }}
+  sentinel.conf: |
+    dir "/data"
+    {{- $root := . -}}
+    {{- range $key, $value := .Values.dbaas.sentinel.config }}
+    sentinel {{ $key }} {{ $root.Values.dbaas.redis.masterGroupName }} {{ $value }}
+    {{- end }}
+    protected-mode {{ index .Values.dbaas.sentinel "protected-mode" }}
+
+  init.sh: |
+    HOSTNAME="$(hostname)"
+    INDEX="${HOSTNAME##*-}"
+    MASTER="$(redis-cli -h {{ template "common.servicename.dbaas.tcp" . }}.{{ include "common.namespace.platform" . }} -p {{ include "common.serviceport.dbaas.sentinel" .  }} sentinel get-master-addr-by-name {{ .Values.dbaas.redis.masterGroupName }} | grep -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')"
+    MASTER_GROUP="{{ .Values.dbaas.redis.masterGroupName }}"
+    QUORUM="{{ .Values.dbaas.sentinel.quorum }}"
+    REDIS_CONF=/data/conf/redis.conf
+    REDIS_PORT={{ include "common.serviceport.dbaas.redis" . }}
+    SENTINEL_CONF=/data/conf/sentinel.conf
+    SENTINEL_PORT={{ include "common.serviceport.dbaas.sentinel" . }}
+    SERVICE={{ include "common.servicename.dbaas.tcp" . }}
+    set -eu
+
+    sentinel_update() {
+        echo "Updating sentinel config"
+        sed -i "1s/^/$(cat sentinel-id)\\n/" "$SENTINEL_CONF"
+        sed -i "2s/^/sentinel monitor $MASTER_GROUP $1 $REDIS_PORT $QUORUM \\n/" "$SENTINEL_CONF"
+        echo "sentinel announce-ip $ANNOUNCE_IP" >> $SENTINEL_CONF
+        echo "sentinel announce-port $SENTINEL_PORT" >> $SENTINEL_CONF
+    }
+
+    redis_update() {
+        echo "Updating redis config"
+        echo "slaveof $1 $REDIS_PORT" >> "$REDIS_CONF"
+        echo "slave-announce-ip $ANNOUNCE_IP" >> $REDIS_CONF
+        echo "slave-announce-port $REDIS_PORT" >> $REDIS_CONF
+    }
+
+    redis_master_update() {
+        echo "Updating redis default master config"
+        echo "slave-announce-ip $ANNOUNCE_IP" >> $REDIS_CONF
+        echo "slave-announce-port $REDIS_PORT" >> $REDIS_CONF
+    }
+
+    copy_config() {
+        if [ -f "$SENTINEL_CONF" ]; then
+            grep "sentinel myid" "$SENTINEL_CONF" > sentinel-id || true
+        fi
+        cp /readonly-config/redis.conf "$REDIS_CONF"
+        cp /readonly-config/sentinel.conf "$SENTINEL_CONF"
+    }
+
+    setup_defaults() {
+        echo "Setting up defaults"
+        if [ "$INDEX" = "0" ]; then
+            echo "Setting this pod as the default master"
+            sed -i "s/^.*slaveof.*//" "$REDIS_CONF"
+            redis_master_update
+            sentinel_update "$ANNOUNCE_IP"
+        else
+            DEFAULT_MASTER="$(getent hosts "{{ include "common.statefulsetname.dbaas" . }}-server-0.$SERVICE" | awk '{ print $1 }')"
+            if [ -z "$DEFAULT_MASTER" ]; then
+                echo "Unable to resolve host"
+                exit 1
+            fi
+            echo "Setting default slave config.."
+            redis_update "$DEFAULT_MASTER"
+            sentinel_update "$DEFAULT_MASTER"
+        fi
+    }
+
+    find_master() {
+        echo "Attempting to find master"
+        if [ "$(redis-cli -h "$MASTER"{{ if .Values.auth }} -a "$AUTH"{{ end }} ping)" != "PONG" ]; then
+           echo "Can't ping master, attempting to force failover"
+           if redis-cli -h "$SERVICE" -p "$SENTINEL_PORT" sentinel failover "$MASTER_GROUP" | grep -q 'NOGOODSLAVE' ; then
+               setup_defaults
+               return 0
+           fi
+           sleep 10
+           MASTER="$(redis-cli -h $SERVICE -p $SENTINEL_PORT sentinel get-master-addr-by-name $MASTER_GROUP | grep -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')"
+           if [ "$MASTER" ]; then
+               sentinel_update "$MASTER"
+               redis_update "$MASTER"
+           else
+              echo "Could not failover, exiting..."
+              exit 1
+           fi
+        else
+            echo "Found reachable master, updating config"
+            sentinel_update "$MASTER"
+            redis_update "$MASTER"
+        fi
+    }
+
+    mkdir -p /data/conf/
+
+    echo "Initializing config.."
+    copy_config
+
+    #    ANNOUNCE_IP=$(getent hosts "{{ include "common.statefulsetname.dbaas" . }}-server-$INDEX.$SERVICE" | awk '{ print $1 }')
+    if [ -z "$ANNOUNCE_IP" ]; then
+        "Could not resolve the announce ip for this pod"
+        exit 1
+    elif [ "$MASTER" ]; then
+        find_master
+    else
+        setup_defaults
+    fi
+
+    if [ "${AUTH:-}" ]; then
+        echo "Setting auth values"
+        sed -i "s/replace-default-auth/$AUTH/" "$REDIS_CONF" "$SENTINEL_CONF"
+    fi
+
+    echo "Ready..."
+
+{{- end }}
