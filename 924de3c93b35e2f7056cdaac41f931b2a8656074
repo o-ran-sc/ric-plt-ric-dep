@@ -24,6 +24,30 @@
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f0738ce6_59b2a16e",
+        "filename": "new-installer/README.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1002067
+      },
+      "writtenOn": "2023-11-24T04:16:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5e3a1a50_c6537f40",
+      "range": {
+        "startLine": 73,
+        "startChar": 6,
+        "endLine": 73,
+        "endChar": 17
+      },
+      "revId": "924de3c93b35e2f7056cdaac41f931b2a8656074",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c578104c_a368761d",
@@ -37,6 +61,30 @@
       "writtenOn": "2023-11-23T14:39:00Z",
       "side": 1,
       "message": "even after creating the plugin dir, this did not work for me. \n\nInstead I did: helm plugin install https://github.com/chartmuseum/helm-push",
+      "range": {
+        "startLine": 122,
+        "startChar": 10,
+        "endLine": 122,
+        "endChar": 28
+      },
+      "revId": "924de3c93b35e2f7056cdaac41f931b2a8656074",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6cec95d5_2ee40d1e",
+        "filename": "new-installer/README.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1002067
+      },
+      "writtenOn": "2023-11-24T04:16:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c578104c_a368761d",
       "range": {
         "startLine": 122,
         "startChar": 10,
