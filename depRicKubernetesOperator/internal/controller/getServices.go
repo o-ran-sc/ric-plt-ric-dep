@@ -90,6 +90,87 @@ func GetService() []*corev1.Service {
 			Kind:       "Service",
 		},
 	}
+	service3 := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Labels: map[string]string{
+				"heritage": "Helm",
+				"release":  "release-name",
+				"app":      "ricplt-alarmmanager",
+				"chart":    "alarmmanager-5.0.0",
+			},
+			Name:      "service-ricplt-alarmmanager-http",
+			Namespace: "ricplt",
+		},
+		Spec: corev1.ServiceSpec{
+			Ports: []corev1.ServicePort{
 
-	return []*corev1.Service{service1, service2}
+				corev1.ServicePort{
+					Name:     "http",
+					Port:     8080,
+					Protocol: corev1.Protocol("TCP"),
+					TargetPort: intstr.IntOrString{
+						IntVal: 8080,
+					},
+				},
+			},
+			PublishNotReadyAddresses: false,
+			Selector: map[string]string{
+				"app":     "ricplt-alarmmanager",
+				"release": "release-name",
+			},
+			Type: corev1.ServiceType("ClusterIP"),
+		},
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "Service",
+			APIVersion: "v1",
+		},
+	}
+
+	service4 := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Labels: map[string]string{
+				"app":      "ricplt-alarmmanager",
+				"chart":    "alarmmanager-5.0.0",
+				"heritage": "Helm",
+				"release":  "release-name",
+			},
+			Name:      "service-ricplt-alarmmanager-rmr",
+			Namespace: "ricplt",
+		},
+		Spec: corev1.ServiceSpec{
+			Ports: []corev1.ServicePort{
+
+				corev1.ServicePort{
+					TargetPort: intstr.IntOrString{
+						StrVal: "rmrdata",
+						Type:   intstr.Type(1),
+					},
+					Name:     "rmrdata",
+					Port:     4560,
+					Protocol: corev1.Protocol("TCP"),
+				},
+				corev1.ServicePort{
+					Name:     "rmrroute",
+					Port:     4561,
+					Protocol: corev1.Protocol("TCP"),
+					TargetPort: intstr.IntOrString{
+						StrVal: "rmrroute",
+						Type:   intstr.Type(1),
+					},
+				},
+			},
+			PublishNotReadyAddresses: false,
+			Selector: map[string]string{
+				"app":     "ricplt-alarmmanager",
+				"release": "release-name",
+			},
+			Type: corev1.ServiceType("ClusterIP"),
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "Service",
+		},
+	}
+
+	return []*corev1.Service{service1, service2, service3, service4}
 }
