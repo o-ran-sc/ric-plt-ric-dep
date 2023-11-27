@@ -151,5 +151,149 @@ func GetDeployment() []*appsv1.Deployment {
 		},
 	}
 
-	return []*appsv1.Deployment{deployment1}
+	deployment2 := &appsv1.Deployment{
+		Spec: appsv1.DeploymentSpec{
+			Paused:   false,
+			Replicas: int32Ptr(1),
+			Selector: &metav1.LabelSelector{
+				MatchLabels: map[string]string{
+					"release": "release-name",
+					"app":     "ricplt-alarmmanager",
+				},
+			},
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: map[string]string{
+						"app":     "ricplt-alarmmanager",
+						"release": "release-name",
+					},
+				},
+				Spec: corev1.PodSpec{
+					HostIPC:     false,
+					HostNetwork: false,
+					HostPID:     false,
+					Hostname:    "alarmmanager",
+					ImagePullSecrets: []corev1.LocalObjectReference{
+
+						corev1.LocalObjectReference{
+							Name: "secret-nexus3-o-ran-sc-org-10002-o-ran-sc",
+						},
+					},
+					ServiceAccountName: "svcacct-ricplt-alarmmanager",
+					Volumes: []corev1.Volume{
+
+						corev1.Volume{
+							Name: "config-volume",
+							VolumeSource: corev1.VolumeSource{
+								ConfigMap: &corev1.ConfigMapVolumeSource{
+									Items: []corev1.KeyToPath{
+
+										corev1.KeyToPath{
+											Mode: int32Ptr(420),
+											Path: "config-file.json",
+											Key:  "alarmmanagercfg",
+										},
+									},
+									LocalObjectReference: corev1.LocalObjectReference{
+										Name: "configmap-ricplt-alarmmanager-alarmmanagercfg",
+									},
+								},
+							},
+						},
+						corev1.Volume{
+							Name: "am-persistent-storage",
+							VolumeSource: corev1.VolumeSource{
+								PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+									ClaimName: "pvc-ricplt-alarmmanager",
+									ReadOnly:  false,
+								},
+							},
+						},
+					},
+					Containers: []corev1.Container{
+
+						corev1.Container{
+							Ports: []corev1.ContainerPort{
+
+								corev1.ContainerPort{
+									ContainerPort: 4561,
+									Name:          "rmrroute",
+									Protocol:      corev1.Protocol("TCP"),
+								},
+								corev1.ContainerPort{
+									ContainerPort: 4560,
+									Name:          "rmrdata",
+									Protocol:      corev1.Protocol("TCP"),
+								},
+								corev1.ContainerPort{
+									ContainerPort: 8080,
+									Name:          "http",
+									Protocol:      corev1.Protocol("TCP"),
+								},
+							},
+							StdinOnce: false,
+							TTY:       false,
+							VolumeMounts: []corev1.VolumeMount{
+
+								corev1.VolumeMount{
+									MountPath: "/cfg",
+									Name:      "config-volume",
+									ReadOnly:  false,
+								},
+								corev1.VolumeMount{
+									Name:      "am-persistent-storage",
+									ReadOnly:  false,
+									MountPath: "/mnt/pv-ricplt-alarmmanager",
+								},
+							},
+							Image:           "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-alarmmanager:0.5.9",
+							ImagePullPolicy: corev1.PullPolicy("IfNotPresent"),
+							Name:            "container-ricplt-alarmmanager",
+							Env: []corev1.EnvVar{
+
+								corev1.EnvVar{
+									Name:  "PLT_NAMESPACE",
+									Value: "ricplt",
+								},
+							},
+							EnvFrom: []corev1.EnvFromSource{
+
+								corev1.EnvFromSource{
+									ConfigMapRef: &corev1.ConfigMapEnvSource{
+										LocalObjectReference: corev1.LocalObjectReference{
+											Name: "configmap-ricplt-dbaas-appconfig",
+										},
+									},
+								},
+								corev1.EnvFromSource{
+									ConfigMapRef: &corev1.ConfigMapEnvSource{
+										LocalObjectReference: corev1.LocalObjectReference{
+											Name: "configmap-ricplt-alarmmanager-env",
+										},
+									},
+								},
+							},
+							Stdin: false,
+						},
+					},
+				},
+			},
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "apps/v1",
+			Kind:       "Deployment",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Namespace: "ricplt",
+			Labels: map[string]string{
+				"chart":    "alarmmanager-5.0.0",
+				"heritage": "Helm",
+				"release":  "release-name",
+				"app":      "ricplt-alarmmanager",
+			},
+			Name: "deployment-ricplt-alarmmanager",
+		},
+	}
+
+	return []*appsv1.Deployment{deployment1, deployment2}
 }
