@@ -50,5 +50,91 @@ func GetConfigMap() []*corev1.ConfigMap {
 		},
 	}
 
-	return []*corev1.ConfigMap{configMap1, configMap2}
+	configMap3 := &corev1.ConfigMap{
+		Data: map[string]string{
+			"ALARM_MGR_SERVICE_NAME": "service-ricplt-alarmmanager-rmr.ricplt",
+			"ALARM_MGR_SERVICE_PORT": "4560",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Namespace: "ricplt",
+			Name:      "configmap-ricplt-alarmmanager-appconfig",
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "ConfigMap",
+		},
+	}
+
+	configMap4 := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "alarm-appconfig",
+			Namespace: "ricxapp",
+		},
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "ConfigMap",
+			APIVersion: "v1",
+		},
+		Data: map[string]string{
+			"ALARM_MGR_SERVICE_NAME": "service-ricplt-alarmmanager-rmr.ricplt",
+			"ALARM_MGR_SERVICE_PORT": "4560",
+		},
+	}
+
+	configMap5 := &corev1.ConfigMap{
+		Data: map[string]string{
+			"alarmmanagercfg": "{  \n" +
+				"  \"local\": {\n" +
+				"    \"host\": \":8080\"\n" +
+				"  },\n" +
+				"  \"logger\": {\n" +
+				"    \"level\": 4\n" +
+				"  },\n" +
+				"  \"db\": {\n" +
+				"    \"namespaces\": [\"sdl\", \"rnib\"]\n" +
+				"  },\n" +
+				"  \"rmr\": {\n" +
+				"    \"protPort\": \"tcp:4560\",\n" +
+				"    \"maxSize\": 1024,\n" +
+				"    \"numWorkers\": 1\n" +
+				"  },\n" +
+				"  \"controls\": {\n" +
+				"    \"promAlertManager\": {\n" +
+				"      \"address\": \"cpro-alertmanager:80\",\n" +
+				"      \"baseUrl\": \"api/v2\",\n" +
+				"      \"schemes\": \"http\",\n" +
+				"      \"alertInterval\": 30000\n" +
+				"    },\n" +
+				"    \"maxActiveAlarms\": 5000,\n" +
+				"    \"maxAlarmHistory\": 20000,\n" +
+				"    \"alarmInfoPvFile\": \"/mnt/pv-ricplt-alarmmanager/alarminfo.json\"\n" +
+				"  }\n" +
+				"}",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "configmap-ricplt-alarmmanager-alarmmanagercfg",
+			Namespace: "ricplt",
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "ConfigMap",
+		},
+	}
+
+	configMap6 := &corev1.ConfigMap{
+		Data: map[string]string{
+			"RMR_SEED_RT": "/cfg/uta_rtg.rt",
+			"RMR_SRC_ID":  "service-ricplt-alarmmanager-rmr.ricplt",
+			"RMR_RTG_SVC": "service-ricplt-rtmgr-rmr:4561",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "configmap-ricplt-alarmmanager-env",
+			Namespace: "ricplt",
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "ConfigMap",
+		},
+	}
+
+	return []*corev1.ConfigMap{configMap1, configMap2, configMap3, configMap4, configMap5, configMap6}
 }
