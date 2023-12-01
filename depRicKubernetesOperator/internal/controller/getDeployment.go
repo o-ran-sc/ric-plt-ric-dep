@@ -701,5 +701,218 @@ func GetDeployment() []*appsv1.Deployment {
 		},
 	}
 
-	return []*appsv1.Deployment{deployment1, deployment2,deployment3,deployment4}
+	deployment5 := &appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{
+			Labels: map[string]string{
+				"release":  "release-name",
+				"app":      "ricplt-e2term-alpha",
+				"chart":    "e2term-3.0.0",
+				"heritage": "Helm",
+			},
+			Name:      "deployment-ricplt-e2term-alpha",
+			Namespace: "ricplt",
+		},
+		Spec: appsv1.DeploymentSpec{
+			Paused:   false,
+			Replicas: int32Ptr(1),
+			Selector: &metav1.LabelSelector{
+				MatchLabels: map[string]string{
+					"release": "release-name",
+					"app":     "ricplt-e2term-alpha",
+				},
+			},
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: map[string]string{
+						"app":     "ricplt-e2term-alpha",
+						"release": "release-name",
+					},
+				},
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+
+						corev1.Container{
+							ReadinessProbe: &corev1.Probe{
+								InitialDelaySeconds: 120,
+								PeriodSeconds:       60,
+								ProbeHandler: corev1.ProbeHandler{
+									Exec: &corev1.ExecAction{
+										Command: []string{
+
+											"/bin/sh",
+											"-c",
+											"ip=`hostname -i`;export RMR_SRC_ID=$ip;/opt/e2/rmr_probe -h $ip:38000",
+										},
+									},
+								},
+							},
+							SecurityContext: &corev1.SecurityContext{
+								Privileged: boolPtr(false),
+							},
+							Stdin: true,
+							Env: []corev1.EnvVar{
+
+								corev1.EnvVar{
+									Name:  "SYSTEM_NAME",
+									Value: "SEP",
+								},
+								corev1.EnvVar{
+									Name:  "CONFIG_MAP_NAME",
+									Value: "/etc/config/log-level",
+								},
+								corev1.EnvVar{
+									Name: "HOST_NAME",
+									ValueFrom: &corev1.EnvVarSource{
+										FieldRef: &corev1.ObjectFieldSelector{
+											FieldPath: "spec.nodeName",
+										},
+									},
+								},
+								corev1.EnvVar{
+									Name:  "SERVICE_NAME",
+									Value: "RIC_E2_TERM",
+								},
+								corev1.EnvVar{
+									Name:  "CONTAINER_NAME",
+									Value: "container-ricplt-e2term",
+								},
+								corev1.EnvVar{
+									Name: "POD_NAME",
+									ValueFrom: &corev1.EnvVarSource{
+										FieldRef: &corev1.ObjectFieldSelector{
+											FieldPath: "metadata.name",
+										},
+									},
+								},
+							},
+							EnvFrom: []corev1.EnvFromSource{
+
+								corev1.EnvFromSource{
+									ConfigMapRef: &corev1.ConfigMapEnvSource{
+										LocalObjectReference: corev1.LocalObjectReference{
+											Name: "configmap-ricplt-e2term-env-alpha",
+										},
+									},
+								},
+							},
+							Image: "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-e2:3.0.1",
+							LivenessProbe: &corev1.Probe{
+								ProbeHandler: corev1.ProbeHandler{
+									Exec: &corev1.ExecAction{
+										Command: []string{
+
+											"/bin/sh",
+											"-c",
+											"ip=`hostname -i`;export RMR_SRC_ID=$ip;/opt/e2/rmr_probe -h $ip:38000",
+										},
+									},
+								},
+								InitialDelaySeconds: 10,
+								PeriodSeconds:       10,
+							},
+							Name:            "container-ricplt-e2term",
+							ImagePullPolicy: corev1.PullPolicy("IfNotPresent"),
+							Ports: []corev1.ContainerPort{
+
+								corev1.ContainerPort{
+									ContainerPort: 4561,
+									Name:          "rmrroute-alpha",
+								},
+								corev1.ContainerPort{
+									ContainerPort: 38000,
+									Name:          "rmrdata-alpha",
+								},
+								corev1.ContainerPort{
+									ContainerPort: 36422,
+									Name:          "sctp-alpha",
+									Protocol:      corev1.Protocol("SCTP"),
+								},
+								corev1.ContainerPort{
+									ContainerPort: 8088,
+									Name:          "prmts-alpha",
+								},
+							},
+							StdinOnce: false,
+							TTY:       true,
+							VolumeMounts: []corev1.VolumeMount{
+
+								corev1.VolumeMount{
+									MountPath: "/opt/e2/router.txt",
+									Name:      "local-router-file",
+									ReadOnly:  false,
+									SubPath:   "router.txt",
+								},
+								corev1.VolumeMount{
+									MountPath: "/tmp/rmr_verbose",
+									Name:      "local-router-file",
+									ReadOnly:  false,
+									SubPath:   "rmr_verbose",
+								},
+								corev1.VolumeMount{
+									MountPath: "/etc/config",
+									Name:      "local-loglevel-file",
+									ReadOnly:  false,
+								},
+								corev1.VolumeMount{
+									ReadOnly:  false,
+									MountPath: "/data/outgoing/",
+									Name:      "vol-shared",
+								},
+							},
+						},
+					},
+					DNSPolicy:   corev1.DNSPolicy("ClusterFirstWithHostNet"),
+					HostIPC:     false,
+					HostNetwork: false,
+					HostPID:     false,
+					Hostname:    "e2term-alpha",
+					ImagePullSecrets: []corev1.LocalObjectReference{
+
+						corev1.LocalObjectReference{
+							Name: "secret-nexus3-o-ran-sc-org-10002-o-ran-sc",
+						},
+					},
+					Volumes: []corev1.Volume{
+
+						corev1.Volume{
+							Name: "local-router-file",
+							VolumeSource: corev1.VolumeSource{
+								ConfigMap: &corev1.ConfigMapVolumeSource{
+									LocalObjectReference: corev1.LocalObjectReference{
+										Name: "configmap-ricplt-e2term-router-configmap",
+									},
+								},
+							},
+						},
+						corev1.Volume{
+							Name: "local-loglevel-file",
+							VolumeSource: corev1.VolumeSource{
+								ConfigMap: &corev1.ConfigMapVolumeSource{
+									LocalObjectReference: corev1.LocalObjectReference{
+										Name: "configmap-ricplt-e2term-loglevel-configmap",
+									},
+								},
+							},
+						},
+						corev1.Volume{
+							VolumeSource: corev1.VolumeSource{
+								PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+									ClaimName: "pvc-ricplt-e2term-alpha",
+									ReadOnly:  false,
+								},
+							},
+							Name: "vol-shared",
+						},
+					},
+				},
+			},
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "apps/v1",
+			Kind:       "Deployment",
+		},
+	}
+
+
+	return []*appsv1.Deployment{deployment1, deployment2,deployment3,deployment4,deployment5}
 }
