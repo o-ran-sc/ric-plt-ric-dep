@@ -36,3 +36,32 @@ func GetIngress() []*unstructured.Unstructured {
 			},
 		},
 	}
+	ingress2 := &unstructured.Unstructured{
+		Object: map[string]interface{}{
+			"apiVersion": "networking.k8s.io/v1beta1",
+			"kind":       "Ingress",
+			"metadata": map[string]interface{}{
+				"name": "ingress-ricplt-appmgr",
+			},
+			"spec": map[string]interface{}{
+				"rules": []interface{}{
+					map[string]interface{}{
+						"http": map[string]interface{}{
+							"paths": []interface{}{
+								map[string]interface{}{
+									"backend": map[string]interface{}{
+										"serviceName": "service-ricplt-appmgr-http",
+										"servicePort": 8080,
+									},
+									"path": "/appmgr",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	
+	return []*unstructured.Unstructured{ingress1, ingress2}
+}
