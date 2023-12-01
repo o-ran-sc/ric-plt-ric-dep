@@ -369,6 +369,88 @@ func GetConfigMap() []*corev1.ConfigMap {
 			Kind:       "ConfigMap",
 		},
 	}
-	
-	return []*corev1.ConfigMap{configMap1, configMap2, configMap3, configMap4, configMap5, configMap6,configMap7, configMap8, configMap9, configMap10, configMap11, configMap12, configMap13, configMap14, configMap15, configMap16}
+
+	configMap17 := &corev1.ConfigMap{
+		Data: map[string]string{
+			"log-level": "log-level: 3",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "configmap-ricplt-e2term-loglevel-configmap",
+			Namespace: "ricplt",
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "ConfigMap",
+		},
+	}
+
+	configMap18 := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "configmap-ricplt-e2term-router-configmap",
+			Namespace: "ricplt",
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "ConfigMap",
+		},
+		Data: map[string]string{
+			"rmr_verbose": "0\n" +
+				"",
+			"router.txt": "newrt|start\n" +
+				"rte|1080|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|1090|service-ricplt-e2term-rmr-alpha.ricplt:38000\n" +
+				"rte|1100|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|10020|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|10060|service-ricplt-e2term-rmr-alpha.ricplt:38000\n" +
+				"rte|10061|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|10062|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|10030|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|10070|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|10071|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|10080|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|10091|service-ricplt-rsm-rmr.ricplt:4801\n" +
+				"rte|10092|service-ricplt-rsm-rmr.ricplt:4801\n" +
+				"rte|10360|service-ricplt-e2term-rmr-alpha.ricplt:38000\n" +
+				"rte|10361|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|10362|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|10370|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|10371|service-ricplt-e2term-rmr-alpha.ricplt:38000\n" +
+				"rte|12010|service-ricplt-e2term-rmr-alpha.ricplt:38000\n" +
+				"rte|12020|service-ricplt-e2term-rmr-alpha.ricplt:38000\n" +
+				"rte|20001|service-ricplt-a1mediator-rmr.ricplt:4562\n" +
+				"rte|12011|service-ricxapp-ueec-rmr.ricxapp:4560;service-admission-ctrl-xapp-rmr.ricxapp:4560\n" +
+				"rte|12050|service-ricxapp-ueec-rmr.ricxapp:4560;service-admission-ctrl-xapp-rmr.ricxapp:4560\n" +
+				"rte|12012|service-ricxapp-ueec-rmr.ricxapp:4560;service-admission-ctrl-xapp-rmr.ricxapp:4560\n" +
+				"rte|12021|service-ricxapp-ueec-rmr.ricxapp:4560;service-admission-ctrl-xapp-rmr.ricxapp:4560\n" +
+				"rte|12022|service-ricxapp-ueec-rmr.ricxapp:4560;service-admission-ctrl-xapp-rmr.ricxapp:4560\n" +
+				"rte|12041|service-ricxapp-ueec-rmr.ricxapp:4560;service-admission-ctrl-xapp-rmr.ricxapp:4560\n" +
+				"rte|12042|service-ricxapp-ueec-rmr.ricxapp:4560;service-admission-ctrl-xapp-rmr.ricxapp:4560\n" +
+				"rte|12050|service-ricxapp-ueec-rmr.ricxapp:4560;service-admission-ctrl-xapp-rmr.ricxapp:4560\n" +
+				"rte|20000|service-ricxapp-ueec-rmr.ricxapp:4560;service-admission-ctrl-xapp-rmr.ricxapp:4560\n" +
+				"newrt|end",
+		},
+	}
+
+	configMap19 := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "configmap-ricplt-e2term-env-alpha",
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "ConfigMap",
+		},
+		Data: map[string]string{
+			"RMR_SEED_RT":   "router.txt",
+			"RMR_SRC_ID":    "service-ricplt-e2term-rmr-alpha.ricplt",
+			"RMR_VCTL_FILE": "/tmp/rmr_verbose",
+			"nano":          "38000",
+			"print":         "1",
+			"sctp":          "36422",
+			"volume":        "/data/outgoing/",
+			"RMR_RTG_SVC":   "4561",
+		},
+	}
+
+
+	return []*corev1.ConfigMap{configMap1, configMap2, configMap3, configMap4, configMap5, configMap6,configMap7, configMap8, configMap9, configMap10, configMap11, configMap12, configMap13, configMap14, configMap15, configMap16, configMap17, configMap18, configMap19}
 }

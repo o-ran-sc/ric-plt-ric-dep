@@ -30,5 +30,27 @@ func GetPersistentVolumeClaim() []*corev1.PersistentVolumeClaim {
 			Namespace: "ricplt",
 		},
 	}
-	return []*corev1.PersistentVolumeClaim{persistentVolumeClaim1}
+	persistentVolumeClaim2 := &corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "pvc-ricplt-e2term-alpha",
+		},
+		Spec: corev1.PersistentVolumeClaimSpec{
+			AccessModes: []corev1.PersistentVolumeAccessMode{
+
+				corev1.PersistentVolumeAccessMode("ReadWriteOnce"),
+			},
+			Resources: corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					"storage": resource.MustParse("100Mi"),
+				},
+			},
+			StorageClassName: stringPtr("local-storage"),
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "PersistentVolumeClaim",
+		},
+	}
+
+	return []*corev1.PersistentVolumeClaim{persistentVolumeClaim1, persistentVolumeClaim2}
 }

@@ -339,5 +339,130 @@ func GetService() []*corev1.Service {
 		},
 	}
 
-	return []*corev1.Service{service1, service2, service3, service4,service5,service6,service8,service9 }
+	service10 := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Annotations: map[string]string{
+				"prometheus.io/path":   "/metrics",
+				"prometheus.io/port":   "8088",
+				"prometheus.io/scrape": "true",
+			},
+			Labels: map[string]string{
+				"heritage": "Helm",
+				"release":  "release-name",
+				"app":      "ricplt-e2term-alpha",
+				"chart":    "e2term-3.0.0",
+			},
+			Name:      "service-ricplt-e2term-prometheus-alpha",
+			Namespace: "ricplt",
+		},
+		Spec: corev1.ServiceSpec{
+			Ports: []corev1.ServicePort{
+
+				corev1.ServicePort{
+					Name:     "prmts-alpha",
+					Port:     8088,
+					Protocol: corev1.Protocol("TCP"),
+					TargetPort: intstr.IntOrString{
+						StrVal: "prmts-alpha",
+						Type:   intstr.Type(1),
+					},
+				},
+			},
+			PublishNotReadyAddresses: false,
+			Selector: map[string]string{
+				"release": "release-name",
+				"app":     "ricplt-e2term-alpha",
+			},
+			Type: corev1.ServiceType("ClusterIP"),
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "Service",
+		},
+	}
+
+	service11 := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Labels: map[string]string{
+				"chart":    "e2term-3.0.0",
+				"heritage": "Helm",
+				"release":  "release-name",
+				"app":      "ricplt-e2term-alpha",
+			},
+			Name:      "service-ricplt-e2term-rmr-alpha",
+			Namespace: "ricplt",
+		},
+		Spec: corev1.ServiceSpec{
+			Ports: []corev1.ServicePort{
+
+				corev1.ServicePort{
+					Name:     "rmrroute-alpha",
+					Port:     4561,
+					Protocol: corev1.Protocol("TCP"),
+					TargetPort: intstr.IntOrString{
+						StrVal: "rmrroute-alpha",
+						Type:   intstr.Type(1),
+					},
+				},
+				corev1.ServicePort{
+					TargetPort: intstr.IntOrString{
+						StrVal: "rmrdata-alpha",
+						Type:   intstr.Type(1),
+					},
+					Name:     "rmrdata-alpha",
+					Port:     38000,
+					Protocol: corev1.Protocol("TCP"),
+				},
+			},
+			PublishNotReadyAddresses: false,
+			Selector: map[string]string{
+				"app":     "ricplt-e2term-alpha",
+				"release": "release-name",
+			},
+			Type: corev1.ServiceType("ClusterIP"),
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "Service",
+		},
+	}
+
+	service12 := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Namespace: "ricplt",
+			Labels: map[string]string{
+				"app":      "ricplt-e2term-alpha",
+				"chart":    "e2term-3.0.0",
+				"heritage": "Helm",
+				"release":  "release-name",
+			},
+			Name: "service-ricplt-e2term-sctp-alpha",
+		},
+		Spec: corev1.ServiceSpec{
+			Ports: []corev1.ServicePort{
+
+				corev1.ServicePort{
+					Name:     "sctp-alpha",
+					NodePort: 32222,
+					Port:     36422,
+					Protocol: corev1.Protocol("SCTP"),
+					TargetPort: intstr.IntOrString{
+						IntVal: 36422,
+					},
+				},
+			},
+			PublishNotReadyAddresses: false,
+			Selector: map[string]string{
+				"app":     "ricplt-e2term-alpha",
+				"release": "release-name",
+			},
+			Type: corev1.ServiceType("NodePort"),
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "Service",
+		},
+	}
+
+	return []*corev1.Service{service1, service2, service3, service4,service5,service6,service8,service9,service10,service11,service12}
 }
