@@ -255,5 +255,89 @@ func GetService() []*corev1.Service {
 		},
 	}
 
-	return []*corev1.Service{service1, service2, service3, service4,service5,service6 }
+
+	service8 := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Labels: map[string]string{
+				"app":      "ricplt-e2mgr",
+				"chart":    "e2mgr-3.0.0",
+				"heritage": "Helm",
+				"release":  "release-name",
+			},
+			Name:      "service-ricplt-e2mgr-http",
+			Namespace: "ricplt",
+		},
+		Spec: corev1.ServiceSpec{
+			Ports: []corev1.ServicePort{
+
+				corev1.ServicePort{
+					TargetPort: intstr.IntOrString{
+						StrVal: "http",
+						Type:   intstr.Type(1),
+					},
+					Name:     "http",
+					Port:     3800,
+					Protocol: corev1.Protocol("TCP"),
+				},
+			},
+			PublishNotReadyAddresses: false,
+			Selector: map[string]string{
+				"app":     "ricplt-e2mgr",
+				"release": "release-name",
+			},
+			Type: corev1.ServiceType("ClusterIP"),
+		},
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "Service",
+			APIVersion: "v1",
+		},
+	}
+
+	service9 := &corev1.Service{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "Service",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Labels: map[string]string{
+				"app":      "ricplt-e2mgr",
+				"chart":    "e2mgr-3.0.0",
+				"heritage": "Helm",
+				"release":  "release-name",
+			},
+			Name:      "service-ricplt-e2mgr-rmr",
+			Namespace: "ricplt",
+		},
+		Spec: corev1.ServiceSpec{
+			Selector: map[string]string{
+				"app":     "ricplt-e2mgr",
+				"release": "release-name",
+			},
+			Type: corev1.ServiceType("ClusterIP"),
+			Ports: []corev1.ServicePort{
+
+				corev1.ServicePort{
+					Protocol: corev1.Protocol("TCP"),
+					TargetPort: intstr.IntOrString{
+						StrVal: "rmrroute",
+						Type:   intstr.Type(1),
+					},
+					Name: "rmrroute",
+					Port: 4561,
+				},
+				corev1.ServicePort{
+					Name:     "rmrdata",
+					Port:     3801,
+					Protocol: corev1.Protocol("TCP"),
+					TargetPort: intstr.IntOrString{
+						StrVal: "rmrdata",
+						Type:   intstr.Type(1),
+					},
+				},
+			},
+			PublishNotReadyAddresses: false,
+		},
+	}
+
+	return []*corev1.Service{service1, service2, service3, service4,service5,service6,service8,service9 }
 }
