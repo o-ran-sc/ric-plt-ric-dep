@@ -18,5 +18,16 @@ func GetServiceAccount() []*corev1.ServiceAccount {
 			Kind:       "ServiceAccount",
 		},
 	}
-	return []*corev1.ServiceAccount{serviceAccount1}
+	serviceAccount2 := &corev1.ServiceAccount{
+		ObjectMeta: metav1.ObjectMeta{
+			Namespace: "ricplt",
+			Name:      "svcacct-ricplt-appmgr",
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "ServiceAccount",
+		},
+	}
+	
+	return []*corev1.ServiceAccount{serviceAccount1,serviceAccount2}
 }
