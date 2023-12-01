@@ -136,5 +136,133 @@ func GetConfigMap() []*corev1.ConfigMap {
 		},
 	}
 
-	return []*corev1.ConfigMap{configMap1, configMap2, configMap3, configMap4, configMap5, configMap6}
+	configMap7 := &corev1.ConfigMap{
+		Data: map[string]string{
+			"appmgr.yaml": "\"local\":\n" +
+				"  # Port on which the xapp-manager REST services are provided\n" +
+				"  \"host\": \":8080\"\n" +
+				"\"helm\":\n" +
+				"  # Remote helm repo URL. UPDATE this as required.\n" +
+				"  \"repo\": \"\\\"http://service-ricplt-xapp-onboarder-http:8080\\\"\"\n" +
+				"\n" +
+				"  # Repo name referred within the xapp-manager\n" +
+				"  \"repo-name\": \"helm-repo\"\n" +
+				"\n" +
+				"  # Tiller service details in the cluster. UPDATE this as required.\n" +
+				"  \"tiller-service\": service-tiller-ricxapp\n" +
+				"  \"tiller-namespace\": ricinfra\n" +
+				"  \"tiller-port\": \"44134\"\n" +
+				"  # helm username and password files\n" +
+				"  \"helm-username-file\": \"/opt/ric/secret/helm_repo_username\"\n" +
+				"  \"helm-password-file\": \"/opt/ric/secret/helm_repo_password\"\n" +
+				"  \"retry\": 1\n" +
+				"\"xapp\":\n" +
+				"  #Namespace to install xAPPs\n" +
+				"  \"namespace\": \"ricxapp\"\n" +
+				"  \"tarDir\": \"/tmp\"\n" +
+				"  \"schema\": \"descriptors/schema.json\"\n" +
+				"  \"config\": \"config/config-file.json\"\n" +
+				"  \"tmpConfig\": \"/tmp/config-file.json\"\n" +
+				"",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "configmap-ricplt-appmgr-appconfig",
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "ConfigMap",
+		},
+	}
+
+	configMap8 := &corev1.ConfigMap{
+		Data: map[string]string{
+			"appmgr-tiller-secret-copier.sh": "#!/bin/sh\n" +
+				"if [ -x /svcacct-to-kubeconfig.sh ] ; then\n" +
+				" /svcacct-to-kubeconfig.sh\n" +
+				"fi\n" +
+				"\n" +
+				"if [ ! -z \"${HELM_TLS_CA_CERT}\" ]; then\n" +
+				"  kubectl -n ${SECRET_NAMESPACE} get secret -o yaml ${SECRET_NAME} | \\\n" +
+				"   grep 'ca.crt:' | \\\n" +
+				"   awk '{print $2}' | \\\n" +
+				"   base64 -d > ${HELM_TLS_CA_CERT}\n" +
+				"fi\n" +
+				"\n" +
+				"if [ ! -z \"${HELM_TLS_CERT}\" ]; then\n" +
+				"  kubectl -n ${SECRET_NAMESPACE} get secret -o yaml ${SECRET_NAME} | \\\n" +
+				"   grep 'tls.crt:' | \\\n" +
+				"   awk '{print $2}' | \\\n" +
+				"   base64 -d > ${HELM_TLS_CERT}\n" +
+				"fi\n" +
+				"\n" +
+				"if [ ! -z \"${HELM_TLS_KEY}\" ]; then\n" +
+				"  kubectl -n ${SECRET_NAMESPACE} get secret -o yaml ${SECRET_NAME} | \\\n" +
+				"   grep 'tls.key:' | \\\n" +
+				"   awk '{print $2}' | \\\n" +
+				"   base64 -d > ${HELM_TLS_KEY}\n" +
+				"fi\n" +
+				"",
+			"svcacct-to-kubeconfig.sh": "#!/bin/sh\n" +
+				"\n" +
+				"# generate a kubconfig (at ${KUBECONFIG} file from the automatically-mounted\n" +
+				"# service account token.\n" +
+				"# ENVIRONMENT:\n" +
+				"# SVCACCT_NAME: the name of the service account user.  default \"default\"\n" +
+				"# CLUSTER_NAME: the name of the kubernetes cluster.  default \"kubernetes\"\n" +
+				"# KUBECONFIG: where the generated file will be deposited.\n" +
+				"SVCACCT_TOKEN=`cat /var/run/secrets/kubernetes.io/serviceaccount/token`\n" +
+				"CLUSTER_CA=`base64 /var/run/secrets/kubernetes.io/serviceaccount/ca.crt|tr -d '\\n'`\n" +
+				"\n" +
+				"cat >${KUBECONFIG} <<__EOF__\n" +
+				"ApiVersion: v1\n" +
+				"kind: Config\n" +
+				"users:\n" +
+				"- name: ${SVCACCT_NAME:-default}\n" +
+				"  user:\n" +
+				"    token: ${SVCACCT_TOKEN}\n" +
+				"clusters:\n" +
+				"- cluster:\n" +
+				"    certificate-authority-data: ${CLUSTER_CA}\n" +
+				"    server: ${K8S_API_HOST:-https://kubernetes.default.svc.cluster.local/}\n" +
+				"  name: ${CLUSTER_NAME:-kubernetes}\n" +
+				"contexts:\n" +
+				"- context:\n" +
+				"    cluster: ${CLUSTER_NAME:-kubernetes}\n" +
+				"    user: ${SVCACCT_NAME:-default}\n" +
+				"  name: svcs-acct-context\n" +
+				"current-context: svcs-acct-context\n" +
+				"__EOF__\n" +
+				"",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "configmap-ricplt-appmgr-bin",
+		},
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "ConfigMap",
+			APIVersion: "v1",
+		},
+	}
+
+	configMap9 := &corev1.ConfigMap{
+		Data: map[string]string{
+			"RMR_RTG_SVC":       "4561",
+			"HELM_TLS_CA_CERT":  "/opt/ric/secret/tiller-ca.cert",
+			"HELM_TLS_CERT":     "/opt/ric/secret/helm-client.cert",
+			"HELM_TLS_HOSTNAME": "service-tiller-ricxapp",
+			"HELM_TLS_VERIFY":   "true",
+			"NAME":              "xappmgr",
+			"HELM_HOST":         "service-tiller-ricxapp.ricinfra:44134",
+			"HELM_TLS_ENABLED":  "true",
+			"HELM_TLS_KEY":      "/opt/ric/secret/helm-client.key",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "configmap-ricplt-appmgr-env",
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "ConfigMap",
+		},
+	}
+	
+	return []*corev1.ConfigMap{configMap1, configMap2, configMap3, configMap4, configMap5, configMap6,configMap7, configMap8, configMap9}
 }
