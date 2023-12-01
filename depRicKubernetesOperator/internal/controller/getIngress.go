@@ -36,6 +36,7 @@ func GetIngress() []*unstructured.Unstructured {
 			},
 		},
 	}
+
 	ingress2 := &unstructured.Unstructured{
 		Object: map[string]interface{}{
 			"apiVersion": "networking.k8s.io/v1beta1",
@@ -90,5 +91,86 @@ func GetIngress() []*unstructured.Unstructured {
 		},
 	}
 
-	return []*unstructured.Unstructured{ingress1, ingress2,ingress3}
+	ingress4 := &unstructured.Unstructured{
+		Object: map[string]interface{}{
+			"apiVersion": "networking.k8s.io/v1beta1",
+			"kind":       "Ingress",
+			"metadata": map[string]interface{}{
+				"name": "ingress-ricplt-rsm",
+			},
+			"spec": map[string]interface{}{
+				"rules": []interface{}{
+					map[string]interface{}{
+						"http": map[string]interface{}{
+							"paths": []interface{}{
+								map[string]interface{}{
+									"backend": map[string]interface{}{
+										"serviceName": "service-ricplt-rsm-http",
+										"servicePort": 4800,
+									},
+									"path": "/rsm",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	ingress5 := &unstructured.Unstructured{
+		Object: map[string]interface{}{
+			"apiVersion": "networking.k8s.io/v1beta1",
+			"kind":       "Ingress",
+			"metadata": map[string]interface{}{
+				"name": "ingress-ricplt-xapp-onboarder-chartmuseum",
+			},
+			"spec": map[string]interface{}{
+				"rules": []interface{}{
+					map[string]interface{}{
+						"http": map[string]interface{}{
+							"paths": []interface{}{
+								map[string]interface{}{
+									"path": "/helmrepo",
+									"backend": map[string]interface{}{
+										"serviceName": "service-ricplt-xapp-onboarder-http",
+										"servicePort": 8080,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	ingress6 := &unstructured.Unstructured{
+		Object: map[string]interface{}{
+			"metadata": map[string]interface{}{
+				"name": "ingress-ricplt-xapp-onboarder-server",
+			},
+			"spec": map[string]interface{}{
+				"rules": []interface{}{
+					map[string]interface{}{
+						"http": map[string]interface{}{
+							"paths": []interface{}{
+								map[string]interface{}{
+									"backend": map[string]interface{}{
+										"serviceName": "service-ricplt-xapp-onboarder-http",
+										"servicePort": 8888,
+									},
+									"path": "/onboard",
+								},
+							},
+						},
+					},
+				},
+			},
+			"apiVersion": "networking.k8s.io/v1beta1",
+			"kind":       "Ingress",
+		},
+	}
+
+	return []*unstructured.Unstructured{ingress1, ingress2, ingress3, ingress4, ingress5, ingress6}
 }
