@@ -295,5 +295,233 @@ func GetDeployment() []*appsv1.Deployment {
 		},
 	}
 
-	return []*appsv1.Deployment{deployment1, deployment2}
+	deployment3 := &appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{
+			Namespace: "ricplt",
+			Labels: map[string]string{
+				"app":      "ricplt-appmgr",
+				"chart":    "appmgr-3.0.0",
+				"heritage": "Helm",
+				"release":  "release-name",
+			},
+			Name: "deployment-ricplt-appmgr",
+		},
+		Spec: appsv1.DeploymentSpec{
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: map[string]string{
+						"app":     "ricplt-appmgr",
+						"release": "release-name",
+					},
+				},
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+
+						corev1.Container{
+							Stdin: false,
+							VolumeMounts: []corev1.VolumeMount{
+
+								corev1.VolumeMount{
+									MountPath: "/opt/ric/config/appmgr.yaml",
+									Name:      "config-volume",
+									ReadOnly:  false,
+									SubPath:   "appmgr.yaml",
+								},
+								corev1.VolumeMount{
+									MountPath: "/opt/ric/secret",
+									Name:      "helm-secret-volume",
+									ReadOnly:  false,
+								},
+								corev1.VolumeMount{
+									ReadOnly:  false,
+									SubPath:   "helm_repo_username",
+									MountPath: "/opt/ric/secret/helm_repo_username",
+									Name:      "secret-volume",
+								},
+								corev1.VolumeMount{
+									SubPath:   "helm_repo_password",
+									MountPath: "/opt/ric/secret/helm_repo_password",
+									Name:      "secret-volume",
+									ReadOnly:  false,
+								},
+							},
+							EnvFrom: []corev1.EnvFromSource{
+
+								corev1.EnvFromSource{
+									ConfigMapRef: &corev1.ConfigMapEnvSource{
+										LocalObjectReference: corev1.LocalObjectReference{
+											Name: "configmap-ricplt-appmgr-env",
+										},
+									},
+								},
+								corev1.EnvFromSource{
+									ConfigMapRef: &corev1.ConfigMapEnvSource{
+										LocalObjectReference: corev1.LocalObjectReference{
+											Name: "configmap-ricplt-dbaas-appconfig",
+										},
+									},
+								},
+							},
+							ImagePullPolicy: corev1.PullPolicy("IfNotPresent"),
+							Name:            "container-ricplt-appmgr",
+							TTY:             false,
+							Image:           "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-appmgr:0.2.0",
+							Ports: []corev1.ContainerPort{
+
+								corev1.ContainerPort{
+									ContainerPort: 8080,
+									Name:          "http",
+									Protocol:      corev1.Protocol("TCP"),
+								},
+								corev1.ContainerPort{
+									Protocol:      corev1.Protocol("TCP"),
+									ContainerPort: 4561,
+									Name:          "rmrroute",
+								},
+								corev1.ContainerPort{
+									ContainerPort: 4560,
+									Name:          "rmrdata",
+									Protocol:      corev1.Protocol("TCP"),
+								},
+							},
+							StdinOnce: false,
+						},
+					},
+					HostIPC:            false,
+					HostPID:            false,
+					Hostname:           "appmgr",
+					RestartPolicy:      corev1.RestartPolicy("Always"),
+					ServiceAccountName: "svcacct-ricplt-appmgr",
+					Volumes: []corev1.Volume{
+
+						corev1.Volume{
+							Name: "config-volume",
+							VolumeSource: corev1.VolumeSource{
+								ConfigMap: &corev1.ConfigMapVolumeSource{
+									LocalObjectReference: corev1.LocalObjectReference{
+										Name: "configmap-ricplt-appmgr-appconfig",
+									},
+								},
+							},
+						},
+						corev1.Volume{
+							Name: "secret-volume",
+							VolumeSource: corev1.VolumeSource{
+								Secret: &corev1.SecretVolumeSource{
+									SecretName: "secret-ricplt-appmgr",
+								},
+							},
+						},
+						corev1.Volume{
+							Name: "helm-secret-volume",
+						},
+						corev1.Volume{
+							Name: "appmgr-bin-volume",
+							VolumeSource: corev1.VolumeSource{
+								ConfigMap: &corev1.ConfigMapVolumeSource{
+									DefaultMode: int32Ptr(493),
+									LocalObjectReference: corev1.LocalObjectReference{
+										Name: "configmap-ricplt-appmgr-bin",
+									},
+								},
+							},
+						},
+					},
+					HostNetwork: false,
+					ImagePullSecrets: []corev1.LocalObjectReference{
+
+						corev1.LocalObjectReference{
+							Name: "secret-nexus3-o-ran-sc-org-10002-o-ran-sc",
+						},
+					},
+					InitContainers: []corev1.Container{
+
+						corev1.Container{
+							Env: []corev1.EnvVar{
+
+								corev1.EnvVar{
+									Name:  "SVCACCT_NAME",
+									Value: "svcacct-ricplt-appmgr",
+								},
+								corev1.EnvVar{
+									Name:  "CLUSTER_NAME",
+									Value: "kubernetes",
+								},
+								corev1.EnvVar{
+									Name:  "KUBECONFIG",
+									Value: "/tmp/kubeconfig",
+								},
+								corev1.EnvVar{
+									Name:  "K8S_API_HOST",
+									Value: "https://kubernetes.default.svc.cluster.local/",
+								},
+								corev1.EnvVar{
+									Name:  "SECRET_NAMESPACE",
+									Value: "ricinfra",
+								},
+								corev1.EnvVar{
+									Name:  "SECRET_NAME",
+									Value: "ricxapp-helm-secret",
+								},
+							},
+							Image:     "nexus3.o-ran-sc.org:10002/o-ran-sc/it-dep-init:0.0.1",
+							Name:      "container-ricplt-appmgr-copy-tiller-secret",
+							Stdin:     false,
+							StdinOnce: false,
+							TTY:       false,
+							VolumeMounts: []corev1.VolumeMount{
+
+								corev1.VolumeMount{
+									Name:      "helm-secret-volume",
+									ReadOnly:  false,
+									MountPath: "/opt/ric/secret",
+								},
+								corev1.VolumeMount{
+									MountPath: "/svcacct-to-kubeconfig.sh",
+									Name:      "appmgr-bin-volume",
+									ReadOnly:  false,
+									SubPath:   "svcacct-to-kubeconfig.sh",
+								},
+								corev1.VolumeMount{
+									ReadOnly:  false,
+									SubPath:   "appmgr-tiller-secret-copier.sh",
+									MountPath: "/appmgr-tiller-secret-copier.sh",
+									Name:      "appmgr-bin-volume",
+								},
+							},
+							Command: []string{
+
+								"/appmgr-tiller-secret-copier.sh",
+							},
+							EnvFrom: []corev1.EnvFromSource{
+
+								corev1.EnvFromSource{
+									ConfigMapRef: &corev1.ConfigMapEnvSource{
+										LocalObjectReference: corev1.LocalObjectReference{
+											Name: "configmap-ricplt-appmgr-env",
+										},
+									},
+								},
+							},
+							ImagePullPolicy: corev1.PullPolicy("IfNotPresent"),
+						},
+					},
+				},
+			},
+			Paused:   false,
+			Replicas: int32Ptr(1),
+			Selector: &metav1.LabelSelector{
+				MatchLabels: map[string]string{
+					"release": "release-name",
+					"app":     "ricplt-appmgr",
+				},
+			},
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "apps/v1",
+			Kind:       "Deployment",
+		},
+	}
+
+	return []*appsv1.Deployment{deployment1, deployment2,deployment3}
 }
