@@ -50,6 +50,7 @@ data:
       "dbTryCount": 200
       "dbRetryForever": "true"
       "waitRouteCleanup_ms": 5000
+      "checkE2IEOrder": 1
   submgrutartg: |
       newrt|start
       newrt|end
