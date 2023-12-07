@@ -263,6 +263,112 @@ func GetConfigMap() []*corev1.ConfigMap {
 			Kind:       "ConfigMap",
 		},
 	}
+
+	configMap13 := &corev1.ConfigMap{
+		Data: map[string]string{
+			"rmr_verbose": "0\n" +
+				"",
+			"router.txt": "newrt|start\n" +
+				"rte|1080|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|1090|service-ricplt-e2term-rmr.ricplt:38000\n" +
+				"rte|1100|service-ricplt-e2term-rmr.ricplt:38000\n" +
+				"rte|1101|service-ricplt-e2term-rmr.ricplt:38000\n" +
+				"rte|1200|service-ricplt-rsm-rmr.ricplt:4801\n" +
+				"rte|1210|service-ricplt-rsm-rmr.ricplt:4801\n" +
+				"rte|1220|service-ricplt-rsm-rmr.ricplt:4801\n" +
+				"rte|10020|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|10060|service-ricplt-e2term-rmr.ricplt:38000\n" +
+				"rte|10061|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|10062|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|10070|service-ricplt-e2term-rmr.ricplt:38000\n" +
+				"rte|10071|service-ricplt-e2term-rmr.ricplt:38000\n" +
+				"rte|10080|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|10360|service-ricplt-e2term-rmr.ricplt:38000\n" +
+				"rte|10361|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|10362|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|10370|service-ricplt-e2mgr-rmr.ricplt:3801\n" +
+				"rte|10371|service-ricplt-e2term-rmr.ricplt:38000\n" +
+				"rte|12010|service-ricplt-e2term-rmr.ricplt:38000\n" +
+				"rte|12020|service-ricplt-e2term-rmr.ricplt:38000\n" +
+				"rte|20001|service-ricplt-a1mediator-rmr.ricplt:4562\n" +
+				"newrt|end",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "configmap-ricplt-e2mgr-router-configmap",
+			Namespace: "ricplt",
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "ConfigMap",
+		},
+	}
+
+	configMap14 := &corev1.ConfigMap{
+		Data: map[string]string{
+			"configuration.yaml": "logging:\n" +
+				"  logLevel:  \"info\"     \n" +
+				"http:\n" +
+				"  port: 3800\n" +
+				"rmr:\n" +
+				"  port: 3801\n" +
+				"  maxMsgSize: 65536\n" +
+				"\n" +
+				"routingManager:\n" +
+				"  baseUrl: \"http://service-ricplt-rtmgr-http:3800/ric/v1/handles/\"\n" +
+				"notificationResponseBuffer: 100\n" +
+				"bigRedButtonTimeoutSec: 5 \n" +
+				"maxConnectionAttempts: 3 \n" +
+				"maxRnibConnectionAttempts: 3 \n" +
+				"rnibRetryIntervalMs: 10\n" +
+				"keepAliveResponseTimeoutMs: 360000\n" +
+				"keepAliveDelayMs: 120000\n" +
+				"\n" +
+				"globalRicId:\n" +
+				"  ricId: \"AACCE\"\n" +
+				"  mcc: \"310\"\n" +
+				"  mnc: \"411\"\n" +
+				"  \n" +
+				"rnibWriter:\n" +
+				"  stateChangeMessageChannel: \"RAN_CONNECTION_STATUS_CHANGE\"\n" +
+				"  ranManipulationMessageChannel: \"RAN_MANIPULATION\"",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "configmap-ricplt-e2mgr-configuration-configmap",
+			Namespace: "ricplt",
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "ConfigMap",
+		},
+	}
+
+	configMap15 := &corev1.ConfigMap{
+		Data: map[string]string{
+			"logcfg": "loglevel: 3",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "configmap-ricplt-e2mgr-loglevel-configmap",
+			Namespace: "ricplt",
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "ConfigMap",
+		},
+	}
+
+	configMap16 := &corev1.ConfigMap{
+		Data: map[string]string{
+			"RMR_RTG_SVC": "4561",
+			"RMR_SRC_ID":  "service-ricplt-e2mgr-rmr.ricplt",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "configmap-ricplt-e2mgr-env",
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "ConfigMap",
+		},
+	}
 	
-	return []*corev1.ConfigMap{configMap1, configMap2, configMap3, configMap4, configMap5, configMap6,configMap7, configMap8, configMap9}
+	return []*corev1.ConfigMap{configMap1, configMap2, configMap3, configMap4, configMap5, configMap6,configMap7, configMap8, configMap9, configMap10, configMap11, configMap12, configMap13, configMap14, configMap15, configMap16}
 }
