@@ -523,5 +523,183 @@ func GetDeployment() []*appsv1.Deployment {
 		},
 	}
 
-	return []*appsv1.Deployment{deployment1, deployment2,deployment3}
+	deployment4 := &appsv1.Deployment{
+		Spec: appsv1.DeploymentSpec{
+			Paused:   false,
+			Replicas: int32Ptr(1),
+			Selector: &metav1.LabelSelector{
+				MatchLabels: map[string]string{
+					"app":     "ricplt-e2mgr",
+					"release": "release-name",
+				},
+			},
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: map[string]string{
+						"app":     "ricplt-e2mgr",
+						"release": "release-name",
+					},
+				},
+				Spec: corev1.PodSpec{
+					HostNetwork: false,
+					HostPID:     false,
+					Hostname:    "e2mgr",
+					ImagePullSecrets: []corev1.LocalObjectReference{
+
+						corev1.LocalObjectReference{
+							Name: "secret-nexus3-o-ran-sc-org-10002-o-ran-sc",
+						},
+					},
+					Volumes: []corev1.Volume{
+
+						corev1.Volume{
+							Name: "local-router-file",
+							VolumeSource: corev1.VolumeSource{
+								ConfigMap: &corev1.ConfigMapVolumeSource{
+									LocalObjectReference: corev1.LocalObjectReference{
+										Name: "configmap-ricplt-e2mgr-router-configmap",
+									},
+								},
+							},
+						},
+						corev1.Volume{
+							VolumeSource: corev1.VolumeSource{
+								ConfigMap: &corev1.ConfigMapVolumeSource{
+									LocalObjectReference: corev1.LocalObjectReference{
+										Name: "configmap-ricplt-e2mgr-configuration-configmap",
+									},
+								},
+							},
+							Name: "local-configuration-file",
+						},
+						corev1.Volume{
+							Name: "e2mgr-loglevel-volume",
+							VolumeSource: corev1.VolumeSource{
+								ConfigMap: &corev1.ConfigMapVolumeSource{
+									Items: []corev1.KeyToPath{
+
+										corev1.KeyToPath{
+											Key:  "logcfg",
+											Mode: int32Ptr(420),
+											Path: "log-level.yaml",
+										},
+									},
+									LocalObjectReference: corev1.LocalObjectReference{
+										Name: "configmap-ricplt-e2mgr-loglevel-configmap",
+									},
+								},
+							},
+						},
+					},
+					Containers: []corev1.Container{
+
+						corev1.Container{
+							Ports: []corev1.ContainerPort{
+
+								corev1.ContainerPort{
+									ContainerPort: 3800,
+									Name:          "http",
+								},
+								corev1.ContainerPort{
+									ContainerPort: 4561,
+									Name:          "rmrroute",
+								},
+								corev1.ContainerPort{
+									ContainerPort: 3801,
+									Name:          "rmrdata",
+								},
+							},
+							SecurityContext: &corev1.SecurityContext{
+								Privileged: boolPtr(false),
+							},
+							StdinOnce: false,
+							LivenessProbe: &corev1.Probe{
+								InitialDelaySeconds: 3,
+								PeriodSeconds:       10,
+								ProbeHandler: corev1.ProbeHandler{
+									HTTPGet: &corev1.HTTPGetAction{
+										Path: "v1/health",
+										Port: intstr.IntOrString{
+											IntVal: 3800,
+										},
+									},
+								},
+							},
+							Name:            "container-ricplt-e2mgr",
+							ImagePullPolicy: corev1.PullPolicy("IfNotPresent"),
+							ReadinessProbe: &corev1.Probe{
+								InitialDelaySeconds: 3,
+								PeriodSeconds:       10,
+								ProbeHandler: corev1.ProbeHandler{
+									HTTPGet: &corev1.HTTPGetAction{
+										Path: "v1/health",
+										Port: intstr.IntOrString{
+											IntVal: 3800,
+										},
+									},
+								},
+							},
+							Stdin: true,
+							TTY:   true,
+							VolumeMounts: []corev1.VolumeMount{
+
+								corev1.VolumeMount{
+									MountPath: "/opt/E2Manager/router.txt",
+									Name:      "local-router-file",
+									ReadOnly:  false,
+									SubPath:   "router.txt",
+								},
+								corev1.VolumeMount{
+									MountPath: "/etc/config",
+									Name:      "e2mgr-loglevel-volume",
+									ReadOnly:  false,
+								},
+								corev1.VolumeMount{
+									MountPath: "/opt/E2Manager/resources/configuration.yaml",
+									Name:      "local-configuration-file",
+									ReadOnly:  false,
+									SubPath:   "configuration.yaml",
+								},
+							},
+							EnvFrom: []corev1.EnvFromSource{
+
+								corev1.EnvFromSource{
+									ConfigMapRef: &corev1.ConfigMapEnvSource{
+										LocalObjectReference: corev1.LocalObjectReference{
+											Name: "configmap-ricplt-e2mgr-env",
+										},
+									},
+								},
+								corev1.EnvFromSource{
+									ConfigMapRef: &corev1.ConfigMapEnvSource{
+										LocalObjectReference: corev1.LocalObjectReference{
+											Name: "configmap-ricplt-dbaas-appconfig",
+										},
+									},
+								},
+							},
+							Image: "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-e2mgr:3.0.1",
+						},
+					},
+					HostIPC: false,
+				},
+			},
+		},
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "apps/v1",
+			Kind:       "Deployment",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Labels: map[string]string{
+				"app":      "ricplt-e2mgr",
+				"chart":    "e2mgr-3.0.0",
+				"heritage": "Helm",
+				"release":  "release-name",
+			},
+			Name:      "deployment-ricplt-e2mgr",
+			Namespace: "ricplt",
+		},
+	}
+
+	return []*appsv1.Deployment{deployment1, deployment2,deployment3,deployment4}
 }
