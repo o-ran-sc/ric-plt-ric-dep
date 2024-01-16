@@ -1,5 +1,28 @@
-# depriclatest26oct
-// TODO(user): Add simple overview of use/purpose
+# depriclatest
+The depric Operator for Kubernetes provides easy monitoring definitions for Kubernetes services and deployment and management of RIC services and instances.
+
+# To deploy K8s Operator 
+1. Build the docker image:
+```sh
+make docker-build docker-push IMG=registry/depriclatest-operator:latest
+```
+2. deploy the operator using above image:
+
+```sh
+make deploy IMG=registry/depriclatest-operator:latest
+```
+
+# To Deploy/Undeploy RIC 
+
+## Deploy RIC
+For deploying RIC apply a sample manifest based on the new operator CRD :
+
+kubectl apply -f config/samples/ricdeploy_v1_ricplatform.yaml
+
+## Undeploy RIC
+For undeploying RIC apply a sample manifest based on the new operator CRD :
+
+kubectl apply -f config/samples/ricdeploy_v1_ricplatform.yaml
 
 ## Description
 // TODO(user): An in-depth paragraph about your project and overview of use
@@ -18,13 +41,13 @@ kubectl apply -f config/samples/
 2. Build and push your image to the location specified by `IMG`:
 
 ```sh
-make docker-build docker-push IMG=<some-registry>/depriclatest26oct:tag
+make docker-build docker-push IMG=<some-registry>/depriclatest:tag
 ```
 
 3. Deploy the controller to the cluster with the image specified by `IMG`:
 
 ```sh
-make deploy IMG=<some-registry>/depriclatest26oct:tag
+make deploy IMG=<some-registry>/depriclatest:tag
 ```
 
 ### Uninstall CRDs
