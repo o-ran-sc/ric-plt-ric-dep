@@ -141,7 +141,7 @@ if [[ ${LIST_OF_COMPONENTS} == *"influxdb"* ]]; then
 fi
 
 # replace the dbaasha with dbaas1 if deploying non HA DBaaS
-COMPONENTS="infrastructure dbaas appmgr rtmgr e2mgr e2term a1mediator submgr vespamgr o1mediator alarmmanager $LIST_OF_COMPONENTS"
+COMPONENTS="infrastructure dbaas appmgr rtmgr e2mgr e2term a1mediator submgr vespamgr o1mediator alarmmanager conflictmgr $LIST_OF_COMPONENTS"
 
 echo "Deploying RIC infra components [$COMPONENTS]"
 if [[ ${COMPONENTS} != *"influxdb"* ]]; then

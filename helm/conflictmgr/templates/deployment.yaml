@@ -1,0 +1,62 @@
+################################################################################
+#   Copyright (c) 2023 Capgemini Intellectual Property.                        #
+################################################################################
+
+################################################################################
+#   Application Deployment Configurations and metadata.                        #
+################################################################################
+
+{{- $imagectx := dict "ctx" . "defaultregistry" .Values.conflictmgr.image.registry }}
+{{- $pullpolicyctx := dict "ctx" . "defaultpullpolicy" .Values.conflictmgr.imagePullPolicy }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "common.deploymentname.conflictmgr" . }}
+  namespace: {{ include "common.namespace.platform" . }}
+  labels:
+    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.conflictmgr" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.conflictmgr.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "common.namespace.platform" . }}-{{ include "common.name.conflictmgr" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      {{- if .Values.conflictmgr.annotations }}
+      annotations:
+        {{- .Values.conflictmgr.annotations | nindent 8 -}}
+      {{ end }}
+      labels:
+        app: {{ include "common.namespace.platform" . }}-{{ include "common.name.conflictmgr" . }}
+        release: {{ .Release.Name }}
+    spec:
+      hostname: {{ include "common.name.conflictmgr" . }}
+      imagePullSecrets:
+        - name: {{ include "common.dockerregistry.credential" $imagectx }}
+      containers:
+        - name: {{ include "common.containername.conflictmgr" . }}
+          image: {{ include "common.dockerregistry.url" $imagectx }}/{{ .Values.conflictmgr.image.name }}:{{ .Values.conflictmgr.image.tag }}
+          imagePullPolicy: {{ include "common.dockerregistry.pullpolicy" $pullpolicyctx }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "common.configmapname.conflictmgr" . }}-env
+          ports:
+              - name: grpc
+                containerPort: {{ include "common.serviceport.conflictmgr.grpc.data" . }}
+                protocol: TCP
+          volumeMounts:
+            - name: config-volume
+              mountPath: /cfg
+      volumes:
+        - name: config-volume
+          configMap:
+            name: conflictconf
+            items:
+              - key: conflictconf
+                path: config.yaml
+                mode: 0644
