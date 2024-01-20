@@ -1,0 +1,14 @@
+################################################################################
+#   Copyright (c) 2023 Capgemini Intellectual Property.                        #
+################################################################################
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: conflictconf
+data:
+  conflictconf: |
+    "logger":
+      "level": 4
+    "controls":
+      "stateduration": -1

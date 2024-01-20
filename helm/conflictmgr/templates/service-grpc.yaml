@@ -1,0 +1,28 @@
+################################################################################
+#   Copyright (c) 2023 Capgemini Intellectual Property.                        #
+################################################################################
+################################################################################
+#  Grpc Service Configuration attached to Modules K8S Pod.                   #
+################################################################################
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "common.servicename.conflictmgr.grpc" . }}
+  namespace: {{ include "common.namespace.platform" . }}
+  labels:
+    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.conflictmgr" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  selector:
+    app: {{ include "common.namespace.platform" . }}-{{ include "common.name.conflictmgr" . }}
+    release: {{ .Release.Name }}
+  type: ClusterIP
+  ports:
+    - name: "http"
+      port: {{ include "common.serviceport.conflictmgr.grpc.data" . }}
+      protocol: "TCP"
+      targetPort: "grpc"
+

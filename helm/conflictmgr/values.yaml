@@ -1,0 +1,16 @@
+################################################################################
+#   Copyright (c) 2023 Capgemini Intellectual Property.                        #
+################################################################################
+
+#################################################################
+# Application configuration defaults.
+#################################################################
+# application image
+
+conflictmgr:
+  replicaCount: 1
+  imagePullPolicy: IfNotPresent
+  image:
+    name: ric-plt-conflictmgr
+    tag: 1.0.0
+    registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
