@@ -1,0 +1,4 @@
+## Append samples of your project ##
+resources:
+- ricdeploy_v1_ricplatform.yaml
+#+kubebuilder:scaffold:manifestskustomizesamples
