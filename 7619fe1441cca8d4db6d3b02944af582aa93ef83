@@ -1,0 +1,8 @@
+Code-Review+2: Ranjit Kumar <ranjit.angajala@nokia.com>
+Verified+1: ORAN Required GHA <releng+oran.required.gha@linuxfoundation.org>
+Verified+1: Ranjit Kumar <ranjit.angajala@nokia.com>
+Submitted-by: Ranjit Kumar <ranjit.angajala@nokia.com>
+Submitted-at: Wed, 03 Apr 2024 07:23:35 +0000
+Reviewed-on: https://gerrit.o-ran-sc.org/r/c/ric-plt/ric-dep/+/12624
+Project: ric-plt/ric-dep
+Branch: refs/heads/master
