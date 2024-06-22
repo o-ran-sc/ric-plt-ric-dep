@@ -61,9 +61,9 @@ start_ipv6_if () {
   fi
 }
 
-KUBEV="1.16.0"
+KUBEV="1.28.11"
 KUBECNIV="0.7.5"
-HELMV="3.5.4"
+HELMV="3.14.4"
 DOCKERV="20.10.21"
 
 echo running ${0}
@@ -104,7 +104,7 @@ mkdir -p /opt/config
 echo "" > /opt/config/docker_version.txt
 echo "1.16.0" > /opt/config/k8s_version.txt
 echo "0.7.5" > /opt/config/k8s_cni_version.txt
-echo "3.5.4" > /opt/config/helm_version.txt
+echo "3.14.4" > /opt/config/helm_version.txt
 echo "$(hostname -I)" > /opt/config/host_private_ip_addr.txt
 echo "$(curl ifconfig.co)" > /opt/config/k8s_mst_floating_ip_addr.txt
 echo "$(hostname -I)" > /opt/config/k8s_mst_private_ip_addr.txt
@@ -152,7 +152,7 @@ echo "### k8s version     = "${KUBEV}
 echo "### helm version    = "${HELMV}
 echo "### k8s cni version = "${KUBECNIV}
 
-KUBEVERSION="${KUBEV}-00"
+#KUBEVERSION="${KUBEV}-00"
 CNIVERSION="${KUBECNIV}-00"
 DOCKERVERSION="${DOCKERV}"
 
@@ -178,8 +178,12 @@ fi
 
 echo "docker version to use = "${DOCKERVERSION}
 
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-echo 'deb http://apt.kubernetes.io/ kubernetes-xenial main' > /etc/apt/sources.list.d/kubernetes.list
+#curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+#echo 'deb http://apt.kubernetes.io/ kubernetes-xenial main' > /etc/apt/sources.list.d/kubernetes.list
+
+mkdir /etc/apt/keyrings
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
 mkdir -p /etc/apt/apt.conf.d
 echo "APT::Acquire::Retries \"3\";" > /etc/apt/apt.conf.d/80-retries
@@ -299,7 +303,9 @@ apiVersion: kubeproxy.config.k8s.io/v1alpha1
 kind: KubeProxyConfiguration
 mode: ipvs
 EOF
-  else
+  elif [[ ${KUBEV} == 1.28.* ]] ; then
+    echo "Do Nothing for now."
+    else
     echo "Unsupported Kubernetes version requested.  Bail."
     exit
   fi
@@ -325,8 +331,18 @@ subjects:
     namespace: kube-system
 EOF
 
-
+if [[ ${KUBEV} == 1.28.11 ]]; then
+  kubeadm init --pod-network-cidr=10.244.0.0/16
+  mkdir -p /run/flannel
+cat <<EOF > /run/flannel/subnet.env
+FLANNEL_NETWORK=10.244.0.0/16
+FLANNEL_SUBNET=10.244.0.1/24
+FLANNEL_MTU=1450
+FLANNEL_IPMASQ=true
+EOF
+else  
   kubeadm init --config /root/config.yaml
+fi
 
   cd /root
   rm -rf .kube
@@ -338,12 +354,22 @@ EOF
 
   kubectl get pods --all-namespaces
 
+if [[ ${KUBEV} == 1.28.11 ]]; then
+  kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+else
   # we refer to version 0.18.1 because later versions use namespace kube-flannel instead of kube-system TODO
   kubectl apply -f "https://raw.githubusercontent.com/flannel-io/flannel/v0.18.1/Documentation/kube-flannel.yml"
+fi
 
+if [[ ${KUBEV} == 1.28.11 ]]; then
+  wait_for_pods_running 7 kube-system
+  wait_for_pods_running 1 kube-flannel
+  kubectl taint nodes --all node-role.kubernetes.io/control-plane:NoSchedule-
+else
   wait_for_pods_running 8 kube-system
-
   kubectl taint nodes --all node-role.kubernetes.io/master-
+fi
+
 
   HELMV=$(cat /opt/config/helm_version.txt)
   HELMVERSION=${HELMV}
