@@ -33,7 +33,7 @@ metadata:
   name: {{ include "common.serviceaccountname.tiller" $ctx }}
   namespace: {{ $deployNameSpace }}
 ---  
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: {{ include "common.tillerName" $ctx }}-tiller-base
@@ -53,7 +53,7 @@ rules:
   resources: ["pods", "configmaps", "deployments", "services"]
   verbs: ["get", "list", "create", "delete"]
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: {{ include "common.serviceaccountname.tiller" $ctx }}-{{ $nameSpace }}-tiller-base
@@ -67,7 +67,7 @@ subjects:
     name: {{ include "common.serviceaccountname.tiller" $ctx }}
     namespace: {{ $deployNameSpace }}
 ---  
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: {{ include "common.tillerName" $ctx }}-tiller-operation
@@ -77,7 +77,7 @@ rules:
   resources: ["configmaps"]
   verbs: ["get", "list", "create", "delete", "update"]
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: {{ include "common.serviceaccountname.tiller" $ctx }}-{{ $nameSpace }}-tiller-operation
@@ -92,7 +92,7 @@ subjects:
     namespace: {{ $deployNameSpace }}
 {{- if .serviceAccount.role }}
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: {{ include "common.tillerName" $ctx }}-tiller-deployer
@@ -100,7 +100,7 @@ metadata:
 rules:
 {{ toYaml .serviceAccount.role }}
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: {{ include "common.serviceaccountname.tiller" $ctx }}-{{ $nameSpace }}-tiller-deployer

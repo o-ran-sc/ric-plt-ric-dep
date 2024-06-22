@@ -308,7 +308,7 @@ rm kernel_optimizer.yaml
 fi
 
 for component in $COMPONENTS; do
-    helm dep up $DIR/../helm/$component
+    helm dep build $DIR/../helm/$component
     COMPONENT="${RELEASE_PREFIX}-$component"
     if [ -z $IS_HELM3 ]
     then

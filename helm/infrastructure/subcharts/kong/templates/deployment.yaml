@@ -1,25 +1,48 @@
+{{- if or .Values.deployment.kong.enabled .Values.ingressController.enabled }}
 apiVersion: apps/v1
+{{- if .Values.deployment.daemonset }}
+kind: DaemonSet
+{{- else }}
 kind: Deployment
+{{- end }}
 metadata:
   name: {{ template "kong.fullname" . }}
+  namespace:  {{ template "kong.namespace" . }}
   labels:
     {{- include "kong.metaLabels" . | nindent 4 }}
     app.kubernetes.io/component: app
+  {{- if .Values.deploymentAnnotations }}
+  annotations:
+  {{- range $key, $value := .Values.deploymentAnnotations }}
+    {{ $key }}: {{ include "kong.renderTpl" (dict "value" $value "context" $) | quote }}
+  {{- end }}
+  {{- end }}
 spec:
+  {{- if not .Values.autoscaling.enabled }}
+  {{- if not .Values.deployment.daemonset }}
   replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "kong.selectorLabels" . | nindent 6 }}
   {{- if .Values.updateStrategy }}
+  {{- if .Values.deployment.daemonset }}
+  updateStrategy:
+  {{- else }}
   strategy:
+  {{- end }}
 {{ toYaml .Values.updateStrategy | indent 4 }}
+  {{- end }}
+  {{- if .Values.deployment.minReadySeconds }}
+  minReadySeconds: {{ .Values.deployment.minReadySeconds }}
   {{- end }}
 
   template:
     metadata:
       annotations:
-        {{- if .Values.ingressController.admissionWebhook.enabled }}
-        checksum/admission-webhook.yaml: {{ include (print $.Template.BasePath "/admission-webhook.yaml") . | sha256sum }}
+        {{- if (and (not .Values.deployment.serviceAccount.automountServiceAccountToken) (or .Values.deployment.serviceAccount.create .Values.deployment.serviceAccount.name)) }}
+        kuma.io/service-account-token-volume: {{ template "kong.serviceAccountTokenName" . }}
         {{- end }}
         {{- if (and (not .Values.ingressController.enabled) (eq .Values.env.database "off" )) }}
         {{- if .Values.dblessConfig.config }}
@@ -27,58 +50,35 @@ spec:
         {{- end }}
         {{- end }}
         {{- if .Values.podAnnotations }}
-{{ toYaml .Values.podAnnotations | indent 8 }}
+        {{- range $key, $value := .Values.podAnnotations }}
+        {{ $key }}: {{ include "kong.renderTpl" (dict "value" $value "context" $) | quote }}
         {{- end }}
-        {{- if $.Values.global }}
-          {{- if $.Values.global.danm_networks }}
-            {{- $networklist := list }}
-            {{- range $network := $.Values.global.danm_networks }}
-              {{- if $network.tenants }}
-                {{- if $network.tenants.kong }}
-                  {{- $networklist = append $networklist $network }}
-                {{- end }}
-              {{- end }}
-            {{- end }}
-            {{- if $networklist }}
-        danm.k8s.io/interfaces: |
-          [
-            {{- range $network := $networklist }}
-              {{- printf "\n            {\"clusterNetwork\": \"%s\"" $network.name }}
-              {{- if $network.tenants.kong.ip }}
-                {{- printf ", \"ip\": \"%s\"" $network.tenants.kong.ip }}
-              {{- else }}
-                {{- printf ", \"ip\": \"dynamic\"" }}
-              {{- end }}
-              {{- if $network.tenants.kong.ip6 }}
-                {{- printf ", \"ip6\": \"%s\"" $network.tenants.kong.ip6 }}
-              {{- end }}
-              {{- if $network.tenants.kong.proutes }}
-                {{- printf ", \"proutes\": {" }}
-                {{- range $subnet, $gw := $network.tenants.kong.proutes }}
-                  {{- if eq $subnet ( first ( keys $network.tenants.kong.proutes ))}}
-                    {{- printf "\"%s\": \"%s\"" $subnet $gw }}
-                  {{- else }}
-                    {{- printf ", \"%s\": \"%s\"" $subnet $gw }}
-                  {{- end }}
-                {{- end }}
-                {{- printf "}" }}
-              {{- end }}
-              {{- if ne $network.name (last $networklist).name }}
-              {{- printf "}," }}
-              {{- else }}
-              {{- printf "}" }}
-              {{- end }}
-            {{- end }}
-          ] 
-            {{- end }}
-          {{- end }}
         {{- end }}
       labels:
         {{- include "kong.metaLabels" . | nindent 8 }}
         app.kubernetes.io/component: app
+        app: {{ template "kong.fullname" . }}
+        version: {{ .Chart.AppVersion | quote }}
+        {{- if .Values.podLabels }}
+        {{ include "kong.renderTpl" (dict "value" .Values.podLabels "context" $) | nindent 8 }}
+        {{- end }}
     spec:
-      {{- if or .Values.ingressController.enabled .Values.podSecurityPolicy.enabled }}
+      {{- if .Values.deployment.hostname }}
+      hostname: {{ .Values.deployment.hostname }}
+      {{- end }}
+      {{- if .Values.deployment.hostNetwork }}
+      hostNetwork: true
+      {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: "{{ .Values.priorityClassName }}"
+      {{- end }}
+      {{- if or .Values.deployment.serviceAccount.create .Values.deployment.serviceAccount.name }}
       serviceAccountName: {{ template "kong.serviceAccountName" . }}
+      {{- end }}
+      {{- if (and (or .Values.deployment.serviceAccount.create .Values.deployment.serviceAccount.name) .Values.deployment.serviceAccount.automountServiceAccountToken) }}
+      automountServiceAccountToken: true
+      {{- else }}
+      automountServiceAccountToken: false
       {{ end }}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
@@ -86,31 +86,78 @@ spec:
         - name: {{ . }}
       {{- end }}
       {{- end }}
-      {{- if not (eq .Values.env.database "off") }}
+      {{- if .Values.deployment.kong.enabled }}
       initContainers:
-      {{- include "kong.wait-for-db" . | nindent 6 }}
-      {{ end }}
+      - name: clear-stale-pid
+        image: {{ include "kong.getRepoTag" .Values.image }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        securityContext:
+        {{ toYaml .Values.containerSecurityContext | nindent 10 }}
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        command:
+        - "rm"
+        - "-vrf"
+        - "$KONG_PREFIX/pids"
+        env:
+        {{- include "kong.env" . | nindent 8 }}
+        {{- include "kong.envFrom" .Values.envFrom | nindent 8 }}
+        volumeMounts:
+        {{- include "kong.volumeMounts" . | nindent 8 }}
+        {{- if .Values.deployment.initContainers }}
+        {{- toYaml .Values.deployment.initContainers | nindent 6 }}
+        {{- end }}
+        {{- if (and (not (eq .Values.env.database "off")) .Values.waitImage.enabled) }}
+        {{- include "kong.wait-for-db" . | nindent 6 }}
+        {{- end }}
+      {{- end }}
+      {{- if .Values.deployment.hostAliases }}
+      hostAliases:
+        {{- toYaml .Values.deployment.hostAliases | nindent 6 }}
+      {{- end}}
+      {{- if .Values.dnsPolicy }}
+      dnsPolicy: {{ .Values.dnsPolicy | quote }}
+      {{- end }}
+      {{- if .Values.dnsConfig }}
+      dnsConfig:
+{{ toYaml .Values.dnsConfig | indent 8 }}
+      {{- end }}
       containers:
       {{- if .Values.ingressController.enabled }}
       {{- include "kong.controller-container" . | nindent 6 }}
       {{ end }}
+      {{- if .Values.deployment.sidecarContainers }}
+      {{- toYaml .Values.deployment.sidecarContainers | nindent 6 }}
+      {{- end }}
+      {{- if .Values.deployment.kong.enabled }}
       - name: "proxy"
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: {{ include "kong.getRepoTag" .Values.image }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
+        securityContext:
+        {{ toYaml .Values.containerSecurityContext | nindent 10 }}
         env:
-        {{- include "kong.final_env" . | nindent 8 }}
+        {{- include "kong.no_daemon_env" . | nindent 8 }}
+        {{- include "kong.envFrom" .Values.envFrom | nindent 8 }}
         lifecycle:
-          preStop:
-            exec:
-              command: [ "/bin/sh", "-c", "kong quit" ]
+          {{- toYaml .Values.lifecycle | nindent 10 }}
         ports:
+        {{- if (and .Values.admin.http.enabled .Values.admin.enabled) }}
         - name: admin
-          containerPort: {{ .Values.admin.containerPort }}
-          {{- if .Values.admin.hostPort }}
-          hostPort: {{ .Values.admin.hostPort }}
+          containerPort: {{ .Values.admin.http.containerPort }}
+          {{- if .Values.admin.http.hostPort }}
+          hostPort: {{ .Values.admin.http.hostPort }}
           {{- end}}
           protocol: TCP
-        {{- if .Values.proxy.http.enabled }}
+        {{- end }}
+        {{- if (and .Values.admin.tls.enabled .Values.admin.enabled) }}
+        - name: admin-tls
+          containerPort: {{ .Values.admin.tls.containerPort }}
+          {{- if .Values.admin.tls.hostPort }}
+          hostPort: {{ .Values.admin.tls.hostPort }}
+          {{- end}}
+          protocol: TCP
+        {{- end }}
+        {{- if (and .Values.proxy.http.enabled .Values.proxy.enabled) }}
         - name: proxy
           containerPort: {{ .Values.proxy.http.containerPort }}
           {{- if .Values.proxy.http.hostPort }}
@@ -118,7 +165,7 @@ spec:
           {{- end}}
           protocol: TCP
         {{- end }}
-        {{- if .Values.proxy.tls.enabled }}
+        {{- if (and .Values.proxy.tls.enabled .Values.proxy.enabled)}}
         - name: proxy-tls
           containerPort: {{ .Values.proxy.tls.containerPort }}
           {{- if .Values.proxy.tls.hostPort }}
@@ -126,16 +173,48 @@ spec:
           {{- end}}
           protocol: TCP
         {{- end }}
-        - name: metrics
-          containerPort: 9542
+        {{- range .Values.proxy.stream }}
+        - name: stream{{ if (eq (default "TCP" .protocol) "UDP") }}udp{{ end }}-{{ .containerPort }}
+          containerPort: {{ .containerPort }}
+          {{- if .hostPort }}
+          hostPort: {{ .hostPort }}
+          {{- end}}
+          protocol: {{ .protocol }}
+        {{- end }}
+        {{- range .Values.udpProxy.stream }}
+        - name: streamudp-{{ .containerPort }}
+          containerPort: {{ .containerPort }}
+          {{- if .hostPort }}
+          hostPort: {{ .hostPort }}
+          {{- end}}
+          protocol: {{ .protocol }}
+        {{- end }}
+        {{- if (and .Values.status.http.enabled .Values.status.enabled)}}
+        - name: status
+          containerPort: {{ .Values.status.http.containerPort }}
+          {{- if .Values.status.http.hostPort }}
+          hostPort: {{ .Values.status.http.hostPort }}
+          {{- end}}
           protocol: TCP
-        {{- if .Values.ingressController.admissionWebhook.enabled }}
-        - name: webhook
-          containerPort: {{ .Values.ingressController.admissionWebhook.port }}
+        {{- end }}
+        {{- if (and .Values.status.tls.enabled .Values.status.enabled) }}
+        - name: status-tls
+          containerPort: {{ .Values.status.tls.containerPort }}
+          {{- if .Values.status.tls.hostPort }}
+          hostPort: {{ .Values.status.tls.hostPort }}
+          {{- end}}
+          protocol: TCP
+        {{- end }}
+        {{- if (and .Values.cluster.tls.enabled .Values.cluster.enabled) }}
+        - name: cluster-tls
+          containerPort: {{ .Values.cluster.tls.containerPort }}
+          {{- if .Values.cluster.tls.hostPort }}
+          hostPort: {{ .Values.cluster.tls.hostPort }}
+          {{- end}}
           protocol: TCP
         {{- end }}
         {{- if .Values.enterprise.enabled }}
-        {{- if .Values.manager.http.enabled }}
+        {{- if (and .Values.manager.http.enabled .Values.manager.enabled) }}
         - name: manager
           containerPort: {{ .Values.manager.http.containerPort }}
           {{- if .Values.manager.http.hostPort }}
@@ -143,7 +222,7 @@ spec:
           {{- end}}
           protocol: TCP
         {{- end }}
-        {{- if .Values.manager.tls.enabled }}
+        {{- if (and .Values.manager.tls.enabled .Values.manager.enabled) }}
         - name: manager-tls
           containerPort: {{ .Values.manager.tls.containerPort }}
           {{- if .Values.manager.tls.hostPort }}
@@ -151,7 +230,7 @@ spec:
           {{- end}}
           protocol: TCP
         {{- end }}
-        {{- if .Values.portal.http.enabled }}
+        {{- if (and .Values.portal.http.enabled .Values.portal.enabled) }}
         - name: portal
           containerPort: {{ .Values.portal.http.containerPort }}
           {{- if .Values.portal.http.hostPort }}
@@ -159,7 +238,7 @@ spec:
           {{- end}}
           protocol: TCP
         {{- end }}
-        {{- if .Values.portal.tls.enabled }}
+        {{- if (and .Values.portal.tls.enabled .Values.portal.enabled) }}
         - name: portal-tls
           containerPort: {{ .Values.portal.tls.containerPort }}
           {{- if .Values.portal.tls.hostPort }}
@@ -167,7 +246,7 @@ spec:
           {{- end}}
           protocol: TCP
         {{- end }}
-        {{- if .Values.portalapi.http.enabled }}
+        {{- if (and .Values.portalapi.http.enabled .Values.portalapi.enabled) }}
         - name: portalapi
           containerPort: {{ .Values.portalapi.http.containerPort }}
           {{- if .Values.portalapi.http.hostPort }}
@@ -175,7 +254,7 @@ spec:
           {{- end}}
           protocol: TCP
         {{- end }}
-        {{- if .Values.portalapi.tls.enabled }}
+        {{- if (and .Values.portalapi.tls.enabled .Values.portalapi.enabled) }}
         - name: portalapi-tls
           containerPort: {{ .Values.portalapi.tls.containerPort }}
           {{- if .Values.portalapi.tls.hostPort }}
@@ -183,18 +262,36 @@ spec:
           {{- end}}
           protocol: TCP
         {{- end }}
+        {{- if (and .Values.clustertelemetry.tls.enabled .Values.clustertelemetry.enabled) }}
+        - name: clustert-tls
+          containerPort: {{ .Values.clustertelemetry.tls.containerPort }}
+          {{- if .Values.clustertelemetry.tls.hostPort }}
+          hostPort: {{ .Values.clustertelemetry.tls.hostPort }}
+          {{- end}}
+          protocol: TCP
+        {{- end }}
         {{- end }}
         volumeMounts:
         {{- include "kong.volumeMounts" . | nindent 10 }}
+        {{- include "kong.userDefinedVolumeMounts" .Values.deployment | nindent 10 }}
         readinessProbe:
-{{ toYaml .Values.readinessProbe | indent 10 }}
+{{ include "kong.proxy.compatibleReadiness" . | indent 10 }}
         livenessProbe:
 {{ toYaml .Values.livenessProbe | indent 10 }}
+        {{- if .Values.startupProbe }}
+        startupProbe:
+{{ toYaml .Values.startupProbe | indent 10 }}
+        {{- end }}
         resources:
 {{ toYaml .Values.resources | indent 10 }}
+        {{- end }} {{/* End of Kong container spec */}}
     {{- if .Values.affinity }}
       affinity:
 {{ toYaml .Values.affinity | indent 8 }}
+    {{- end }}
+    {{- if .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+{{ toYaml .Values.topologySpreadConstraints | indent 8 }}
     {{- end }}
       securityContext:
       {{- include "kong.podsecuritycontext" . | nindent 8 }}
@@ -202,7 +299,12 @@ spec:
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 }}
     {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+    {{- if .Values.tolerations }}
       tolerations:
 {{ toYaml .Values.tolerations | indent 8 }}
+    {{- end }}
       volumes:
       {{- include "kong.volumes" . | nindent 8 -}}
+      {{- include "kong.userDefinedVolumes" . | nindent 8 -}}
+{{- end }}

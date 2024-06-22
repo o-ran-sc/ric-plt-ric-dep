@@ -1,8 +1,15 @@
 {{- if .Values.podDisruptionBudget.enabled }}
-apiVersion: policy/v1beta1
+{{- if and (not .Values.autoscaling.enabled) (le (int .Values.replicaCount) 1) }}
+{{- fail "Enabling PodDisruptionBudget with replicaCount: 1 and no autoscaling prevents pod restarts during upgrades" }}
+{{- end }}
+{{- if and .Values.autoscaling.enabled (le (int .Values.autoscaling.minReplicas) 1) }}
+{{- fail "Enabling PodDisruptionBudget with autoscaling.minReplicas: 1 prevents pod restarts during upgrades" }}
+{{- end }}
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "kong.fullname" . }}
+  namespace: {{ template "kong.namespace" . }}
   labels:
     {{- include "kong.metaLabels" . | nindent 4 }}
 spec:
@@ -15,4 +22,5 @@ spec:
   selector:
     matchLabels:
       {{- include "kong.metaLabels" . | nindent 6 }}
+      app.kubernetes.io/component: app
 {{- end }}
