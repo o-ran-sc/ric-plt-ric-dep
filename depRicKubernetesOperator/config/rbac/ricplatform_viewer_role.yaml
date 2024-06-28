@@ -1,0 +1,27 @@
+# permissions for end users to view ricplatforms.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: ricplatform-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: depriclatest26oct
+    app.kubernetes.io/part-of: depriclatest26oct
+    app.kubernetes.io/managed-by: kustomize
+  name: ricplatform-viewer-role
+rules:
+- apiGroups:
+  - ricdeploy.ricplt.com
+  resources:
+  - ricplatforms
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ricdeploy.ricplt.com
+  resources:
+  - ricplatforms/status
+  verbs:
+  - get
