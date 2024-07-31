@@ -1,0 +1,13 @@
+apiVersion: ricdeploy.ricplt.com/v1
+kind: RicPlatform
+metadata:
+  labels:
+    app.kubernetes.io/name: ricplatform
+    app.kubernetes.io/instance: ricplatform-sample
+    app.kubernetes.io/part-of: depriclatest26oct
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: depriclatest26oct
+  name: ricplatform-sample
+spec:
+  # TODO(user): Add fields here
+  foo : hi
