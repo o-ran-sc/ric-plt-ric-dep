@@ -13,16 +13,28 @@
 #   See the License for the specific language governing permissions and        #
 #   limitations under the License.                                             #
 ################################################################################
----
-{{- if .Values.serviceAccount.create -}}
+{{ if .Values.enterprise.enabled -}}
 apiVersion: v1
-kind: ServiceAccount
+kind: Service
 metadata:
-  name: {{ include "common.influxdb.serviceAccountName" . }}
+{{- if .Values.service.annotations }}
+  annotations:
+{{ toYaml .Values.service.annotations | indent 4 }}
+{{- end }}
+  name: {{ include "common.fullname.influxdb" . }}-meta
   labels:
     {{- include "common.influxdb.labels" . | nindent 4 }}
-  {{- with .Values.serviceAccount.annotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}  
-{{- end -}}
+    app.kubernets.io/component: meta
+spec:
+  type: ClusterIP
+  clusterIP: None
+  # publishNotReadyAddresses is used for service discovery of meta and data nodes by querying the service's SRV record.
+  publishNotReadyAddresses: true
+  ports:
+    - name: meta
+      port: {{ include "common.serviceport.influxdb.meta.bind_address" . | default 8091 }}
+      targetPort: meta
+  selector:
+    {{- include "common.influxdb.selectorLabels" . | nindent 4 }}
+    app.kubernets.io/component: meta
+{{- end }}

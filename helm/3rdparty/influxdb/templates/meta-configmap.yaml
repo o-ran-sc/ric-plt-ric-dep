@@ -13,16 +13,38 @@
 #   See the License for the specific language governing permissions and        #
 #   limitations under the License.                                             #
 ################################################################################
----
-{{- if .Values.serviceAccount.create -}}
+{{ if .Values.enterprise.enabled -}}
 apiVersion: v1
-kind: ServiceAccount
+kind: ConfigMap
 metadata:
-  name: {{ include "common.influxdb.serviceAccountName" . }}
+  name: {{ include "common.fullname.influxdb" . }}-meta
   labels:
     {{- include "common.influxdb.labels" . | nindent 4 }}
-  {{- with .Values.serviceAccount.annotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}  
-{{- end -}}
+    app.kubernetes.io/component: meta
+data:
+  influxdb-meta.conf: |+
+    reporting-disabled = {{ .Values.config.reporting_disabled | default false }}
+    bind-address = ":{{ include "common.serviceport.influxdb.meta.bind_address" . | default 8091 }}"
+
+    [enterprise]
+      license-key = {{ .Values.enterprise.licensekey | quote }}
+
+    [meta]
+      dir = "/var/lib/influxdb/meta"
+      {{- range $key, $value := index .Values.config.meta }}
+      {{ $key }} = {{ $value }}
+      {{- end }}
+      {{- if .Values.enterprise.enabled }}
+      meta-auth-enabled = {{ .Values.config.meta.authEnabled }}
+      {{- end }}
+
+    [logging]
+      {{- range $key, $value := index .Values.config.logging }}
+      {{ $key }} = {{ $value }}
+      {{- end }}
+
+    [tls]
+      {{- range $key, $value := index .Values.config.tls }}
+      {{ $key }} = {{ $value }}
+      {{- end }}
+{{- end }}

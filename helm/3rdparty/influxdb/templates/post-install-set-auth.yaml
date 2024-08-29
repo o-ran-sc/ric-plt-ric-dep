@@ -1,0 +1,64 @@
+################################################################################
+#   Copyright (c) 2021 HCL Technolgies Limited.                                #
+#                                                                              #
+#   Licensed under the Apache License, Version 2.0 (the "License");            #
+#   you may not use this file except in compliance with the License.           #
+#   You may obtain a copy of the License at                                    #
+#                                                                              #
+#       http://www.apache.org/licenses/LICENSE-2.0                             #
+#                                                                              #
+#   Unless required by applicable law or agreed to in writing, software        #
+#   distributed under the License is distributed on an "AS IS" BASIS,          #
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   #
+#   See the License for the specific language governing permissions and        #
+#   limitations under the License.                                             #
+################################################################################
+{{ if .Values.setDefaultUser.enabled -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "common.fullname.influxdb" . }}-set-auth
+  labels:
+    {{- include "common.influxdb.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": {{ .Values.setDefaultUser.hookDeletePolicy }}
+spec:
+  activeDeadlineSeconds: {{ .Values.setDefaultUser.activeDeadlineSeconds }}
+  backoffLimit: {{ .Values.setDefaultUser.backoffLimit }}
+  template:
+    metadata:
+      labels:
+        {{- include "common.influxdb.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: {{ include "common.fullname.influxdb" . }}-set-auth
+        image: "{{ .Values.setDefaultUser.image }}"
+        env:
+          - name: INFLUXDB_USER
+            valueFrom:
+              secretKeyRef:
+                {{- if .Values.setDefaultUser.user.existingSecret }}
+                name: {{ .Values.setDefaultUser.user.existingSecret -}}
+                {{ else }}
+                name: {{ include "common.fullname.influxdb" . }}-auth
+                {{- end }}
+                key: influxdb-user
+          - name: INFLUXDB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                {{- if .Values.setDefaultUser.user.existingSecret }}
+                name: {{ .Values.setDefaultUser.user.existingSecret -}}
+                {{ else }}
+                name: {{ include "common.fullname.influxdb" . }}-auth
+                {{- end }}
+                key: influxdb-password
+        args:
+          - "/bin/sh"
+          - "-c"
+          - |
+             curl -X POST http://{{ include "common.fullname.influxdb" . }}:{{ include "common.serviceport.influxdb.http.bind_address" . | default 8086 }}/query \
+             --data-urlencode \
+             "q=CREATE USER \"${INFLUXDB_USER}\" WITH PASSWORD '${INFLUXDB_PASSWORD}' {{ .Values.setDefaultUser.user.privileges }}"
+      restartPolicy: {{ .Values.setDefaultUser.restartPolicy }}
+{{- end -}}

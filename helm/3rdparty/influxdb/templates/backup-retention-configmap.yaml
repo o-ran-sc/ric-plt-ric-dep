@@ -13,16 +13,14 @@
 #   See the License for the specific language governing permissions and        #
 #   limitations under the License.                                             #
 ################################################################################
----
-{{- if .Values.serviceAccount.create -}}
+{{- if .Values.backupRetention.enabled }}
 apiVersion: v1
-kind: ServiceAccount
+kind: ConfigMap
 metadata:
-  name: {{ include "common.influxdb.serviceAccountName" . }}
+  name: {{ include "common.fullname.influxdb" . }}-backup-retention
   labels:
     {{- include "common.influxdb.labels" . | nindent 4 }}
-  {{- with .Values.serviceAccount.annotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}  
-{{- end -}}
+data:
+  backup-retention.sh: |-
+    {{- .Files.Get "files/backup-retention-script.sh" | nindent 4 }}
+{{- end }}
