@@ -1,17 +1,42 @@
-InfluxDB 2 is deployed as a StatefulSet on your cluster.
+InfluxDB can be accessed via port {{ include "influxdb.httpPortNumber" . }} on the following DNS name from within your cluster:
 
-You can access it by using the service name: {{ template "influxdb.fullname" . }}
+  http://{{ include "influxdb.fullname" . }}.{{ .Release.Namespace }}:{{ include "influxdb.httpPortNumber" . }}
 
-To retrieve the password for the '{{ .Values.adminUser.user}}' user:
+You can connect to the remote instance with the influx CLI. To forward the API port to localhost:8086, run the following:
 
-{{- if .Values.adminUser.existingSecret }}
+  kubectl port-forward --namespace {{ .Release.Namespace }} $(kubectl get pods --namespace {{ .Release.Namespace }} -l app={{ include "influxdb.fullname" . }} -o jsonpath='{ .items[0].metadata.name }') 8086:{{ include "influxdb.httpPortNumber" . }}
 
-  echo $(kubectl get secret {{ .Values.adminUser.existingSecret }} -o "jsonpath={.data['admin-password']}" --namespace {{ .Release.Namespace }} | base64 --decode)
+You can also connect to the influx CLI from inside the container. To open a shell session in the InfluxDB pod, run the following:
+
+  kubectl exec -i -t --namespace {{ .Release.Namespace }} $(kubectl get pods --namespace {{ .Release.Namespace }} -l app={{ include "influxdb.fullname" . }} -o jsonpath='{.items[0].metadata.name}') /bin/sh
+
+To view the logs for the InfluxDB pod, run the following:
+
+  kubectl logs -f --namespace {{ .Release.Namespace }} $(kubectl get pods --namespace {{ .Release.Namespace }} -l app={{ include "influxdb.fullname" . }} -o jsonpath='{ .items[0].metadata.name }')
+
+{{- if .Values.setDefaultUser.enabled }}
+
+To retrieve the default user name:
+
+{{- if .Values.setDefaultUser.user.existingSecret }}
+
+  echo $(kubectl get secret {{ .Values.setDefaultUser.user.existingSecret }} -o "jsonpath={.data['influxdb-user']}" --namespace {{ .Release.Namespace }} | base64 --decode)
 
 {{- else }}
 
-  echo $(kubectl get secret {{ include "influxdb.fullname" . }}-auth -o "jsonpath={.data['admin-password']}" --namespace {{ .Release.Namespace }} | base64 --decode)
+  echo $(kubectl get secret {{ include "influxdb.fullname" . }}-auth -o "jsonpath={.data['influxdb-user']}" --namespace {{ .Release.Namespace }} | base64 --decode)
 
 {{- end }}
 
-Note: with enabled persistence, admin password is only set once during the initial deployment. The password is not changed when InfluxDB 2 is re-deployed with different password.
+To retrieve the default user password:
+
+{{- if .Values.setDefaultUser.user.existingSecret }}
+
+  echo $(kubectl get secret {{ .Values.setDefaultUser.user.existingSecret }} -o "jsonpath={.data['influxdb-password']}" --namespace {{ .Release.Namespace }} | base64 --decode)
+
+{{- else }}
+
+  echo $(kubectl get secret {{ include "influxdb.fullname" . }}-auth -o "jsonpath={.data['influxdb-password']}" --namespace {{ .Release.Namespace }} | base64 --decode)
+
+{{- end }}
+{{- end }}
