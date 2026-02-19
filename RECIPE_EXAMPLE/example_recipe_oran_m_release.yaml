@@ -77,7 +77,7 @@ appmgr:
    appmgr:
      registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
      name: ric-plt-appmgr
-     tag: 0.5.9
+     tag: 0.5.10
    chartmuseum:
      registry: "docker.io"
      name: chartmuseum/chartmuseum
@@ -98,7 +98,7 @@ e2mgr:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-e2mgr
-    tag: 6.0.7
+    tag: 6.0.8
   privilegedmode: false
   globalRicId:
     ricId: "AACCE"
@@ -113,7 +113,7 @@ e2term:
     image:
       registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
       name: ric-plt-e2
-      tag: 6.0.7
+      tag: 6.0.8
     privilegedmode: false
     hostnetworkmode: false
     env:
@@ -142,7 +142,7 @@ submgr:
   image:
     registry: "nexus3.o-ran-sc.org:10002/o-ran-sc"
     name: ric-plt-submgr
-    tag: 0.10.3
+    tag: 0.10.4
 
 vespamgr:
   image:
