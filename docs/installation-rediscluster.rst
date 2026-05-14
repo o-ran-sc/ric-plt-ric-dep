@@ -20,7 +20,7 @@ Important
 ^^^^^^^^^
 The redis-cluster currently is NOT part of RIC platform & hence is completely optional.
 This piece of document has been created as part of delivery item for below jira ticket 
-https://jira.o-ran-sc.org/browse/RIC-109 
+https://lf-o-ran-sc.atlassian.net/jira/browse/RIC-109 
 This ticket is about assessing the feasibility of redis-cluster (with data sharding) 
 supporting desired pod anti-affinity for high availability as per the ticket.
 
